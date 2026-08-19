@@ -1,5 +1,5 @@
 """
-Punto de entrada de la API Facturas v3.
+Punto de entrada de la API Facturas v4.
 
 Crea la aplicación FastAPI, registra el router de producto y expone el
 endpoint de diagnóstico. Swagger queda en /docs y ReDoc en /redoc
@@ -22,10 +22,10 @@ from controllers.vendedor_controller import router as router_vendedor
 
 app = FastAPI(
     title="API Facturas",
-    version="v3",
+    version="v4",
     description="Producto, persona, empresa, cliente, vendedor y factura "
-                "maestro-detalle contra PostgreSQL O MariaDB (el motor lo "
-                "elige DB_PROVIDER) — versión 3 del proyecto.",
+                "maestro-detalle contra PostgreSQL, MariaDB O SQL Server "
+                "(el motor lo elige DB_PROVIDER) — versión 4 del proyecto.",
 )
 
 # Un router por entidad — el molde de la v1, replicado (v2):
@@ -40,7 +40,7 @@ app.include_router(router_factura)
 @app.get("/", tags=["Diagnóstico"])
 async def diagnostico():
     """Confirma que la API está en línea (usable como healthcheck)."""
-    return {"mensaje": "API Facturas funcionando", "version": "v3",
+    return {"mensaje": "API Facturas funcionando", "version": "v4",
             # v3: a cuál motor le está hablando la API (el interruptor):
             "motor": os.environ.get("DB_PROVIDER", "postgres"),
             "documentacion": "/docs"}

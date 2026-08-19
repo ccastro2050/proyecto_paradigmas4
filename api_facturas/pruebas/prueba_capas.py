@@ -206,6 +206,23 @@ async def main() -> None:
                          RepositorioFacturaMariaDB),
               "fábrica mariadb: factura del dialecto correcto")
 
+    # v4 — el tercer motor en la fábrica:
+    from repositorios.repositorio_factura_sqlserver import (
+        RepositorioFacturaSqlServer,
+    )
+    from repositorios.repositorio_producto_sqlserver import (
+        RepositorioProductoSqlServer,
+    )
+
+    os.environ.setdefault("DB_SQLSERVER", "mssql+aioodbc://finjo:finjo@nohay/nada")
+    os.environ["DB_PROVIDER"] = "sqlserver"
+    verificar(isinstance(ensamblador._crear_repositorio("producto"),
+                         RepositorioProductoSqlServer),
+              "fábrica sqlserver: producto del dialecto correcto")
+    verificar(isinstance(ensamblador._crear_repositorio("factura"),
+                         RepositorioFacturaSqlServer),
+              "fábrica sqlserver: factura del dialecto correcto")
+
     os.environ["DB_PROVIDER"] = "oracle"
     try:
         ensamblador._crear_repositorio("producto")

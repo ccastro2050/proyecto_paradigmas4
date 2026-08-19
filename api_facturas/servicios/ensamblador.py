@@ -6,8 +6,9 @@ archivo cambió de forma — controllers y servicios ni se enteraron (las
 funciones crear_servicio_x conservan su firma).
 
 El patrón: un diccionario proveedor → {cadena, familia de repositorios}.
-UN punto del código decide el motor (DB_PROVIDER); agregar SQL Server en
-la v4 será agregar UN bloque a _FABRICAS — ni un if regado por el código.
+UN punto del código decide el motor (DB_PROVIDER). La v4 pagó la cuenta
+didáctica: agregar SQL Server costó exactamente UN bloque en _FABRICAS
+(y sus imports) — ni un if regado por el código, ni un cambio arriba.
 (El gemelo C# del curso escribe este mismo patrón con clases fábrica GoF:
 compárelos — misma idea, dos idiomas.)
 """
@@ -22,19 +23,25 @@ from repositorios.repositorio_empresa_mariadb import RepositorioEmpresaMariaDB
 from repositorios.repositorio_empresa_postgresql import (
     RepositorioEmpresaPostgreSQL,
 )
+from repositorios.repositorio_cliente_sqlserver import RepositorioClienteSqlServer
+from repositorios.repositorio_empresa_sqlserver import RepositorioEmpresaSqlServer
 from repositorios.repositorio_factura_mariadb import RepositorioFacturaMariaDB
+from repositorios.repositorio_factura_sqlserver import RepositorioFacturaSqlServer
 from repositorios.repositorio_factura_postgresql import (
     RepositorioFacturaPostgreSQL,
 )
 from repositorios.repositorio_persona_mariadb import RepositorioPersonaMariaDB
+from repositorios.repositorio_persona_sqlserver import RepositorioPersonaSqlServer
 from repositorios.repositorio_persona_postgresql import (
     RepositorioPersonaPostgreSQL,
 )
 from repositorios.repositorio_producto_mariadb import RepositorioProductoMariaDB
+from repositorios.repositorio_producto_sqlserver import RepositorioProductoSqlServer
 from repositorios.repositorio_producto_postgresql import (
     RepositorioProductoPostgreSQL,
 )
 from repositorios.repositorio_vendedor_mariadb import RepositorioVendedorMariaDB
+from repositorios.repositorio_vendedor_sqlserver import RepositorioVendedorSqlServer
 from repositorios.repositorio_vendedor_postgresql import (
     RepositorioVendedorPostgreSQL,
 )
@@ -76,6 +83,18 @@ _FABRICAS = {
             "cliente": RepositorioClienteMariaDB,
             "vendedor": RepositorioVendedorMariaDB,
             "factura": RepositorioFacturaMariaDB,
+        },
+    },
+    # v4 — el tercer motor: ESTE bloque es todo lo que costó agregarlo.
+    "sqlserver": {
+        "variable_cadena": "DB_SQLSERVER",
+        "repositorios": {
+            "producto": RepositorioProductoSqlServer,
+            "persona": RepositorioPersonaSqlServer,
+            "empresa": RepositorioEmpresaSqlServer,
+            "cliente": RepositorioClienteSqlServer,
+            "vendedor": RepositorioVendedorSqlServer,
+            "factura": RepositorioFacturaSqlServer,
         },
     },
 }

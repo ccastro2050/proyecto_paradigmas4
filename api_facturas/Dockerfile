@@ -1,9 +1,15 @@
 # ==============================================================
-# API Facturas v1 — FastAPI (puerto 8002)
+# API Facturas — FastAPI (puerto 8002)
 # En desarrollo, docker-compose monta el código como volumen y
 # corre uvicorn con --reload: guardar un archivo recarga solo.
 # ==============================================================
 FROM python:3.12-slim
+
+# v4 — el driver ODBC de Microsoft: aioodbc (SQL Server async) habla ODBC,
+# y el sistema necesita el driver nativo msodbcsql18. PostgreSQL y MariaDB
+# no piden nada de esto (sus drivers son Python puro + C embebido) — la
+# asimetría también es una lección de motores.
+RUN apt-get update && apt-get install -y --no-install-recommends curl gnupg2 unixodbc  && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft.gpg  && echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql.list  && apt-get update && ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

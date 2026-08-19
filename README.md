@@ -153,8 +153,9 @@ v1  api_facturas: CRUD de producto, solo PostgreSQL   (cerrada: tag v1)
 v2  más tablas: persona, empresa, cliente, vendedor y
     factura maestro-detalle vía SPs   (cerrada: tag v2)
 v3  segundo motor (MariaDB) — nace la fábrica
-    y el interruptor DB_PROVIDER   ← USTED ESTÁ AQUÍ
-v4  tercer motor (SQL Server) + docker compose completo
+    y el interruptor DB_PROVIDER   (cerrada: tag v3)
+v4  tercer motor (SQL Server) + docker compose
+    completo   ← USTED ESTÁ AQUÍ
 v5  API genérica (/api/{tabla})
 v6  frontend Flask
 ```
@@ -164,18 +165,18 @@ propia spec, y una versión está TERMINADA solo cuando pasa sus criterios de
 aceptación (se cierra con tag). Detalle completo:
 **[mapa de versiones](docs/spec_kit/versiones/0_mapa_versiones.md)**.
 
-## 4. Las especificaciones de la versión actual (v3)
+## 4. Las especificaciones de la versión actual (v4)
 
 | Documento | Qué contiene |
 |---|---|
 | [Constitución](docs/spec_kit/1_constitution.md) | Las reglas permanentes del proyecto |
-| [2_spec.md](docs/spec_kit/versiones/v3_segundo_motor/2_spec.md) | QUÉ construir y los 5 criterios de aceptación |
-| [3_plan.md](docs/spec_kit/versiones/v3_segundo_motor/3_plan.md) | CÓMO: la fábrica, los 6 repositorios MariaDB y el interruptor |
-| [4_research.md](docs/spec_kit/versiones/v3_segundo_motor/4_research.md) | Las decisiones y sus alternativas descartadas *(lectura opcional)* |
-| [5_data_model.md](docs/spec_kit/versiones/v3_segundo_motor/5_data_model.md) | La MISMA bdfacturas en dialecto MariaDB (equivalencias y semillas) |
-| [6_contracts.md](docs/spec_kit/versiones/v3_segundo_motor/6_contracts.md) | CERO endpoints nuevos: el mismo contrato con ambos motores |
-| [7_quickstart.md](docs/spec_kit/versiones/v3_segundo_motor/7_quickstart.md) | Arranque y la regresión DOBLE (ambos motores) |
-| [8_tasks.md](docs/spec_kit/versiones/v3_segundo_motor/8_tasks.md) | Las fases de construcción, en orden |
+| [2_spec.md](docs/spec_kit/versiones/v4_sqlserver_docker/2_spec.md) | QUÉ construir y los 5 criterios de aceptación |
+| [3_plan.md](docs/spec_kit/versiones/v4_sqlserver_docker/3_plan.md) | CÓMO: el bloque nuevo de la fábrica y el dialecto T-SQL |
+| [4_research.md](docs/spec_kit/versiones/v4_sqlserver_docker/4_research.md) | Las decisiones y sus alternativas descartadas *(lectura opcional)* |
+| [5_data_model.md](docs/spec_kit/versiones/v4_sqlserver_docker/5_data_model.md) | La MISMA bdfacturas en dialecto SQL Server (la tercera columna) |
+| [6_contracts.md](docs/spec_kit/versiones/v4_sqlserver_docker/6_contracts.md) | CERO endpoints nuevos: el mismo contrato con LOS TRES motores |
+| [7_quickstart.md](docs/spec_kit/versiones/v4_sqlserver_docker/7_quickstart.md) | Arranque y la regresión TRIPLE (tres motores) |
+| [8_tasks.md](docs/spec_kit/versiones/v4_sqlserver_docker/8_tasks.md) | Las fases de construcción, en orden |
 
 ## 5. Material conceptual del curso
 

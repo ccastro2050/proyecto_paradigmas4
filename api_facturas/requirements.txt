@@ -5,3 +5,4 @@ asyncpg
 greenlet
 pydantic
 aiomysql
+aioodbc
