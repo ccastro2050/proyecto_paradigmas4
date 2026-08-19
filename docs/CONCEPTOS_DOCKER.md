@@ -150,13 +150,13 @@ Las tres ideas que este archivo demuestra:
 ### Contenedores huérfanos y `--remove-orphans`
 
 Compose recuerda qué contenedores creó para este proyecto (los marca con el
-nombre de la carpeta: `proyecto_paradigmas3-...`). Si el `docker-compose.yml`
+nombre de la carpeta: `proyecto_paradigmas4-...`). Si el `docker-compose.yml`
 **deja de declarar** un servicio que antes existía, su contenedor no se borra
 solo: queda **huérfano** — creado por el proyecto, pero ya sin servicio que lo
 respalde — y Compose lo avisa al arrancar:
 
 ```
-Found orphan containers ([proyecto_paradigmas3-front-1 ...]) for this project.
+Found orphan containers ([proyecto_paradigmas4-front-1 ...]) for this project.
 ```
 
 En este repositorio pasa de forma natural, porque el curso es **por

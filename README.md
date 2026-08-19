@@ -29,8 +29,8 @@ desde cero** en su propio proyecto.
 En la terminal integrada de VS Code (*Terminal → New Terminal*, PowerShell):
 
 ```powershell
-git clone https://github.com/ccastro2050/proyecto_paradigmas3.git
-cd proyecto_paradigmas3
+git clone https://github.com/ccastro2050/proyecto_paradigmas4.git
+cd proyecto_paradigmas4
 docker compose up -d --build
 ```
 
@@ -94,7 +94,7 @@ siguiendo las especificaciones — con o sin ayuda de IA:
 Qué es cada carpeta y cada archivo, y para qué sirve:
 
 ```
-proyecto_paradigmas3/
+proyecto_paradigmas4/
 ├── docker-compose.yml           # TODO el sistema declarado: PostgreSQL + API
 │                                #   (el "un solo comando" del proyecto)
 ├── db/
