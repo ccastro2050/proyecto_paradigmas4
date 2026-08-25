@@ -9,13 +9,13 @@
 
 - [ ] La v3 corre y pasa su regresión doble (tag `v3` presente).
 
-**Verificar:** `curl http://localhost:8002/` → `"version":"v3"`.
+**Verificar:** `curl http://localhost:8005/` → `"version":"v3"`.
 
 ## Fase 1 — El motor nuevo en el compose (sin tocar la API)
 
 - [ ] `db/bdfacturas_sqlserver.sql` (cópielo del proyecto del curso — es
       dato) y `db/init_sqlserver.sh`.
-- [ ] `docker-compose.yml`: `sqlserver` (2022, :11432, healthcheck con
+- [ ] `docker-compose.yml`: `sqlserver` (2022, :11435, healthcheck con
       sqlcmd y `start_period`) + `sqlserver-init` (entrypoint al .sh,
       `restart: "no"`).
 - [ ] `docker compose up -d` — la API sigue en v3: nada se rompe.

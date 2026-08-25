@@ -139,7 +139,7 @@ funcionando. En v1 eso son **dos servicios**:
 ```yaml
 services:
   postgres:            # postgres:16-alpine + db/init.sql (la BD completa)
-    # volumen pgdata (persistencia) · puerto 15432 al host · healthcheck pg_isready
+    # volumen pgdata (persistencia) · puerto 15435 al host · healthcheck pg_isready
   api-facturas:        # build: ./api_facturas (su Dockerfile)
     # código montado como volumen + uvicorn --reload → guardar recarga solo
     # DB_POSTGRES apunta al host interno "postgres:5432" (nombre del servicio)
@@ -152,7 +152,7 @@ volumes:
 `pip install` (capa cacheada) → copiar el código → `CMD uvicorn`.
 
 **Durante la construcción fase a fase** también se puede correr la API local
-(venv + `uvicorn --reload` con `DB_POSTGRES` hacia `localhost:15432`) — es la
+(venv + `uvicorn --reload` con `DB_POSTGRES` hacia `localhost:15435`) — es la
 misma API; el compose es la forma oficial de entrega.
 
 ## 6. Convenciones

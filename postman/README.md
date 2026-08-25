@@ -1,7 +1,7 @@
 # postman — la colección de la API, lista para importar
 
 Esta API ya trae documentación interactiva propia: **Swagger en
-http://localhost:8002/docs** (FastAPI la genera sola). Esta colección es el
+http://localhost:8005/docs** (FastAPI la genera sola). Esta colección es el
 **camino alternativo**: los mismos endpoints como un recorrido guiado y
 numerado, útil para quien prefiere Postman/Thunder Client, para presentar la
 API sin abrir el código, y para comparar con el proyecto gemelo en PHP (que
@@ -28,9 +28,9 @@ en la pestaña de descripción.
 
 ## La variable {{base}}
 
-La colección usa la variable `base` = `http://localhost:8002` (el proyecto
+La colección usa la variable `base` = `http://localhost:8005` (el proyecto
 del curso). Si está probando **SU reconstrucción** (la de la
-[GUIA_IA](../docs/GUIA_IA.md), que corre en el puerto 8102): clic en la
+[GUIA_IA](../docs/GUIA_IA.md), que corre en el puerto 8105): clic en la
 colección → pestaña **Variables** → cambie `base` a
-`http://localhost:8102`. Una sola edición y las 27 peticiones apuntan a su
+`http://localhost:8105`. Una sola edición y las 27 peticiones apuntan a su
 proyecto.

@@ -19,7 +19,7 @@ api_facturas/repositorios/repositorio_{producto,persona,empresa,cliente,
 
 | Archivo | Qué crece |
 |---|---|
-| `docker-compose.yml` | ★ `sqlserver` (2022, :11432, healthcheck con sqlcmd) + `sqlserver-init` + `DB_SQLSERVER` y el tercer valor de `DB_PROVIDER` |
+| `docker-compose.yml` | ★ `sqlserver` (2022, :11435, healthcheck con sqlcmd) + `sqlserver-init` + `DB_SQLSERVER` y el tercer valor de `DB_PROVIDER` |
 | `api_facturas/Dockerfile` | ★ el driver **ODBC 18** de Microsoft (msodbcsql18 + unixodbc) |
 | `api_facturas/requirements.txt` | ★ **aioodbc** |
 | `servicios/ensamblador.py` | ★ UN bloque `"sqlserver"` en `_FABRICAS` (+ imports) — la cuenta de la fábrica |
@@ -85,5 +85,5 @@ mssql+aioodbc://sa:Paradigmas123!@sqlserver:1433/bdfacturas_sqlserver_local
   vez — el contraste con los otros dos motores que se inicializan solos.
 - La API espera: `postgres` healthy + `mariadb` healthy +
   `sqlserver-init` completed_successfully.
-- Puertos publicados: 8002 (API) · 15432 (postgres) · 13332 (mariadb) ·
-  **11432 (sqlserver)**. Reconstrucción del estudiante: +100.
+- Puertos publicados: 8005 (API) · 15435 (postgres) · 13335 (mariadb) ·
+  **11435 (sqlserver)**. Reconstrucción del estudiante: +100.

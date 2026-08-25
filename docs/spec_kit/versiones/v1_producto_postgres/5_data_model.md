@@ -57,8 +57,8 @@ docker compose up -d postgres      # desde la raíz del proyecto
 Cadenas de conexión para la API (variable de entorno `DB_POSTGRES`):
 
 ```
-# API corriendo LOCAL (venv + uvicorn), la BD publica el puerto 15432 al host:
-postgresql+asyncpg://paradigmas:paradigmas123@localhost:15432/bdfacturas_postgres_local
+# API corriendo LOCAL (venv + uvicorn), la BD publica el puerto 15435 al host:
+postgresql+asyncpg://paradigmas:paradigmas123@localhost:15435/bdfacturas_postgres_local
 
 # API corriendo EN el compose (la inyecta el docker-compose.yml, host interno):
 postgresql+asyncpg://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local

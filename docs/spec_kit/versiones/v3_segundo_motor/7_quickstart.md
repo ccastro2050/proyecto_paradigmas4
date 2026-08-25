@@ -19,7 +19,7 @@ inicializa solo la primera vez)** y `api-facturas`.
 ### 2a. TODO contra PostgreSQL (el motor por defecto)
 
 ```powershell
-curl http://localhost:8002/     # → "version":"v3", "motor":"postgres"
+curl http://localhost:8005/     # → "version":"v3", "motor":"postgres"
 ```
 
 Correr COMPLETOS los smoke tests de la
@@ -32,7 +32,7 @@ ids, mismos stocks, mismos 404/409/422/500.
 ```powershell
 $env:DB_PROVIDER = "mariadb"
 docker compose up -d api-facturas      # recrea SOLO la API (segundos)
-curl http://localhost:8002/            # → "motor":"mariadb"
+curl http://localhost:8005/            # → "motor":"mariadb"
 ```
 
 Correr la MISMA regresión completa. Pasa igual. **Eso** — ninguna línea
@@ -56,8 +56,8 @@ Con `motor=mariadb` (la regresión ya los cubre — aquí los tres
 emblemáticos):
 
 ```powershell
-curl -i http://localhost:8002/api/factura/999               # 404 "Factura 999 no existe"
-curl -i -X POST http://localhost:8002/api/factura -H "Content-Type: application/json" `
+curl -i http://localhost:8005/api/factura/999               # 404 "Factura 999 no existe"
+curl -i -X POST http://localhost:8005/api/factura -H "Content-Type: application/json" `
      -d '{\"fkidcliente\":1,\"fkidvendedor\":1,\"productos\":[{\"codigo\":\"PR001\",\"cantidad\":9999}]}'  # 500 "Stock insuficiente…"
 # (anule dos veces cualquier factura suya: la segunda → 409)
 ```
@@ -84,7 +84,7 @@ docker compose exec api-facturas python pruebas/prueba_capas.py
 | Síntoma | Causa probable |
 |---|---|
 | Los de v1/v2 | Aplican todos igual (sus quickstarts) |
-| `mariadb` no queda healthy | Puerto 13332 ocupado, o volumen de un intento fallido: `docker compose down -v` y de nuevo |
+| `mariadb` no queda healthy | Puerto 13335 ocupado, o volumen de un intento fallido: `docker compose down -v` y de nuevo |
 | Todo 500 con `motor=mariadb` | ¿`db/init_mariadb.sql` corrió? Solo se auto-ejecuta con el volumen VACÍO — `docker compose down -v && up -d` |
 | `GET /` dice un motor y usted esperaba el otro | `DB_PROVIDER` quedó fijo en su PowerShell: `Remove-Item Env:DB_PROVIDER` y recree la API |
 | "DB_PROVIDER inválido: …" en los logs | Valor mal escrito (solo `postgres` o `mariadb`) |

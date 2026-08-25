@@ -64,7 +64,7 @@ estrena `"motor"` · la prueba de capas crece con la fábrica.
 
 ### RF3 — El segundo motor completo
 - Servicio `mariadb` (MariaDB 11) en el compose, puerto publicado
-  **13332**, con `db/init_mariadb.sql`: las MISMAS 12 tablas, las MISMAS
+  **13335**, con `db/init_mariadb.sql`: las MISMAS 12 tablas, las MISMAS
   semillas (mismos ids, con `AUTO_INCREMENT` alineado), los triggers de
   totales/stock y los SPs de factura — en dialecto MariaDB
   ([5_data_model](5_data_model.md)).

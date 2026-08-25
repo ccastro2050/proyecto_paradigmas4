@@ -73,7 +73,7 @@ En el formulario (*Step 2/3*) llene exactamente estos valores (son los del
 | Connection name | `bdfacturas (Docker)` |
 | Connect using | `Server and Port` |
 | Server Address | `localhost` |
-| Port | `15432` |
+| Port | `15435` |
 | Database | `bdfacturas_postgres_local` |
 | Username | `paradigmas` |
 | Use password | **Save as plaintext in settings** |
@@ -166,7 +166,7 @@ sentencia** ("multiple query results").
 > `▷ Run on active connection` ejecuta el archivo COMPLETO.
 
 Compruebe el otro lado de la moneda: abra
-`http://localhost:8002/api/producto/PR009` en el navegador — la API responde
+`http://localhost:8005/api/producto/PR009` en el navegador — la API responde
 la webcam que usted insertó por SQL (misma BD, otra puerta).
 
 Y para dejar todo como estaba, seleccione y ejecute solo esta línea:

@@ -19,7 +19,7 @@ la nuestra corre en un contenedor Docker y hay que registrarla aparte.
 
 ![Paso 0 — pgAdmin recién abierto](img_pgadmin/paso00_inicio.png)
 
-> Dato importante: la BD del contenedor publica el puerto **15432** en su PC
+> Dato importante: la BD del contenedor publica el puerto **15435** en su PC
 > (no el 5432 clásico) precisamente para NO chocar con un PostgreSQL local
 > como los que quizá ve en su lista.
 
@@ -43,7 +43,7 @@ declarados en el `docker-compose.yml` del proyecto):
 | Campo | Valor | Por qué |
 |---|---|---|
 | Host name/address | `localhost` | El contenedor publica su puerto en SU PC |
-| Port | `15432` | El puerto publicado (no el 5432 clásico, para no chocar con un PostgreSQL local) |
+| Port | `15435` | El puerto publicado (no el 5432 clásico, para no chocar con un PostgreSQL local) |
 | Maintenance database | `bdfacturas_postgres_local` | La BD que creó `db/init.sql` |
 | Username | `paradigmas` | Usuario declarado en el compose |
 | Password | `paradigmas123` | Clave declarada en el compose (didáctica a propósito) |
@@ -115,7 +115,7 @@ En la grilla del paso anterior:
 
 ## Paso 5 — Ver el cambio a través de la API
 
-Abra en el navegador: **http://localhost:8002/api/producto/PR001**
+Abra en el navegador: **http://localhost:8005/api/producto/PR001**
 
 ![Paso 5 — el cambio visto desde la API](img_pgadmin/paso05_api.png)
 
@@ -192,7 +192,7 @@ coinciden, la spec no miente.
 - Todo lo que edite aquí es **real**: no hay "modo práctica". Si daña los
   datos, el reset es `docker compose down -v` + `docker compose up -d`
   (la BD renace desde `db/init.sql`).
-- pgAdmin se conecta al puerto **15432** (el publicado por el compose). Si no
+- pgAdmin se conecta al puerto **15435** (el publicado por el compose). Si no
   conecta, primero verifique que el proyecto esté corriendo:
   `docker compose ps`.
 - Las credenciales de este proyecto son didácticas y públicas a propósito

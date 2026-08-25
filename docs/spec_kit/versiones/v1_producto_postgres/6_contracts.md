@@ -1,6 +1,6 @@
 # Contratos HTTP — Versión 1: producto + PostgreSQL
 
-> **Versión 1** · Base: `http://localhost:8002`. Documentación interactiva:
+> **Versión 1** · Base: `http://localhost:8005`. Documentación interactiva:
 > `/docs` (Swagger) y `/redoc`.
 
 ---

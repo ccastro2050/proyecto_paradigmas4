@@ -52,11 +52,11 @@ con `/api/{tabla}` — el contraste entre las dos filosofías ES la lección
 de la v5. (El gemelo C# tomó la decisión opuesta en su v3 — cubrir todo
 por-entidad ANTES de cambiar de motor: compare los dos caminos.)
 
-## D6 — Puerto 11432
+## D6 — Puerto 11435
 
-SQL Server ya tiene 11463 (curso C#) y 11563 (reconstrucción C#). 11432
+SQL Server ya tiene 11463 (curso C#) y 11563 (reconstrucción C#). 11435
 sigue la forma 114xx y termina en 32 como los demás puertos de esta
-familia (15432, 13332). Reconstrucción del estudiante: 11532.
+familia (15435, 13335). Reconstrucción del estudiante: 11535.
 
 ## D7 — RAM: el motor pesado convive con los livianos
 

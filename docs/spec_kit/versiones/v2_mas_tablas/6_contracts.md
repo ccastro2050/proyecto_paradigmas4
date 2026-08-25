@@ -1,6 +1,6 @@
 # Contratos HTTP — Versión 2: los moldes y la factura
 
-> **Versión 2** · Base: `http://localhost:8002`. Los 7 endpoints de la
+> **Versión 2** · Base: `http://localhost:8005`. Los 7 endpoints de la
 > [v1](../v1_producto_postgres/6_contracts.md) siguen vigentes TAL CUAL
 > (solo el diagnóstico dice `"version": "v2"`). Las convenciones (verbos,
 > vías de envío, sobre de error en `detail`) son las mismas de la v1 §0.

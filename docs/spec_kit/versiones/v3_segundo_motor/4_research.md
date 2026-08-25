@@ -57,12 +57,12 @@ decisión opuesta a la del gemelo C# (que estrenó mostrando el motor
 nuevo) — deliberadamente: aquí la continuidad pedagógica pesa más porque
 el mismo `DB_PROVIDER` será el mecanismo de la API genérica (v5).
 
-## D7 — Puerto 13332
+## D7 — Puerto 13335
 
 El mapa de puertos del curso ya tiene MariaDB en 13326 (gemelo PHP),
-13336 (curso C#) y 13426 (reconstrucción PHP del estudiante). 13332 queda
+13336 (curso C#) y 13426 (reconstrucción PHP del estudiante). 13335 queda
 libre y conserva la forma 133xx. La reconstrucción del estudiante de ESTE
-proyecto usa 13432.
+proyecto usa 13435.
 
 ## D8 — Semillas idénticas, ids idénticos
 

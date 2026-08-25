@@ -43,7 +43,7 @@ resto de su PC.
   comparte el kernel del host con aislamiento de procesos. Por eso arranca en
   segundos y pesa MB, no GB.
 - En la v1: `bd_v1` es un contenedor creado desde la imagen `postgres:16-alpine`,
-  con el puerto interno 5432 **publicado** en el 15432 de su PC (`-p 15432:5432`).
+  con el puerto interno 5432 **publicado** en el 15435 de su PC (`-p 15435:5432`).
 
 **Analogía:** el contenedor es la **galleta**.
 
@@ -106,7 +106,7 @@ services:                          # el mapa de TODOS los contenedores del siste
         #   PostgreSQL ejecuta lo que haya en esa carpeta SOLO si el volumen
         #   está vacío (primera vez) — por eso el reset es `down -v`.
     ports:
-      - "15432:5432"               # "puerto en su PC : puerto interno del contenedor"
+      - "15435:5432"               # "puerto en su PC : puerto interno del contenedor"
     healthcheck:                   # cómo saber si la BD ya RESPONDE (no solo "existe")
       test: ["CMD-SHELL", "pg_isready -U paradigmas -d bdfacturas_postgres_local"]
       interval: 5s
@@ -117,11 +117,11 @@ services:                          # el mapa de TODOS los contenedores del siste
     build: ./api_facturas          # esta imagen SE CONSTRUYE con el Dockerfile de esa carpeta
     volumes:
       - ./api_facturas:/app        # el código montado: guardar un .py recarga la API sola
-    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8005 --reload
       # ↑ sobreescribe el CMD del Dockerfile para agregar --reload (modo desarrollo)
     restart: unless-stopped        # si el proceso muere, Docker lo levanta de nuevo
     ports:
-      - "8002:8002"                # http://localhost:8002/docs
+      - "8005:8005"                # http://localhost:8005/docs
     environment:
       # La cadena usa el NOMBRE del servicio como host (postgres:5432), no
       # localhost: dentro de la red interna de compose los servicios se
@@ -138,7 +138,7 @@ volumes:
 Las tres ideas que este archivo demuestra:
 
 1. **Dos redes de nombres**: hacia su PC, puertos publicados
-   (`localhost:8002`, `localhost:15432`); entre contenedores, nombres de
+   (`localhost:8005`, `localhost:15435`); entre contenedores, nombres de
    servicio (`postgres:5432`). La misma BD tiene dos "direcciones" según
    quién la llame.
 2. **Dependencias por salud**: `service_healthy` + healthcheck — la API

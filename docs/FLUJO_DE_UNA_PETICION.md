@@ -128,27 +128,27 @@ En la terminal de VS Code (PowerShell), con el proyecto corriendo
 
 ```powershell
 # GET (el navegador también sirve para estos dos)
-Invoke-RestMethod "http://localhost:8002/api/producto"
-Invoke-RestMethod "http://localhost:8002/api/producto/PR001"
+Invoke-RestMethod "http://localhost:8005/api/producto"
+Invoke-RestMethod "http://localhost:8005/api/producto/PR001"
 
 # POST — crear
-Invoke-RestMethod -Method Post -Uri "http://localhost:8002/api/producto" -ContentType "application/json" -Body '{"codigo":"PR009","nombre":"Webcam","stock":10,"valorunitario":350000}'
+Invoke-RestMethod -Method Post -Uri "http://localhost:8005/api/producto" -ContentType "application/json" -Body '{"codigo":"PR009","nombre":"Webcam","stock":10,"valorunitario":350000}'
 
 # PUT con body incompleto → error 422 (PUT exige TODO)
-Invoke-RestMethod -Method Put -Uri "http://localhost:8002/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
+Invoke-RestMethod -Method Put -Uri "http://localhost:8005/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
 
 # PATCH con el MISMO body → 200 (PATCH es parcial)
-Invoke-RestMethod -Method Patch -Uri "http://localhost:8002/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
+Invoke-RestMethod -Method Patch -Uri "http://localhost:8005/api/producto/PR009" -ContentType "application/json" -Body '{"stock":25}'
 
 # DELETE — limpiar
-Invoke-RestMethod -Method Delete -Uri "http://localhost:8002/api/producto/PR009"
+Invoke-RestMethod -Method Delete -Uri "http://localhost:8005/api/producto/PR009"
 ```
 
 > Si está probando **SU reconstrucción** (la de la [GUIA_IA](GUIA_IA.md),
-> que corre con puertos +100): cambie `8002` por `8102`.
+> que corre con puertos +100): cambie `8005` por `8105`.
 
 La pareja PUT/PATCH con el mismo body es la lección más importante del
 flujo: el MISMO dato, dos verbos, dos resultados — porque cada verbo tiene
 su semántica y la API la hace cumplir. Y todo esto también se puede recorrer
-con clics en **http://localhost:8002/docs** (Swagger) o con la colección de
+con clics en **http://localhost:8005/docs** (Swagger) o con la colección de
 [postman/](../postman/README.md).

@@ -5,7 +5,7 @@ Crea la aplicación FastAPI, registra el router de producto y expone el
 endpoint de diagnóstico. Swagger queda en /docs y ReDoc en /redoc
 (los defaults de FastAPI).
 
-Arranque:  uvicorn main:app --port 8002 --reload
+Arranque:  uvicorn main:app --port 8005 --reload
 Requiere:  la variable de entorno DB_POSTGRES (ver 7_quickstart.md).
 """
 

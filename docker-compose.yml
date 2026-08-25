@@ -1,9 +1,9 @@
 # ==============================================================
 # Proyecto Paradigmas — versión 4
 #
-#                                  ┌→ PostgreSQL (:15432) — bdfacturas
-#   API FACTURAS (FastAPI, :8002) ─┼→ MariaDB   (:13332) — bdfacturas
-#                                  └→ SQL Server (:11432) — bdfacturas
+#                                  ┌→ PostgreSQL (:15435) — bdfacturas
+#   API FACTURAS (FastAPI, :8005) ─┼→ MariaDB   (:13335) — bdfacturas
+#                                  └→ SQL Server (:11435) — bdfacturas
 #                                       el interruptor: DB_PROVIDER
 #
 # Uso:  docker compose up -d --build      (un solo comando)
@@ -26,7 +26,7 @@ services:
       - pgdata:/var/lib/postgresql/data                          # los datos sobreviven a down/reinicios
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro    # se ejecuta solo con volumen vacío
     ports:
-      - "15432:5432"     # puerto en su PC (para DBeaver/pgAdmin opcional)
+      - "15435:5432"     # puerto en su PC (para DBeaver/pgAdmin opcional)
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U paradigmas -d bdfacturas_postgres_local"]
       interval: 5s
@@ -44,7 +44,7 @@ services:
       - mariadbdata:/var/lib/mysql                                        # los datos sobreviven a down
       - ./db/init_mariadb.sql:/docker-entrypoint-initdb.d/init_mariadb.sql:ro
     ports:
-      - "13332:3306"     # puerto en su PC (para HeidiSQL/DBeaver opcional)
+      - "13335:3306"     # puerto en su PC (para HeidiSQL/DBeaver opcional)
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
@@ -61,7 +61,7 @@ services:
     volumes:
       - mssqldata:/var/opt/mssql
     ports:
-      - "11432:1433"     # puerto en su PC (para SSMS/SQLTools opcional)
+      - "11435:1433"     # puerto en su PC (para SSMS/SQLTools opcional)
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b"]
       interval: 10s
@@ -89,10 +89,10 @@ services:
     build: ./api_facturas
     volumes:
       - ./api_facturas:/app        # el código se monta: guardar un .py recarga solo
-    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8005 --reload
     restart: unless-stopped
     ports:
-      - "8002:8002"                # http://localhost:8002/docs
+      - "8005:8005"                # http://localhost:8005/docs
     environment:
       # Entre contenedores se usa el NOMBRE del servicio (postgres), no localhost
       DB_POSTGRES: postgresql+asyncpg://paradigmas:paradigmas123@postgres:5432/bdfacturas_postgres_local

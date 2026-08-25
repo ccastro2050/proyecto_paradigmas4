@@ -12,7 +12,7 @@
       `bdfacturas` COMPLETA — no se escribe ni se genera con IA; ver
       [5_data_model.md](5_data_model.md) §1).
 - [ ] Crear el `docker-compose.yml` con el servicio `postgres` (volumen
-      `pgdata`, `db/init.sql` montado, puerto 15432, healthcheck — ver
+      `pgdata`, `db/init.sql` montado, puerto 15435, healthcheck — ver
       [3_plan.md](3_plan.md) §5) y levantarlo: `docker compose up -d`.
 - [ ] Crear la carpeta `api_facturas/` con subcarpetas `models/`,
       `controllers/`, `servicios/` (`abstracciones/`), `repositorios/`
@@ -73,7 +73,7 @@ las capas quedaron bien.
 - [ ] `main.py`: app FastAPI (`title="API Facturas"`, `version="v1"`),
       `include_router(prefix="/api")`, endpoint `/` de diagnóstico.
 
-**Verificar:** `uvicorn main:app --port 8002 --reload` y en `/docs` probar:
+**Verificar:** `uvicorn main:app --port 8005 --reload` y en `/docs` probar:
 listar (200 con 8 y `?limite=3` con 3), obtener PR001 (200), PR999 (404),
 POST inválido (422), y el contraste PUT vs PATCH con `{"stock": 7}`
 (422 vs 200).
@@ -82,7 +82,7 @@ POST inválido (422), y el contraste PUT vs PATCH con `{"stock": 7}`
 - [ ] `api_facturas/Dockerfile`: `python:3.12-slim`, `requirements.txt` +
       `pip install` primero (caché de capas), luego el código, `CMD uvicorn`.
 - [ ] Agregar al `docker-compose.yml` el servicio `api-facturas`: `build:`,
-      código montado como volumen + `--reload`, puerto 8002, `DB_POSTGRES`
+      código montado como volumen + `--reload`, puerto 8005, `DB_POSTGRES`
       con el host interno `postgres:5432`, y `depends_on` con
       `condition: service_healthy` ([3_plan.md](3_plan.md) §5).
 

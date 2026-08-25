@@ -56,7 +56,7 @@ con el tercer dialecto.
 ## 3. Requisitos funcionales
 
 ### RF1 — El tercer motor completo
-- `sqlserver` (2022, ~2 GB de RAM) publicado en **11432**, con
+- `sqlserver` (2022, ~2 GB de RAM) publicado en **11435**, con
   healthcheck real (sqlcmd) y `start_period` de gracia.
 - **`sqlserver-init`**: el contraste didáctico — SQL Server NO ejecuta
   scripts montados; este contenedor corre `db/bdfacturas_sqlserver.sql`

@@ -20,7 +20,7 @@ api_facturas/repositorios/repositorio_{producto,persona,empresa,cliente,
 
 | Archivo | Qué crece |
 |---|---|
-| `docker-compose.yml` | ★ servicio `mariadb` (11, puerto 13332, se inicializa solo) + `DB_MARIADB` y `DB_PROVIDER: ${DB_PROVIDER:-postgres}` en la API |
+| `docker-compose.yml` | ★ servicio `mariadb` (11, puerto 13335, se inicializa solo) + `DB_MARIADB` y `DB_PROVIDER: ${DB_PROVIDER:-postgres}` en la API |
 | `api_facturas/requirements.txt` | ★ **aiomysql** (el driver async de MySQL/MariaDB) |
 | `servicios/ensamblador.py` | ★ se REESCRIBE como la fábrica real (ver §3) |
 | `main.py` | ★ `version="v3"` + `motor` en el diagnóstico |
@@ -116,7 +116,7 @@ en PostgreSQL:
 
 - `mariadb:11` también ejecuta los scripts de `/docker-entrypoint-initdb.d/`
   la primera vez — igual que PostgreSQL, sin contenedor inicializador.
-- Puerto publicado **13332** (libre en el mapa del curso; la
-  reconstrucción del estudiante usa 13432).
+- Puerto publicado **13335** (libre en el mapa del curso; la
+  reconstrucción del estudiante usa 13435).
 - El interruptor vive en el compose: `DB_PROVIDER: ${DB_PROVIDER:-postgres}`.
   Ambos motores SIEMPRE arriba; lo que cambia es a cuál le habla la API.

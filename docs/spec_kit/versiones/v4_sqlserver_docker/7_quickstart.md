@@ -21,18 +21,18 @@ trabajo y murió)** y `api-facturas` arriba.
 ## 2. La regresión TRIPLE (criterios 1-3 — el corazón de la v4)
 
 ```powershell
-curl http://localhost:8002/     # → "version":"v4", "motor":"postgres"
+curl http://localhost:8005/     # → "version":"v4", "motor":"postgres"
 # → smoke tests COMPLETOS de v1 §3 y v2 §3: pasan tal cual
 
 $env:DB_PROVIDER = "mariadb"
 docker compose up -d api-facturas
-curl http://localhost:8002/     # → "motor":"mariadb"
+curl http://localhost:8005/     # → "motor":"mariadb"
 # → la MISMA regresión completa: pasa igual
 # (para el estado semilla exacto entre motores: docker compose down -v && up -d)
 
 $env:DB_PROVIDER = "sqlserver"
 docker compose up -d api-facturas
-curl http://localhost:8002/     # → "motor":"sqlserver"
+curl http://localhost:8005/     # → "motor":"sqlserver"
 # → la MISMA regresión completa, tercera vez. Ni una línea de código
 #   cambió entre las tres pasadas: ESO es Liskov entre repositorios.
 

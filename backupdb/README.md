@@ -47,7 +47,7 @@ docker compose cp backupdb/bdfacturas_postgres_2026-08-08.sql postgres:/tmp/rest
 docker compose exec postgres psql -U paradigmas -d bdfacturas_postgres_local -f /tmp/restore.sql
 ```
 
-Verifique: `http://localhost:8002/api/producto/` (o pgAdmin — ver
+Verifique: `http://localhost:8005/api/producto/` (o pgAdmin — ver
 [TUTORIAL_PGADMIN.md](../docs/TUTORIAL_PGADMIN.md)) debe mostrar los datos
 tal como estaban cuando hizo el backup.
 

@@ -25,9 +25,9 @@
 > cada fase** que pide `8_tasks.md`. Ejemplos reales de la v1:
 > `docker compose up -d` (levantar la BD), `pip install -r
 > api_facturas/requirements.txt` (instalar dependencias),
-> `uvicorn main:app --port 8002 --reload` (arrancar la API),
+> `uvicorn main:app --port 8005 --reload` (arrancar la API),
 > `python pruebas\prueba_capas.py` (la prueba de capas) y los `curl` del
-> smoke test (`curl http://localhost:8002/api/producto`). En el chat, la IA
+> smoke test (`curl http://localhost:8005/api/producto`). En el chat, la IA
 > se los dicta y USTED los ejecuta; en el IDE agéntico, el agente los ejecuta
 > y usted revisa la salida.
 
@@ -183,7 +183,7 @@ un comando parado en la carpeta equivocada — "no encuentro el archivo"):
 | Comando | Se corre desde |
 |---|---|
 | `docker compose ...` · `pip install ...` | La **raíz** de su proyecto (ahí viven `docker-compose.yml` y `.venv`) |
-| `uvicorn main:app --port 8002 --reload` · `python pruebas\prueba_capas.py` | `api_facturas\` (ahí vive el código) — primero `cd api_facturas` |
+| `uvicorn main:app --port 8005 --reload` · `python pruebas\prueba_capas.py` | `api_facturas\` (ahí vive el código) — primero `cd api_facturas` |
 
 **El entorno virtual (Fase 0), por si la IA no lo detalla:**
 
@@ -256,15 +256,15 @@ REGLAS DE TRABAJO (no negociables):
 7. En mi máquina TAMBIÉN corre el proyecto clonado del curso con sus
    puertos originales. Para que ambos convivan, MI proyecto:
    a. Publica los puertos del host con +100: en el docker-compose.yml la
-      API va "8102:8002" y PostgreSQL va "15532:5432" (adentro de los
+      API va "8105:8005" y PostgreSQL va "15535:5432" (adentro de los
       contenedores todo queda igual que en los documentos).
    b. El docker-compose.yml empieza con la línea `name: mi_v1_producto`
       (antes de services:) — así Docker lo trata como un proyecto
       distinto al del curso, con sus propios contenedores y volúmenes,
       aunque las carpetas se llamen parecido.
    La cadena de conexión por defecto del ensamblador (para correr sin
-   Docker) apunta a localhost:15532. Cuando me des URLs o comandos de
-   prueba, usa localhost:8102 (API) y localhost:15532 (BD).
+   Docker) apunta a localhost:15535. Cuando me des URLs o comandos de
+   prueba, usa localhost:8105 (API) y localhost:15535 (BD).
 
 Al final, la versión 1 está TERMINADA solo cuando pasan los 6 criterios de
 aceptación de 2_spec.md, verificados con el smoke test de 7_quickstart.md.
@@ -288,8 +288,8 @@ entendiste el alcance) y luego arranca con la Fase 0.
    en el chat CADA error tal cual salga (completo). La IA le entrega el
    archivo corregido, usted lo pega y repite hasta que los 6 criterios
    estén en verde. **Ojo con los puertos**: SU proyecto corre con +100
-   (regla 7 del prompt) — donde el quickstart diga `localhost:8002` use
-   `localhost:8102`, y donde diga `15432` use `15532`.
+   (regla 7 del prompt) — donde el quickstart diga `localhost:8005` use
+   `localhost:8105`, y donde diga `15435` use `15535`.
 4. **Si la IA se acelera** y entrega varios archivos de un tirón,
    recuérdele la regla 2b: "de a uno, espera mi listo".
 5. **Si la primera respuesta llega en OTRO lenguaje** (PHP, Java, Node…),

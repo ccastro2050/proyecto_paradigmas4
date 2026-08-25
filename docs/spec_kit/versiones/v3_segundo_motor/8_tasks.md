@@ -10,14 +10,14 @@
 - [ ] La v2 corre y pasa su smoke test (tag `v2` presente).
 - [ ] `git status` limpio.
 
-**Verificar:** `curl http://localhost:8002/` → `"version":"v2"`.
+**Verificar:** `curl http://localhost:8005/` → `"version":"v2"`.
 
 ## Fase 1 — El motor nuevo en el compose (sin tocar la API)
 
 - [ ] `db/init_mariadb.sql`: la MISMA bdfacturas en dialecto MariaDB
       ([5_data_model.md](5_data_model.md)) — cópielo del proyecto del
       curso (es dato: mismas semillas o la regresión no será comparable).
-- [ ] `docker-compose.yml`: servicio `mariadb` (11, puerto 13332, volumen
+- [ ] `docker-compose.yml`: servicio `mariadb` (11, puerto 13335, volumen
       `mariadbdata`, script montado, healthcheck).
 - [ ] `docker compose up -d` — la API sigue en v2 contra PostgreSQL:
       **nada se rompe por agregar un contenedor**.

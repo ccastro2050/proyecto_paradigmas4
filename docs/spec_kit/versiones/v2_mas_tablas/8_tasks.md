@@ -10,7 +10,7 @@
 - [ ] La v1 corre y pasa su smoke test (tag `v1` presente).
 - [ ] `git status` limpio.
 
-**Verificar:** `curl http://localhost:8002/` → `"version":"v1"`.
+**Verificar:** `curl http://localhost:8005/` → `"version":"v1"`.
 
 ## Fase 1 — Los dos moldes de PK string (persona y empresa)
 
