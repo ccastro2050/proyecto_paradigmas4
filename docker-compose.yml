@@ -16,6 +16,7 @@ services:
 
   # --- Base de datos: PostgreSQL 16 con bdfacturas completa ---
   postgres:
+    restart: unless-stopped   # si el PC se reinicia, este servicio revive con Docker
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: bdfacturas_postgres_local
@@ -36,6 +37,7 @@ services:
   # También se inicializa solo: el script montado corre la PRIMERA vez
   # (volumen vacío) — mismas semillas y mismos ids que PostgreSQL.
   mariadb:
+    restart: unless-stopped   # si el PC se reinicia, este servicio revive con Docker
     image: mariadb:11
     environment:
       MARIADB_ROOT_PASSWORD: paradigmas123
@@ -52,6 +54,7 @@ services:
 
   # --- SQL Server 2022 — el TERCER motor (v4). Requiere ~2 GB de RAM ---
   sqlserver:
+    restart: unless-stopped   # si el PC se reinicia, este servicio revive con Docker
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: "Y"                       # aceptar la licencia (obligatorio)
