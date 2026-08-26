@@ -10,8 +10,7 @@
 #   La API habla con PostgreSQL por defecto; para cambiar de motor
 #   SIN tocar código:  $env:DB_PROVIDER="mariadb"  (o "sqlserver")
 #                      docker compose up -d api-facturas
-# Este archivo CRECE con las versiones: v5 suma la API genérica,
-# v6 el front Flask.
+# Este archivo CRECE con las versiones: v5 suma el front Flask.
 # ==============================================================
 services:
 

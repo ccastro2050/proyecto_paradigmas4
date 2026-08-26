@@ -55,7 +55,7 @@ El default conserva el comportamiento de v1/v2 (la regresión corre
 idéntica sin tocar nada) y el interruptor muestra el motor nuevo. Es la
 decisión opuesta a la del gemelo C# (que estrenó mostrando el motor
 nuevo) — deliberadamente: aquí la continuidad pedagógica pesa más porque
-el mismo `DB_PROVIDER` será el mecanismo de la API genérica (v5).
+el mismo `DB_PROVIDER` seguirá siendo el interruptor de todo el sistema.
 
 ## D7 — Puerto 13335
 

@@ -41,8 +41,8 @@ estructura y nombre.
   `Stock insuficiente…` → 500. (Por eso el repositorio MariaDB reutiliza
   los MISMOS patrones de texto.)
 - Los SPs de usuarios/roles/permisos también viajan en el script: la v3
-  no los llama, pero mantienen la paridad con el gemelo — terreno de la
-  API genérica (v5).
+  no los llama, pero mantienen la paridad con el gemelo — quedarán para el login
+  del front (v5).
 
 ## 3. Semillas (idénticas a PostgreSQL — RNF3)
 

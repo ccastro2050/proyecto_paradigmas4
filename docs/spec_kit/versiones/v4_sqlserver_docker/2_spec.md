@@ -34,7 +34,7 @@ archivos de dialecto). Ni un `if` nuevo, ni una línea arriba.
 
 Con esto el compose queda COMPLETO en infraestructura de datos: las 12
 tablas de bdfacturas viven idénticas en LOS TRES motores — el terreno
-que pisará la API genérica (v5).
+que pisará el front (v5).
 
 ## 2. Alcance
 
@@ -47,9 +47,9 @@ con el tercer dialecto.
 
 **No incluye (deliberado):**
 - Endpoints para usuario, rol, ruta o las tablas puente: esas tablas
-  viven completas en los TRES motores desde el día 1, y su acceso llega
-  con la **API genérica (v5)** — `/api/{tabla}` las cubrirá todas sin
-  escribir 15 repositorios más. (Por eso esta API por-entidad se queda
+  viven completas en los TRES motores desde el día 1, y sus endpoints se
+  calcarán con el mismo molde por-entidad cuando el front (v5) los
+  necesite. (Por eso esta API por-entidad se queda
   en sus 6 entidades: el contraste es la lección de la v5.)
 - El front (v6). Cambios de contrato: ninguno.
 
@@ -92,7 +92,7 @@ con el tercer dialecto.
   ni `models/`.
 - **RNF3 — Paridad de semillas en LOS TRES motores:** el smoke test es
   EL MISMO, tres veces.
-- **RNF4 — Sin anticipación:** nada de API genérica (v5) ni front (v6).
+- **RNF4 — Sin anticipación:** nada del front (v5).
 
 ## 5. Criterios de aceptación
 
@@ -115,4 +115,4 @@ con el tercer dialecto.
 
 Los 5 criterios pasan → commit + tag `v4` → la API es tri-motor y la
 infraestructura de datos está completa → recién entonces se especifica
-la v5 (la API genérica: `/api/{tabla}` sobre cualquiera de los tres).
+la v5 (el front Flask sobre la API tri-motor).

@@ -27,7 +27,7 @@ profesional" y "lo más claro para aprender", gana la claridad:
 
 ```
 CAPA 1: FRONT (Flask, :8000)  — solo pinta HTML y llama APIs; NUNCA toca la BD
-CAPA 2: APIs (FastAPI)        — api_generica :8001 y api_facturas :8005
+CAPA 2: API (FastAPI)        — api_facturas :8005
 CAPA 3: DATOS                 — PostgreSQL | MariaDB | SQL Server (bdfacturas)
 ```
 
@@ -67,13 +67,13 @@ vive completo en contenedores.
 
 | Cosa | Convención |
 |---|---|
-| Puertos públicos | front 8000 · api_generica 8001 · api_facturas 8005 · phpMyAdmin 8081 |
+| Puertos públicos | front 8000 · · api_facturas 8005 · phpMyAdmin 8081 |
 | Puertos de BD hacia el host | PostgreSQL **15435** · MariaDB **13306** · SQL Server **11433** (desplazados para no chocar con motores locales) |
-| Hosts internos (entre contenedores) | `postgres:5432` · `mariadb:3306` · `sqlserver:1433` · `api-generica:8001` · `api-facturas:8005` |
+| Hosts internos (entre contenedores) | `postgres:5432` · `mariadb:3306` · `sqlserver:1433` · `api-facturas:8005` |
 | Credenciales BD | usuario `paradigmas` / clave `paradigmas123` (SQL Server: `sa` / `Paradigmas123!`) |
 | Bases de datos | `bdfacturas_postgres_local` · `bdfacturas_mariadb_local` · `bdfacturas_sqlserver_local` |
 | Nombres de código | snake_case en español; clases PascalCase; interfaces con prefijo `i_`/`I` |
-| Documentación de APIs | api_generica: `/swagger` · api_facturas: `/docs` |
+| Documentación de APIs | api_facturas: `/docs` |
 
 ## Artículo 7 — Desarrollo con recarga en caliente
 

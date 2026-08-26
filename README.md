@@ -156,8 +156,7 @@ v3  segundo motor (MariaDB) — nace la fábrica
     y el interruptor DB_PROVIDER   (cerrada: tag v3)
 v4  tercer motor (SQL Server) + docker compose
     completo   ← USTED ESTÁ AQUÍ
-v5  API genérica (/api/{tabla})
-v6  frontend Flask
+v5  frontend Flask
 ```
 
 La regla del juego: la **constitución** es permanente, cada versión tiene su

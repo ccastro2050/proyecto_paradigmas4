@@ -47,9 +47,8 @@ gemelo C# — y la lección de orquestación de la v4: `depends_on` con
 Las 12 tablas ya viven en los tres motores, pero esta API por-entidad se
 queda en sus 6 entidades. **Deliberado:** escribir 5 entidades × 3
 dialectos = 15 repositorios más no enseña nada nuevo (el molde ya se
-demostró industrial), y la **API genérica (v5)** cubrirá CUALQUIER tabla
-con `/api/{tabla}` — el contraste entre las dos filosofías ES la lección
-de la v5. (El gemelo C# tomó la decisión opuesta en su v3 — cubrir todo
+demostró industrial); las entidades restantes se calcarán con el mismo molde
+cuando el front (v5) las necesite. (El gemelo C# tomó la decisión opuesta en su v3 — cubrir todo
 por-entidad ANTES de cambiar de motor: compare los dos caminos.)
 
 ## D6 — Puerto 11435

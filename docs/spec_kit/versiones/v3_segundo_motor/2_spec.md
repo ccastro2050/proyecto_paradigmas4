@@ -41,7 +41,7 @@ estrena `"motor"` · la prueba de capas crece con la fábrica.
 **No incluye (deliberado — [mapa](../0_mapa_versiones.md)):**
 - **SQL Server** (v4): el tercer motor esperará — con la fábrica puesta,
   costará un bloque en el diccionario.
-- Selección de motor por petición (v5, la API genérica). En v3 el motor
+- Selección de motor por petición: descartada del curso. En v3 el motor
   se elige UNA vez, al arrancar.
 - Cambios de contrato: ningún endpoint nuevo, ningún campo nuevo (salvo
   `motor` en el diagnóstico).
