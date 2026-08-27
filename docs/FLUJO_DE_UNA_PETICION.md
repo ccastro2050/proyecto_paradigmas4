@@ -115,22 +115,23 @@ las de abajo:
 
 ```mermaid
 flowchart TD
-    A["1. uvicorn recibe el texto HTTP"] --> B["2. FastAPI encuentra<br/>(POST, /api/producto) en la tabla de rutas"]
-    B --> C{"3. ¿el body cumple el<br/>modelo Pydantic?"}
-    C -->|"NO"| E422["422 con la lista de errores<br/>AQUÍ TERMINA: su código de negocio<br/>nunca se enteró"]
-    C -->|"sí"| D["4. el controlador (con su try/catch)"]
-    D --> E["5. el SERVICIO: reglas de negocio<br/>(no conoce HTTP)"]
-    E -->|"regla rota: ValueError"| E400["400 {estado, mensaje, detalle}"]
-    E -->|"pasa"| F["6. el REPOSITORIO:<br/>INSERT parametrizado (:codigo, ...)"]
-    F --> G{"7. ¿la base de datos aceptó?"}
-    G -->|"PK duplicada · NOT NULL ·<br/>conexión caída"| E500["500 con el error del motor en detalle"]
-    G -->|"sí"| OK["8. la respuesta SUBE por las mismas capas:<br/>200 {estado, mensaje}"]
+    A["1. uvicorn recibe<br/>el texto HTTP"] --> B["2. FastAPI encuentra<br/>POST /api/producto<br/>en la tabla de rutas"]
+    B --> C{"3. ¿el body cumple<br/>el modelo Pydantic?"}
+    C -->|"NO"| E422["422 con la lista de errores.<br/>AQUÍ TERMINA: su código de<br/>negocio nunca se enteró"]
+    C -->|"sí"| D["4. el controlador<br/>(con su try/catch)"]
+    D --> E["5. el SERVICIO:<br/>reglas de negocio<br/>(no conoce HTTP)"]
+    E -->|"regla rota:<br/>ValueError"| E400["400 con su sobre:<br/>estado, mensaje, detalle"]
+    E -->|"pasa"| F["6. el REPOSITORIO:<br/>INSERT parametrizado<br/>con :codigo, :nombre, ..."]
+    F --> G{"7. ¿la base de<br/>datos aceptó?"}
+    G -->|"PK duplicada · NOT NULL<br/>· conexión caída"| E500["500 con el error del<br/>motor en el detalle"]
+    G -->|"sí"| OK["8. la respuesta SUBE<br/>por las mismas capas:<br/>200 estado, mensaje"]
 ```
 
 **Guía de lectura:** el camino feliz es la columna del centro; cada rombo
 es una defensa y cada salida lateral, un código HTTP distinto. Por eso el
 error también es contrato: se sabe QUIÉN lo decide (la frontera → 422, el
 servicio → 400, la BD → 500) y QUIÉN le pone el número (el controlador).
+
 
 ## 5. El viaje de un GET (más corto: no hay body ni validación de forma)
 
@@ -150,11 +151,12 @@ servicio → 400, la BD → 500) y QUIÉN le pone el número (el controlador).
 
 ```mermaid
 flowchart LR
-    A["GET /api/producto/PR001"] --> B["controlador"] --> S["servicio"] --> R["repositorio:<br/>SELECT ... WHERE codigo = :codigo"]
+    A["GET /api/<br/>producto/PR001"] --> B["controlador"] --> S["servicio"] --> R["repositorio:<br/>SELECT ... WHERE<br/>codigo = :codigo"]
     R --> E{"¿hay fila?"}
-    E -->|"sí"| OK["200: el producto en JSON"]
-    E -->|"no"| N["el servicio lanza<br/>'no existe' (LookupError)"] --> C404["el controlador la traduce: 404"]
+    E -->|"sí"| OK["200: el producto<br/>en JSON"]
+    E -->|"no"| N["el servicio lanza<br/>'no existe'<br/>(LookupError)"] --> C404["el controlador<br/>la traduce: 404"]
 ```
+
 
 ## 6. Véalo usted mismo (5 minutos)
 
