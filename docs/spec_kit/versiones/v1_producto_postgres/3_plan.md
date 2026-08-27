@@ -104,7 +104,7 @@ fábrica real — controllers y servicios no se tocan (ese es el examen de la v3
 
 ### 4.4 SQL del repositorio
 `text()` + parámetros nombrados, identificadores fijos (la entidad es conocida
-— esta API es por-entidad, no genérica):
+— cada entidad tiene su propia ruta y su propio contrato):
 
 ```sql
 SELECT codigo, nombre, stock, valorunitario FROM producto ORDER BY codigo LIMIT :limite
