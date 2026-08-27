@@ -88,6 +88,49 @@ CAPA 2: APIs (v1…v5)    → solo JSON
 CAPA 3: DATOS (v1…)     → PostgreSQL → +MariaDB → +SQL Server
 ```
 
+### 1.1 ¿Y los MODELOS? ¿Por qué no aparecen como capa?
+
+Pregunta legítima: la carpeta de modelos (`models/producto.py (Pydantic)`) existe en el
+proyecto, pero la tabla de capas no la menciona. ¿Se olvidó? No — **el
+modelo NO es una capa, y la diferencia ES la lección:**
+
+- Las **capas son las ESTACIONES del viaje**: cada una le HACE algo a la
+  petición (el controller traduce HTTP, el servicio decide, el
+  repositorio consulta).
+- El **modelo es LO QUE VIAJA entre estaciones**: el repositorio arma un
+  `Producto` desde la fila, el servicio lo razona, el controller lo
+  vuelve JSON. No procesa nada: ES el paquete. Por eso el diagrama de
+  palitos no lo pinta como caja — el modelo va implícito en las flechas.
+
+```mermaid
+flowchart LR
+    subgraph CAPAS["Las ESTACIONES (sí son capas)"]
+        C["Controller<br/>(HTTP)"] --> S["Servicio<br/>(negocio)"] --> R["Repositorio<br/>(datos)"]
+    end
+    M["MODELO Producto<br/>el paquete que viaja"]
+    C -.->|"lo conoce"| M
+    S -.->|"lo conoce"| M
+    R -.->|"lo conoce"| M
+    M -.->|"y él NO conoce a NADIE:<br/>ni HTTP, ni SQL, ni framework"| NADA(( ))
+```
+
+**Guía de lectura:** las tres estaciones lo conocen y él no conoce a
+ninguna — a eso se le llama un elemento **transversal**. No viola la regla
+de dependencias ("cada capa solo conoce a la de abajo") porque conocer un
+modelo no acopla a nada: el modelo no arrastra dependencias, solo trae
+datos con tipos.
+
+**¿Entonces para qué se necesita?** Es el **idioma común** del sistema —
+el contrato interno entre capas. Sin modelo, las capas se pasarían
+diccionarios sueltos sin tipos, y el error de escribir `stok` en vez de
+`stock` no lo atraparía nadie hasta producción. Con modelo, lo atrapa el
+lenguaje. En Python, además, los modelos Pydantic hacen doble turno: son el
+dato tipado Y la frontera de validación (el 422 nace de ellos).
+
+**La regla del modelo** (tan estricta como las de las capas): el modelo
+tiene PROHIBIDO importar cosas del proyecto — ni HTTP, ni SQL, ni
+conexiones. Sus flechas de dependencia solo ENTRAN; jamás SALEN.
+
 ## 2. Los cinco principios SOLID
 
 SOLID (Robert C. Martin) son cinco reglas de diseño orientado a objetos para
