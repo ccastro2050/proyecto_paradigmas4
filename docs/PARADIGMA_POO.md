@@ -120,8 +120,8 @@ classDiagram
     RepositorioProductoPostgreSQL ..|> IRepositorioProducto : POLIMORFISMO
     RepositorioFalsoEnMemoria ..|> IRepositorioProducto : POLIMORFISMO
     ServicioProducto o-- IRepositorioProducto : COMPOSICIÓN (recibe, no hereda)
-    note for IRepositorioProducto "ABSTRACCIÓN: declara QUÉ,\nni una línea de CÓMO"
-    note for RepositorioProductoPostgreSQL "ENCAPSULAMIENTO: la conexión\ny el SQL no salen de aquí"
+    note for IRepositorioProducto "ABSTRACCIÓN: declara QUÉ — ni una línea de CÓMO"
+    note for RepositorioProductoPostgreSQL "ENCAPSULAMIENTO: la conexión y el SQL no salen de aquí"
 ```
 
 **Guía de lectura:** los cuatro pilares están en UN dibujo. La interfaz es
@@ -129,6 +129,83 @@ la abstracción; los atributos privados del repositorio son el
 encapsulamiento; las dos flechas punteadas que llegan a la misma interfaz
 son el polimorfismo (piezas intercambiables); y el rombo del servicio es
 composición: recibe el repositorio por constructor en vez de heredarlo.
+
+**Las DOS caras del polimorfismo (aclaración importante).** La
+definición es una sola: **el MISMO mensaje, respuestas DIFERENTES**. Pero
+se logra de dos maneras, y conviene distinguirlas:
+
+**Cara A — la del libro: herencia + sobrescritura.** Un método existe en
+la clase PADRE y la clase hija lo vuelve a programar a su manera
+(sobrescribir / override):
+
+```python
+class Animal:
+    def hablar(self):            # el método vive en el PADRE...
+        return "..."
+
+class Perro(Animal):
+    def hablar(self):            # ...y la hija lo SOBRESCRIBE
+        return "¡Guau!"
+
+class Gato(Animal):
+    def hablar(self):
+        return "¡Miau!"
+
+for a in [Perro(), Gato()]:
+    print(a.hablar())            # el MISMO mensaje, DOS respuestas
+```
+
+```mermaid
+classDiagram
+    Animal <|-- Perro : hereda y SOBRESCRIBE hablar()
+    Animal <|-- Gato : hereda y SOBRESCRIBE hablar()
+    class Animal { +hablar() "..." }
+    class Perro { +hablar() "Guau" }
+    class Gato { +hablar() "Miau" }
+```
+
+**Cara B — la de ESTE proyecto: contrato + implementaciones.** Aquí NO hay
+clase padre con código: hay una **interfaz**, que declara el mensaje pero
+no trae ninguna programación. Dos clases sin parentesco entre sí lo
+responden, cada una a su modo:
+
+```python
+# El contrato NO tiene código: solo declara el mensaje
+class IRepositorioProducto(Protocol):
+    async def crear(self, datos: dict) -> bool: ...
+
+# Dos clases SIN parentesco responden el MISMO mensaje, cada una a su modo:
+class RepositorioProductoPostgreSQL:
+    async def crear(self, datos):
+        ...ejecuta un INSERT parametrizado en PostgreSQL...
+
+class RepositorioFalsoEnMemoria:
+    async def crear(self, datos):
+        self._filas[datos["codigo"]] = datos   # un diccionario en RAM
+```
+
+Cuando `ServicioProducto` manda el mensaje `crear(datos)`, NO sabe (ni le
+importa) cuál de las dos clases contesta — una escribe en PostgreSQL, la otra en
+un diccionario. **Eso es el polimorfismo del diagrama de arriba:** las dos
+flechas punteadas que llegan a la interfaz son las dos respuestas
+posibles al mismo mensaje.
+
+| | Cara A (herencia) | Cara B (contrato — la del proyecto) |
+|---|---|---|
+| ¿Dónde se declara el mensaje? | En la clase PADRE (con código propio) | En la INTERFAZ (sin una línea de código) |
+| ¿Las clases se emparentan? | Sí: hija ES-UN padre | No: solo firman el mismo contrato |
+| ¿Qué se comparte? | Código heredado + el mensaje | SOLO el mensaje |
+| Riesgo | Acopla: la hija arrastra TODO lo del padre | Ninguno de acoplamiento: por eso el curso la prefiere |
+
+Las dos son polimorfismo legítimo. El proyecto usa la cara B porque
+necesita piezas intercambiables SIN compartir código (un repositorio real
+y uno falso no tienen nada en común por dentro) — y porque es la que
+permite cambiar de motor sin tocar el servicio.
+
+**¿Y la herencia DE VERDAD, dónde está en este proyecto?** En cada
+modelo Pydantic: `class Producto(BaseModel)` — Producto ES-UN BaseModel y
+hereda completo el motor de validación (por eso validar no cuesta ni una
+línea). Herencia bien usada: se hereda un MOTOR, no un repositorio.
 
 **Herencia vs composición — el error clásico, dibujado:**
 
