@@ -116,3 +116,26 @@ con el tercer dialecto.
 Los 5 criterios pasan → commit + tag `v4` → la API es tri-motor y la
 infraestructura de datos está completa → recién entonces se especifica
 la v5 (el front Flask sobre la API tri-motor).
+
+## 7. Clarificaciones
+
+> **Qué es esta sección:** el registro de las ambigüedades detectadas ANTES
+> de planear, con la respuesta que se acordó y su razón. Es **la compuerta
+> 1** del método (ver [SDD_SPECKIT](../../../SDD_SPECKIT.md)): mientras
+> quede un `[NECESITA ACLARACIÓN: …]` en los requisitos de arriba, esta
+> versión no pasa a la planeación.
+>
+> Las entradas de abajo se reconstruyeron **al cerrar la versión**, a
+> partir de las decisiones que sus propios contratos ya dejaban fijadas.
+> De aquí en adelante esta sección se llena **en vivo**, antes del
+> `3_plan.md` — que es como debe ser.
+
+| # | La pregunta | La respuesta acordada, con su razón | Dónde quedó |
+|---|---|---|---|
+| C1 | Anular dos veces la misma factura, ¿qué responde? | **409**: el conflicto es de estado, no de forma ni de existencia. La factura existe (no es 404) y el body está bien (no es 422). | Contrato de anular |
+
+**Cómo se escribe una entrada nueva:** la pregunta tal como se hizo (no
+"revisar el borrado", sino "¿físico o lógico?"), la respuesta **con su
+razón**, y el documento donde quedó plasmada. Si la respuesta cambia un
+requisito, se corrige el requisito allá arriba: esta sección lo registra,
+no lo reemplaza.

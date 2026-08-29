@@ -160,3 +160,26 @@ misma API; el compose es la forma oficial de entrega.
 Las de la constitución: todo en español, docstring de apertura por archivo,
 snake_case en archivos/funciones, PascalCase en clases, prefijo `i_`/`I` en
 interfaces, comentarios didácticos.
+
+## 7. Chequeo de constitución
+
+> **La compuerta 2** del método (ver [SDD_SPECKIT](../../../SDD_SPECKIT.md)):
+> antes de pasar a `8_tasks.md` se revisa la
+> [constitución](../../1_constitution.md) **artículo por artículo**. Si algo
+> no cumple, o se corrige el plan, o se enmienda la constitución. Nunca se
+> deja pasar "por esta vez".
+
+| Artículo | Cómo lo cumple esta versión |
+|---|---|
+| **1** — Propósito didáctico ante todo | Todo en español y comentado para principiantes; se prefiere lo explícito y legible sobre lo compacto. |
+| **2** — Arquitectura de 3 capas estricta | Las capas que esta versión construye respetan la separación estricta (§3 de este plan): el front no toca la BD y la API no devuelve HTML. |
+| **3** — Independencia del motor de base de datos | El acceso a datos pasa por interfaces. Si esta versión trae un solo motor, la independencia todavía es **meta**, no estado — así lo dice la propia constitución en su encabezado. |
+| **4** — Un solo comando para arrancar | `docker compose up -d --build` deja funcionando lo que esta versión declara (§5 de este plan); lo que aún no existe no se exige. |
+| **5** — Persistencia y reproducibilidad | Los datos viven en volúmenes; `docker compose down -v` devuelve la BD a su estado original. |
+| **6** — Convenciones fijas | Puertos, rutas y convenciones de nombres, tal como los fija el artículo. |
+| **7** — Desarrollo con recarga en caliente | El código va montado en el contenedor: guardar un archivo recarga sin reconstruir la imagen. |
+| **8** — Seguridad en su justa medida académica | Credenciales didácticas y sin secretos reales; la seguridad se mantiene en la medida que el artículo define. |
+
+**Complejidad justificada:** si esta versión se desvía de algún artículo,
+la desviación va aquí, con la alternativa más simple que se descartó y por
+qué no sirvió. Sin desviaciones anotadas, se entiende que no las hay.
