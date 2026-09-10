@@ -18,11 +18,23 @@ existe la de rama: ¿se probaron el `if` Y el `else`?).
 **La trampa:** ejecutar una línea NO es verificarla. Esta prueba sube la
 cobertura y no protege nada:
 
-```
+```python
 # Prueba HUECA: ejecuta el método... y no verifica NADA
-resultado = servicio.crear_producto(datos)
-# (sin assert: si crear_producto guarda mal, esta prueba PASA)
+def test_crear_producto():
+    creado = servicio.crear_producto(datos)
+    # (sin assert: si crear_producto guarda mal, esta prueba PASA)
 ```
+
+La que sí protege lleva **una línea que puede fallar**:
+
+```python
+def test_crear_producto_guarda_el_nombre():
+    creado = servicio.crear_producto(datos)
+    assert creado.nombre == datos["nombre"]   # ← esta línea ES la prueba
+```
+
+Si borra el `assert`, la prueba sigue pasando **y sigue sumando la misma
+cobertura**. Ahí está el problema de la métrica.
 
 **Cómo leerla bien:** cobertura BAJA sí es una alarma confiable (hay
 código que nadie ejecuta jamás en pruebas); cobertura ALTA, sola, no
