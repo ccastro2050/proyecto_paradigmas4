@@ -54,6 +54,11 @@ filas = await servicio.listar(10)
 verificar(filas[0]["codigo"] == "T1", "crear + listar")
 ```
 
+> **Los tres comentarios en mayúscula no están en el archivo:** los agregué
+> aquí para señalar las partes. El código sí es el de su repositorio, línea
+> por línea — vaya y compárelo.
+
+
 **La tercera parte es la prueba.** Las dos primeras solo montan la escena. Si
 borra el `verificar`, el programa sigue corriendo, sigue sin dar error… y ya
 no está probando nada. Vuelva a esta idea en la Parte 2, porque es el origen
