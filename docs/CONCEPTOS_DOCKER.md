@@ -198,23 +198,24 @@ con su propio hostname, unidos por la red interna del compose:
 ```mermaid
 flowchart LR
     NAV["Navegador / curl / Swagger"]
+    CLIENTE["Cliente de base de datos<br/>(DBeaver, SQLTools, mysql, psql, sqlcmd)"]
     subgraph PC["Su PC — Docker Desktop (el 'centro de datos')"]
         subgraph RED["red interna del compose (LAN virtual, con DNS propio)"]
             APIFACTURAS["SERVIDOR DE APLICACIONES<br/>contenedor api-facturas<br/>hostname: api-facturas · escucha en 8005"]
-            POSTGRES[("SERVIDOR DE BASE DE DATOS<br/>PostgreSQL · contenedor postgres<br/>hostname: postgres · escucha en 5432")]
-            MARIADB[("SERVIDOR DE BASE DE DATOS<br/>MariaDB/MySQL · contenedor mariadb<br/>hostname: mariadb · escucha en 3306")]
-            SQLSERVER[("SERVIDOR DE BASE DE DATOS<br/>SQL Server · contenedor sqlserver<br/>hostname: sqlserver · escucha en 1433")]
             SQLSERVERINIT["sqlserver-init<br/>siembra la BD UNA vez<br/>y muere: Exited(0) = éxito"]
+            MARIADB[("SERVIDOR DE BASE DE DATOS<br/>MariaDB/MySQL · contenedor mariadb<br/>hostname: mariadb · escucha en 3306")]
+            POSTGRES[("SERVIDOR DE BASE DE DATOS<br/>PostgreSQL · contenedor postgres<br/>hostname: postgres · escucha en 5432")]
+            SQLSERVER[("SERVIDOR DE BASE DE DATOS<br/>SQL Server · contenedor sqlserver<br/>hostname: sqlserver · escucha en 1433")]
         end
     end
     NAV -->|"localhost:8005"| APIFACTURAS
-    APIFACTURAS -->|"postgres:5432 (DNS de Docker)"| POSTGRES
     APIFACTURAS -->|"mariadb:3306 (DNS de Docker)"| MARIADB
+    APIFACTURAS -->|"postgres:5432 (DNS de Docker)"| POSTGRES
     APIFACTURAS -->|"sqlserver:1433 (DNS de Docker)"| SQLSERVER
     SQLSERVERINIT -->|"espera el healthcheck,<br/>siembra y termina"| SQLSERVER
-    NAV -.->|"opcional (diagnóstico):<br/>localhost:15435"| POSTGRES
-    NAV -.->|"opcional (diagnóstico):<br/>localhost:13335"| MARIADB
-    NAV -.->|"opcional (diagnóstico):<br/>localhost:11435"| SQLSERVER
+    CLIENTE -.->|"opcional (diagnóstico):<br/>localhost:13335"| MARIADB
+    CLIENTE -.->|"opcional (diagnóstico):<br/>localhost:15435"| POSTGRES
+    CLIENTE -.->|"opcional (diagnóstico):<br/>localhost:11435"| SQLSERVER
 ```
 
 **Guía de lectura:** los servicios se hablan entre sí **por nombre**
@@ -578,7 +579,7 @@ flowchart LR
         frontA["front-php<br/>:8020"]
         apiA["api-facturas<br/>:8022"]
         dbA[("mariadb")]
-        frontA -->|"http://api-facturas:8022<br/>por el NOMBRE"| apiA
+        frontA -->|"http://api-facturas:8022<br/>al controlador, por el NOMBRE"| apiA
         apiA -->|"host=mariadb"| dbA
     end
 
@@ -594,18 +595,24 @@ flowchart LR
     nav -->|"localhost:8020"| frontA
     nav -->|"localhost:8084"| frontB
 
-    frontA -. "NO la ve: otra red" .-> dbB
-
     classDef red fill:#eef5ff,stroke:#5b8fd6,stroke-width:2px
     class redA,redB red
 ```
 
 **Guía de lectura.** El navegador está **afuera** de las dos redes: entra por
 `localhost` y el **puerto publicado**. Los contenedores, en cambio, se hablan
-**por el nombre del servicio**, y solo dentro de su propia red. La flecha
-punteada es la que no existe: el front de un proyecto **no puede** ver la base
-del otro, aunque estén en el mismo computador y aunque las dos bases se
+**por el nombre del servicio**, y solo dentro de su propia red: **no hay una sola línea entre las dos cajas azules, y eso no es un olvido del
+dibujo: es el dibujo diciendo la verdad.** La API de un proyecto no alcanza la
+base del otro, aunque estén en el mismo computador y aunque las dos bases se
 llamen `mariadb`.
+
+> **Fíjese en la flecha que NO está.** Del front no sale ninguna línea hacia una
+> base de datos: ni hacia la del otro proyecto, ni hacia la suya. El front habla
+> con los **controladores** de la API, y ahí se acaba su mundo; quien toca la
+> base es la API. Y eso **no** es cosa de redes: aunque estuvieran los seis
+> contenedores en la misma red, el front seguiría sin tener nada que ir a buscar
+> a la base. Es la arquitectura por capas. La red explica por qué no *puede*;
+> las capas explican por qué no *debe*.
 
 Y fíjese en lo que eso implica: **cada caja azul necesita su propio bloque de
 direcciones.** De ahí sale el problema que viene.
