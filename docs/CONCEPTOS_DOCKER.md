@@ -1158,4 +1158,4 @@ corriendo. Enciéndalo y repita el comando.
    <https://kubernetes.io/es/docs/concepts/overview/>
 6. En este repositorio: el `docker run` de la v1 en el
    [README](../README.md) y en el
-   [modelo de datos de la v1](spec_kit/versiones/v1_producto_postgres/5_data_model.md).
+   [modelo de datos de la v1](spec_kit/versiones/0_mapa_versiones.md).

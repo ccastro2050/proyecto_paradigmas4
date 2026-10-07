@@ -110,5 +110,5 @@ DELETE FROM persona WHERE codigo = 'P001';
 4. Kleppmann, M. — *Designing Data-Intensive Applications* (O'Reilly, 2017),
    cap. 7: la mejor discusión moderna de ACID, aislamiento y sus trampas.
 5. En este repositorio: las tablas y llaves foráneas de bdfacturas en el
-   [modelo de datos de la v1](spec_kit/versiones/v1_producto_postgres/5_data_model.md);
+   [modelo de datos de la v1](spec_kit/versiones/0_mapa_versiones.md);
    el trigger de totales/stock se usará desde la v2.

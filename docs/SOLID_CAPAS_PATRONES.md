@@ -350,7 +350,7 @@ jamás pregunta cuál implementación le tocó.
    catálogo original de los 23 patrones.
 6. Martin Fowler — *Patterns of Enterprise Application Architecture*
    (PoEAA, 2002): Repositorio, DTO y compañía.
-7. En este repositorio: el [plan de la v1](spec_kit/versiones/v1_producto_postgres/3_plan.md)
+7. En este repositorio: el [plan de la v1](spec_kit/versiones/0_mapa_versiones.md)
    (§3 capas, §4.1 interfaces, §4.3 la proto-fábrica) y el
    [mapa de versiones](spec_kit/versiones/0_mapa_versiones.md) (dónde entra
    cada principio).

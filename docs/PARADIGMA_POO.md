@@ -364,4 +364,4 @@ línea — eso es el paradigma haciendo su trabajo. En la v3, un tercer objeto
    original era **objetos que se comunican por mensajes** — más cercana a
    "servicios que colaboran" que a "árboles de herencia".
 8. En este repositorio: las interfaces y capas de la
-   [v1](spec_kit/versiones/v1_producto_postgres/3_plan.md).
+   [v1](spec_kit/versiones/0_mapa_versiones.md).

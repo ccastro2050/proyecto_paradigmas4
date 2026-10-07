@@ -73,7 +73,7 @@ Dos observaciones para la clase:
 
 - **La BD está completa desde la v1** aunque la API solo use `producto` — es
   la decisión documentada en el
-  [modelo de datos de la v1](spec_kit/versiones/v1_producto_postgres/5_data_model.md).
+  [modelo de datos de la v1](spec_kit/versiones/0_mapa_versiones.md).
 - De paso, mire los otros nodos bajo `public`: **Functions** y **Procedures**
   (los SPs de facturación que usarán versiones futuras), **Sequences** (los
   autoincrementales de las PK `SERIAL`) y, dentro de cada tabla, sus
@@ -169,7 +169,7 @@ relaciones que el curso usa como ejemplo:
   `ruta`.
 
 Compare este diagrama con el del
-[modelo de datos de la v1](spec_kit/versiones/v1_producto_postgres/5_data_model.md):
+[modelo de datos de la v1](spec_kit/versiones/0_mapa_versiones.md):
 es el mismo modelo — uno viene de la spec, el otro de la BD viva. Cuando
 coinciden, la spec no miente.
 
