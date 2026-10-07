@@ -54,6 +54,10 @@ ENTIDADES = {
     # El tercer elemento de cada campo es la clave de OTRA entidad: cuando
     # está, el formulario lo vuelve un <select> CARGADO DESDE LA API. Esa es
     # la lección de la v2 — la llave foránea se ELIGE, no se escribe.
+    "rol": dict(descripcion="Administrador, Vendedor, Cajero, Contador, Cliente", desde=1, url="roles", titulo="Roles", endpoint="/api/rol", pk="id",
+        permiso="interfaz.roles",
+        campos=[("nombre", "Nombre", None)],
+        editable=True, pk_generada=True),
     "cliente": dict(descripcion="Con su persona y su empresa, elegidas de un desplegable", desde=2, url="clientes", titulo="Clientes", endpoint="/api/cliente", pk="id",
         permiso="interfaz.clientes",
         campos=[("credito", "Crédito", None),

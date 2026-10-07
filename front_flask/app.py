@@ -45,8 +45,8 @@ app.register_blueprint(bp_facturas)
 # roles viaja con casillas, y el tablero no tiene tabla.
 TARJETAS_SUELTAS = [
     ("/facturas", "Facturas", 2, "Maestro-detalle: la factura y sus renglones, en un solo envío"),
-    # Estas dos NO se ofrecen todavia: sus endpoints son de la v3 y la v4, y
-    # una tarjeta que lleva a un 404 es peor que no tenerla.
+    # Estas dos NO se ofrecen todavia porque sus endpoints NO ESTAN
+    # CONSTRUIDOS, y una tarjeta que lleva a un 404 es peor que no tenerla.
     # ("/usuarios-con-roles", "Usuarios y roles", 2, "El usuario y sus roles, con casillas"),
     # ("/tablero", "Tablero", 4, "Diez consultas que cruzan cuatro o más tablas"),
 ]
@@ -70,13 +70,13 @@ def menu():
     usar. Es comodidad. La proteccion esta en el servicio.
     """
     # ========================================================
-    # HASTA LA v3: se muestran TODAS las entidades declaradas.
+    # POR AHORA se muestran TODAS las entidades declaradas.
     #
-    # El filtro por permisos es de la v3, y aqui todavia no hay sesion ni
-    # permisos que consultar. Si se dejara el filtro, el menu saldria VACIO
-    # — que es exactamente lo que pasaba antes de esta correccion.
+    # El filtro por permisos ES PARTE DE ESTA VERSION, pero el control de
+    # acceso todavia NO esta construido: no hay sesion ni permisos que
+    # consultar. Si se dejara el filtro, el menu saldria VACIO.
     #
-    # Cuando llegue la v3 se borra la linea de abajo y se descomentan estas:
+    # Al construirlo se borra la linea de abajo y se descomentan estas:
     #   permitidas = session.get("permisos", [])
     #   visibles = {c: e for c, e in ENTIDADES.items()
     #               if e.get("permiso") in permitidas}
@@ -96,14 +96,13 @@ def login_requerido(vista):
     """
 
     # ========================================================
-    # APAGADO HASTA LA v3, A PROPOSITO.
+    # APAGADO PORQUE EL CONTROL DE ACCESO TODAVIA NO ESTA CONSTRUIDO.
     #
-    # Este repositorio todavia no tiene control de acceso: la API no expone
-    # POST /api/sesion ni responde 401. Si aqui se exigiera sesion, el front
-    # mandaria a un login que no puede funcionar.
+    # La API no expone POST /api/sesion ni responde 401, asi que exigir
+    # sesion aqui mandaria a un login que no puede funcionar.
     #
-    # Cuando llegue la v3 se borra el `return vista(...)` de abajo y se
-    # descomenta lo de arriba. El codigo se deja para que se vea que la pieza
+    # ES UN HUECO DE ESTA VERSION, no una etapa futura: cuando se construya,
+    # se borra el `return vista(...)` de abajo y se descomenta lo de arriba. El codigo se deja para que se vea que la pieza
     # existe y que lo que falta es el otro lado.
     # ========================================================
     @wraps(vista)

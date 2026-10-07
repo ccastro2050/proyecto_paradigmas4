@@ -41,10 +41,10 @@ def _config(clave):
     if cfg is None:
         abort(404)
     # ========================================================
-    # APAGADO HASTA LA v3. Este repositorio todavia no tiene control de
-    # acceso: la API no expone POST /api/sesion ni responde 401, asi que
-    # exigir sesion aqui mandaria a un login que no puede funcionar.
-    # Cuando llegue la v3 se descomentan estas cinco lineas.
+    # APAGADO: el control de acceso todavia no esta construido. La API no
+    # expone POST /api/sesion ni responde 401, asi que exigir sesion aqui
+    # mandaria a un login que no puede funcionar.
+    # Al construirlo se descomentan estas cinco lineas.
     # ========================================================
     # if "usuario" not in session:
     #     abort(redirect(url_for("login")))

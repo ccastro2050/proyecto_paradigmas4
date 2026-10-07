@@ -18,6 +18,7 @@ from controllers.empresa_controller import router as router_empresa
 from controllers.factura_controller import router as router_factura
 from controllers.persona_controller import router as router_persona
 from controllers.producto_controller import router as router_producto
+from controllers.rol_controller import router as router_rol
 from controllers.vendedor_controller import router as router_vendedor
 
 app = FastAPI(
@@ -30,6 +31,7 @@ app = FastAPI(
 
 # Un router por entidad — el molde de la v1, replicado (v2):
 app.include_router(router_producto)
+app.include_router(router_rol)
 app.include_router(router_persona)
 app.include_router(router_empresa)
 app.include_router(router_cliente)

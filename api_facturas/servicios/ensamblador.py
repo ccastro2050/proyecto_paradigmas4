@@ -35,6 +35,9 @@ from repositorios.repositorio_persona_sqlserver import RepositorioPersonaSqlServ
 from repositorios.repositorio_persona_postgresql import (
     RepositorioPersonaPostgreSQL,
 )
+from repositorios.repositorio_rol_mariadb import RepositorioRolMariaDB
+from repositorios.repositorio_rol_postgresql import RepositorioRolPostgreSQL
+from repositorios.repositorio_rol_sqlserver import RepositorioRolSqlServer
 from repositorios.repositorio_producto_mariadb import RepositorioProductoMariaDB
 from repositorios.repositorio_producto_sqlserver import RepositorioProductoSqlServer
 from repositorios.repositorio_producto_postgresql import (
@@ -46,12 +49,14 @@ from repositorios.repositorio_vendedor_postgresql import (
     RepositorioVendedorPostgreSQL,
 )
 from servicios.abstracciones.i_servicio_cliente import IServicioCliente
+from servicios.abstracciones.i_servicio_rol import IServicioRol
 from servicios.abstracciones.i_servicio_empresa import IServicioEmpresa
 from servicios.abstracciones.i_servicio_factura import IServicioFactura
 from servicios.abstracciones.i_servicio_persona import IServicioPersona
 from servicios.abstracciones.i_servicio_producto import IServicioProducto
 from servicios.abstracciones.i_servicio_vendedor import IServicioVendedor
 from servicios.servicio_cliente import ServicioCliente
+from servicios.servicio_rol import ServicioRol
 from servicios.servicio_empresa import ServicioEmpresa
 from servicios.servicio_factura import ServicioFactura
 from servicios.servicio_persona import ServicioPersona
@@ -72,6 +77,7 @@ _FABRICAS = {
             "cliente": RepositorioClientePostgreSQL,
             "vendedor": RepositorioVendedorPostgreSQL,
             "factura": RepositorioFacturaPostgreSQL,
+            "rol": RepositorioRolPostgreSQL,
         },
     },
     "mariadb": {
@@ -83,6 +89,7 @@ _FABRICAS = {
             "cliente": RepositorioClienteMariaDB,
             "vendedor": RepositorioVendedorMariaDB,
             "factura": RepositorioFacturaMariaDB,
+            "rol": RepositorioRolMariaDB,
         },
     },
     # v4 — el tercer motor: ESTE bloque es todo lo que costó agregarlo.
@@ -95,6 +102,7 @@ _FABRICAS = {
             "cliente": RepositorioClienteSqlServer,
             "vendedor": RepositorioVendedorSqlServer,
             "factura": RepositorioFacturaSqlServer,
+            "rol": RepositorioRolSqlServer,
         },
     },
 }
@@ -151,3 +159,8 @@ def crear_servicio_vendedor() -> IServicioVendedor:
 def crear_servicio_factura() -> IServicioFactura:
     """Arma el servicio de factura con el repositorio del motor activo."""
     return ServicioFactura(_crear_repositorio("factura"))
+
+
+def crear_servicio_rol() -> IServicioRol:
+    """Arma el servicio de rol con el repositorio del motor activo."""
+    return ServicioRol(_crear_repositorio("rol"))
