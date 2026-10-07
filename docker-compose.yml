@@ -117,6 +117,30 @@ services:
         condition: service_completed_successfully
         # ↑ v4: y cuando el inicializador de SQL Server TERMINÓ BIEN
 
+  # ============================================================
+  # EL FRONT, en Flask + Jinja2 — v2 en adelante
+  #
+  # Contenedor APARTE de la API, y eso es lo que se quiere demostrar: la
+  # interfaz y la API son dos procesos distintos que se hablan por HTTP.
+  # Apague la API y la interfaz sigue en pie, con su aviso y sin una fila.
+  # ============================================================
+  front-flask:
+    build: ./front_flask
+    container_name: paradigmas4-front
+    ports:
+      - "8046:8046"               # http://localhost:8046
+    volumes:
+      # El codigo montado: Flask en modo depuracion recarga al guardar.
+      - ./front_flask:/app
+    environment:
+      PUERTO: "8046"
+      # El NOMBRE del servicio, no localhost: dentro del contenedor del front,
+      # localhost seria el front mismo.
+      API_FACTURAS_URL: "http://api-facturas:8005"
+      FLASK_SECRET: "paradigmas-dev"
+    depends_on:
+      - api-facturas
+
 volumes:
   pgdata:
   mariadbdata:      # v3: la "memoria" del segundo motor

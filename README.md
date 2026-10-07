@@ -123,9 +123,16 @@ terminar quedan corriendo la base de datos (bdfacturas completa) y la API:
 
 | Qué | Dónde |
 |---|---|
+| **La interfaz gráfica** (Flask) | **http://localhost:8046** |
 | **API Facturas — Swagger** (probar los endpoints) | http://localhost:8005/docs |
 | Diagnóstico | http://localhost:8005/ |
 | PostgreSQL (para DBeaver/pgAdmin, opcional) | `localhost:15435` · `paradigmas`/`paradigmas123` |
+
+> **Son DOS procesos, y conviene verlo:** la interfaz en 8046 y la API en
+> 8005, en contenedores distintos. Apague la API con
+> `docker compose stop api-facturas` y abra la interfaz: **sigue en pie**, con
+> su aviso y sin una sola fila. Eso es la separación de capas a nivel de
+> sistema, no de carpetas.
 
 Pruebe en Swagger: PUT con solo `{"stock": 99}` → 422; el mismo body en
 PATCH → 200. Esa diferencia es parte de lo que enseña la v1.
