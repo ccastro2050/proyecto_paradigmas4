@@ -45,8 +45,10 @@ app.register_blueprint(bp_facturas)
 # roles viaja con casillas, y el tablero no tiene tabla.
 TARJETAS_SUELTAS = [
     ("/facturas", "Facturas", 2, "Maestro-detalle: la factura y sus renglones, en un solo envío"),
-    ("/usuarios-con-roles", "Usuarios y roles", 2, "El usuario y sus roles, con casillas"),
-    ("/tablero", "Tablero", 4, "Diez consultas que cruzan cuatro o más tablas"),
+    # Estas dos NO se ofrecen todavia: sus endpoints son de la v3 y la v4, y
+    # una tarjeta que lleva a un 404 es peor que no tenerla.
+    # ("/usuarios-con-roles", "Usuarios y roles", 2, "El usuario y sus roles, con casillas"),
+    # ("/tablero", "Tablero", 4, "Diez consultas que cruzan cuatro o más tablas"),
 ]
 
 
@@ -67,9 +69,19 @@ def menu():
     ENTONCES PARA QUE SIRVE: para no mostrarle a alguien lo que no va a poder
     usar. Es comodidad. La proteccion esta en el servicio.
     """
-    permitidas = session.get("permisos", [])
-    visibles = {c: e for c, e in ENTIDADES.items()
-                if e.get("permiso") in permitidas}
+    # ========================================================
+    # HASTA LA v3: se muestran TODAS las entidades declaradas.
+    #
+    # El filtro por permisos es de la v3, y aqui todavia no hay sesion ni
+    # permisos que consultar. Si se dejara el filtro, el menu saldria VACIO
+    # — que es exactamente lo que pasaba antes de esta correccion.
+    #
+    # Cuando llegue la v3 se borra la linea de abajo y se descomentan estas:
+    #   permitidas = session.get("permisos", [])
+    #   visibles = {c: e for c, e in ENTIDADES.items()
+    #               if e.get("permiso") in permitidas}
+    # ========================================================
+    visibles = dict(ENTIDADES)
     return {"menu_entidades": visibles, "hay_sesion": "usuario" in session,
             "usuario_actual": session.get("usuario"),
             "roles_actuales": session.get("roles", []), "tarjetas_sueltas": TARJETAS_SUELTAS}

@@ -14,19 +14,21 @@
 {% block contenido %}
 <div class="pb-2 mb-4 border-bottom">
     <h1 class="mb-1">Facturas</h1>
-    <p class="fs-5 text-body-secondary mb-0">Versión 4 — <strong>el aplicativo completo</strong></p>
+    <p class="fs-5 text-body-secondary mb-0">Paradigmas — <strong>Python, FastAPI y PostgreSQL</strong></p>
 </div>
 
-<p class="mb-4">Las cuatro versiones del curso, y además el adelanto de la v5: una segunda implementación de los repositorios contra SQL Server, elegida por configuración.</p>
+<p class="mb-4">La interfaz gráfica del proyecto, en <strong>Flask</strong>, hablando por HTTP con una API en <strong>FastAPI</strong> que consulta <strong>PostgreSQL</strong>. Tres procesos, tres contenedores.</p>
 
-<div class="alert alert-primary d-flex align-items-start gap-2" role="alert">
+<div class="alert alert-warning d-flex align-items-start gap-2" role="alert">
     <div>
-        <strong>Esta versión pide identificarse.</strong>
-        Sin sesión, la interfaz manda a <a href="{{ url_for('login') }}" class="alert-link">iniciar sesión</a>
-        y la API responde <code>401</code>. Y el menú de arriba
-        <strong>solo muestra lo que su rol puede abrir</strong> — pero eso es
-        comodidad, no protección: quien escriba la dirección a mano recibe un
-        <code>403</code> de la API, que es quien de verdad protege.
+        <strong>Todavía no pide identificarse, y es a propósito.</strong>
+        El control de acceso —contraseña con hash, sesión con token, 401 y
+        403— es de la <strong>versión 3</strong>, y este repositorio aún no la
+        tiene: la API atiende a cualquiera que llegue al 8005.
+        <br>
+        El código del login está escrito y <strong>comentado</strong> en
+        <code>app.py</code> y en las rutas, con la nota de dónde se vuelve a
+        encender. Lo que falta no es esta pieza: es el otro lado.
     </div>
 </div>
 

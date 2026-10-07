@@ -65,7 +65,8 @@
     </div>
     {% else %}
     <div class="ms-auto">
-        <a class="btn btn-outline-light btn-sm" href="{{ url_for('login') }}">Iniciar sesión</a>
+        {# El boton vuelve con la v3: hoy la API no expone POST /api/sesion. #}
+        <span class="badge text-bg-light text-dark">v3 pendiente: sin sesión</span>
     </div>
     {% endif %}
   </div>
