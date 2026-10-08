@@ -11,6 +11,23 @@ desde cero** en su propio proyecto.
 > [proyecto_paradigmas_sin_docker](https://github.com/ccastro2050/proyecto_paradigmas_sin_docker)
 > (PostgreSQL instalado + venv) — misma API, misma spec, otra infraestructura.
 
+### Qué hay hoy en el repositorio (v4, cerrada)
+
+| | Cuánto | Dónde se ve |
+|---|---|---|
+| **La base de datos** | 12 tablas · 1 disparador · 16 procedimientos | `db/init.sql` |
+| **La API** | 15 controladores · **45 rutas, 91 operaciones** | http://localhost:8005/docs |
+| **Las tres capas** | 15 servicios + 15 contratos · **42 repositorios** + 14 contratos | `api_facturas/` |
+| **El control de acceso** | token firmado · 401 y 403 en cada petición | `api_facturas/autorizacion/` |
+| **Las consultas de la v4** | **10**, cada una cruzando 4 o 5 tablas | http://localhost:8046/tablero |
+| **La interfaz** | **14 pantallas**, una por recurso | http://localhost:8046 |
+| **Los tres motores** | la MISMA API contra PostgreSQL, MariaDB y SQL Server | [`DEMOSTRACION_MOTORES.md`](docs/DEMOSTRACION_MOTORES.md) |
+
+**Los 42 repositorios contra los 14 contratos son la arquitectura en un
+número:** cada contrato tiene tres implementaciones —una por motor— y arriba
+nadie sabe cuál está puesta. Cambiar de motor es cambiar **una variable de
+entorno**, no una línea de código.
+
 ---
 
 ## 1. Cómo le trabaja el estudiante (léame primero)
@@ -134,8 +151,41 @@ terminar quedan corriendo la base de datos (bdfacturas completa) y la API:
 > su aviso y sin una sola fila. Eso es la separación de capas a nivel de
 > sistema, no de carpetas.
 
-Pruebe en Swagger: PUT con solo `{"stock": 99}` → 422; el mismo body en
-PATCH → 200. Esa diferencia es parte de lo que enseña la v1.
+### Lo primero: ENTRAR
+
+Desde la v3 la API está **cerrada**. Quien llegue sin identificarse recibe
+**401**, y eso incluye Swagger:
+
+| Paso | Qué hacer |
+|---|---|
+| **1** | Abra http://localhost:8005/docs y busque **`POST /api/sesion/entrar`** |
+| **2** | *Try it out* con `{"email": "admin@correo.com", "contrasena": "admin123"}` |
+| **3** | Copie el `token` de la respuesta |
+| **4** | Botón **Authorize** (arriba a la derecha) y pegue `Bearer <el token>` |
+
+Ahora sí responden los demás endpoints. En la interfaz gráfica (8046) es más
+corto: la pantalla de entrada pide los mismos datos.
+
+**Las contraseñas están escritas a propósito**, y conviene entender por qué:
+en la base de datos se guardan con **hash bcrypt**, y de un hash no se puede
+volver a la clave —eso es lo que lo hace un hash—. Sin tenerlas anotadas en
+algún lado, no habría forma de entrar a probar:
+
+| Usuario | Contraseña | A qué llega |
+|---|---|---|
+| `admin@correo.com` | `admin123` | A las 15 rutas |
+| `vendedor1@correo.com` | `vendedor123` | Solo a inicio, facturas y clientes |
+| `cliente1@correo.com` | `cliente123` | Solo a inicio y productos |
+
+> **Con esos tres se comprueba el 403**, que es el criterio que importa:
+> entre como `vendedor1` y pida `/api/usuario`. Responde **403**, no 401 —
+> «sé quién es usted, y no puede»—. Y **no** porque la interfaz esconda el
+> botón: escribiendo la dirección a mano. Las otras cinco claves están en
+> `db/init.sql`, junto a los datos sembrados.
+
+Pruebe también, ya con el token: PUT a `/api/producto/PR001` con solo
+`{"stock": 99}` → **422**; el mismo body en PATCH → **200**. Esa diferencia
+es parte de lo que enseña la v1, y sigue viva en la v4.
 
 ### Los días siguientes (volver a encender)
 
@@ -186,48 +236,62 @@ Qué es cada carpeta y cada archivo, y para qué sirve:
 
 ```
 proyecto_paradigmas4/
-├── docker-compose.yml           # TODO el sistema declarado: PostgreSQL + API
-│                                #   (el "un solo comando" del proyecto)
+├── docker-compose.yml           # TODO el sistema declarado: tres motores +
+│                                #   la API + el front (el "un solo comando")
 ├── db/
-│   └── init.sql                 # Crea bdfacturas COMPLETA (12 tablas, triggers, datos).
-│                                #   PostgreSQL lo ejecuta solo la PRIMERA vez (volumen vacío)
+│   ├── init.sql                 # bdfacturas COMPLETA en PostgreSQL: 12 tablas,
+│   │                            #   1 disparador, 16 procedimientos y los datos.
+│   │                            #   Se ejecuta solo la PRIMERA vez (volumen vacío)
+│   ├── init_mariadb.sql         # La MISMA base en MariaDB      (para la v5)
+│   ├── bdfacturas_sqlserver.sql # La MISMA base en SQL Server   (para la v5)
+│   └── init_sqlserver.sh        # El arranque de SQL Server, que no carga scripts solo
 │
-├── backupdb/                    # Respaldos (dumps) de la BD — su README explica
-│                                #   cómo hacer el backup y cómo restaurarlo
+├── backupdb/                    # Respaldos (dumps) — su README explica cómo
+│                                #   hacer el backup y cómo restaurarlo
 │
-├── api_facturas/                # LA API DE LA v1 — FastAPI (puerto 8005)
-│   ├── Dockerfile               # Su imagen: python:3.12-slim + requirements
-│   ├── requirements.txt         # Dependencias exactas (fastapi, uvicorn, sqlalchemy, asyncpg)
-│   ├── main.py                  # Crea la app, configura CORS y registra el router
-│   ├── controllers/             # Capa 1 — HTTP: los endpoints de /api/producto
-│   ├── models/                  # Pydantic: un modelo por verbo (Producto,
-│   │                            #   ProductoReemplazo, ProductoActualizar) → los 422
-│   ├── servicios/               # Capa 2 — negocio: servicio + ensamblador (proto-fábrica)
-│   │   └── abstracciones/       #   la interfaz (typing.Protocol) que la capa 1 conoce
-│   ├── repositorios/            # Capa 3 — datos: SQL asíncrono contra PostgreSQL
-│   │   └── abstracciones/       #   la interfaz que la capa 2 conoce
-│   └── pruebas/                 # prueba_capas.py — el criterio 6: el servicio
-│                                #   con un repositorio FALSO, sin PostgreSQL
+├── api_facturas/                # LA API — FastAPI (puerto 8005)
+│   ├── Dockerfile               # Su imagen: python:3.12-slim + el driver ODBC
+│   ├── requirements.txt         # Las dependencias, con el para qué de cada una
+│   ├── main.py                  # Crea la app y registra UN ROUTER POR RECURSO
+│   ├── excepciones.py           # ConflictoError: el 409 no tiene builtin razonable
+│   ├── controllers/             # Capa 1 — HTTP: 15 archivos, uno por recurso,
+│   │                            #   cada uno con su guardia de permisos
+│   ├── models/                  # Pydantic: un modelo POR VERBO (POST/PUT/PATCH)
+│   │                            #   → de ahí salen los 422
+│   ├── servicios/               # Capa 2 — negocio: 15 servicios + el ensamblador
+│   │   └── abstracciones/       #   los contratos (typing.Protocol) que ve la capa 1
+│   ├── repositorios/            # Capa 3 — datos: 42 implementaciones, TRES por
+│   │   └── abstracciones/       #   contrato (PostgreSQL · MariaDB · SQL Server)
+│   ├── autorizacion/            # El control de acceso de la v3:
+│   │                            #   jwt_token.py (firma y lee) +
+│   │                            #   dependencias.py (401 y 403)
+│   └── pruebas/                 # prueba_capas.py — el servicio con un repositorio
+│                                #   FALSO, sin base de datos
 │
-├── postman/                     # La colección de la API (13 peticiones en orden
-│                                #   didáctico) — alternativa a Swagger, con README
+├── front_flask/                 # LA INTERFAZ — Flask + Jinja2 (puerto 8046)
+│   ├── app.py                   # El ensamblador del front: sesión, menú por permisos
+│   ├── cliente_api.py           # El ÚNICO que habla HTTP con la API
+│   ├── entidades.py             # El registro: 10 entidades descritas, no copiadas
+│   ├── rutas_entidades.py       # Las vistas genéricas que usan ese registro
+│   ├── rutas_facturas.py        # La facturación, que NO es un CRUD
+│   ├── rutas_usuarios_roles.py  # El usuario con sus roles, con casillas
+│   ├── rutas_tablero.py         # Las 10 consultas, pedidas EN PARALELO
+│   └── templates/ static/       # Las plantillas y la hoja de marca
+│
+├── postman/                     # La colección de la API — alternativa a Swagger
 │
 ├── docs/
-│   ├── spec_kit/                # LAS ESPECIFICACIONES: constitución permanente +
-│   │                            #   una carpeta de specs por versión (v1, v2, …)
-│   ├── GUIA_IA.md               # Cómo reconstruir la versión desde 0 con ayuda de una IA
-│   ├── FLUJO_DE_UNA_PETICION.md # Dónde "está" el GET y el viaje de una petición por capas
-│   ├── PARADIGMA_POO.md         # Material conceptual: POO (con Pydantic), SOLID+capas,
-│   ├── SOLID_CAPAS_PATRONES.md         #   ACID, Docker y SDD (un .md por tema)
-│   ├── PRINCIPIOS_ACID.md       #
-│   ├── CONCEPTOS_DOCKER.md      #
-│   ├── SDD_SPECKIT.md           #
-│   ├── TUTORIAL_PGADMIN.md      # Tutoriales de administración de la BD, paso a paso
-│   ├── TUTORIAL_VSCODE_SQLTOOLS.md  #   con capturas reales
-│   └── img_pgadmin/ img_sqltools/   # Las capturas de esos tutoriales
+│   ├── DEMOSTRACION_MOTORES.md  # El cambio de motor, paso a paso y medido
+│   ├── spec_kit/                # LAS ESPECIFICACIONES: la constitución permanente
+│   │                            #   + una carpeta por versión (v1_sin_fk … v5)
+│   │                            #   con sus 9 documentos — 47 en total
+│   ├── dominio/                 # 17 documentos del PROYECTO: requisitos, reglas,
+│   │                            #   arquitectura, planes por versión, pendientes,
+│   │                            #   cronograma, marca y elicitación
+│   └── conceptos/               # 25 documentos del CURSO: POO, SOLID, ACID,
+│                                #   Docker, async, pruebas, SDD y los tutoriales
 │
-├── .gitignore / .gitattributes  # Higiene del repo (ignora .venv, .session.sql, EOL)
-└── README.md                    # Este archivo
+├── .gitignore / .gitattributes  # Higiene del repo (ignora .venv, EOL)
 ```
 
 La regla de lectura: **el sistema vive en `docker-compose.yml`**, la API
@@ -240,19 +304,36 @@ rama `sistema-completo`.
 ## 3. La ruta de versiones
 
 ```
-v1  api_facturas: CRUD de producto, solo PostgreSQL   (cerrada: tag v1)
-v2  más tablas: persona, empresa, cliente, vendedor y
-    factura maestro-detalle vía SPs   (cerrada: tag v2)
-v3  segundo motor (MariaDB) — nace la fábrica
-    y el interruptor DB_PROVIDER   (cerrada: tag v3)
-v4  tercer motor (SQL Server) + docker compose
-    completo   ← USTED ESTÁ AQUÍ
-v5  frontend Flask
+v1  sin clave foránea: CRUD de las 6 tablas que no
+    dependen de nadie — y la API y su front
+v2  con clave foránea: las otras 6, el maestro-detalle
+    de la factura por procedimientos, y los puentes
+v3  control de acceso: hash, token, 401 y 403
+    — el permiso lo resuelve la base de datos
+v4  el aplicativo: 10 consultas multitabla, el tablero,
+    la marca y la publicación   ← USTED ESTÁ AQUÍ
+────────────────────────────────────────────────────────
+v5  otros motores: la MISMA API contra MariaDB y
+    SQL Server, cambiando una variable   (se PROYECTA)
 ```
+
+**Cada versión INCLUYE la anterior.** No la reemplaza: la trae adentro, y por
+eso en la v4 siguen funcionando los seis recursos de la v1 — y hay una
+regresión que lo comprueba.
+
+**Y la v5 está debajo de la raya a propósito:** se proyecta, no se dicta. El
+curso cierra en la v4. (En este repositorio los tres motores **ya** están
+escritos y medidos, porque es el ejemplo del profesor; eso es la
+[demostración](docs/DEMOSTRACION_MOTORES.md), no una versión más.)
+
+> **Ojo con los tags `v2`, `v3` y `v4` de este repositorio:** describen un
+> mapa anterior —un motor por versión—. No se mueven, porque un tag es la foto
+> de lo que se entregó ese día. Está explicado en
+> [`CRONOGRAMA.md`](docs/dominio/CRONOGRAMA.md) §4.
 
 La regla del juego: la **constitución** es permanente, cada versión tiene su
 propia spec, y una versión está TERMINADA solo cuando pasa sus criterios de
-aceptación (se cierra con tag). Detalle completo:
+aceptación. Detalle completo:
 **[mapa de versiones](docs/spec_kit/versiones/0_mapa_versiones.md)**.
 
 ## 4. Las especificaciones de la versión actual (v4)
@@ -261,11 +342,11 @@ aceptación (se cierra con tag). Detalle completo:
 |---|---|
 | [Constitución](docs/spec_kit/1_constitution.md) | Las reglas permanentes del proyecto |
 | [2_spec.md](docs/spec_kit/versiones/v4_aplicativo/2_spec.md) | QUÉ construir y los 5 criterios de aceptación |
-| [3_plan.md](docs/spec_kit/versiones/v4_aplicativo/3_plan.md) | CÓMO: el bloque nuevo de la fábrica y el dialecto T-SQL |
+| [3_plan.md](docs/spec_kit/versiones/v4_aplicativo/3_plan.md) | CÓMO: las diez consultas, el tablero y la publicación |
 | [4_research.md](docs/spec_kit/versiones/v4_aplicativo/4_research.md) | Las decisiones y sus alternativas descartadas *(lectura opcional)* |
-| [5_data_model.md](docs/spec_kit/versiones/v4_aplicativo/5_data_model.md) | La MISMA bdfacturas en dialecto SQL Server (la tercera columna) |
-| [6_contracts.md](docs/spec_kit/versiones/v4_aplicativo/6_contracts.md) | CERO endpoints nuevos: el mismo contrato con LOS TRES motores |
-| [7_quickstart.md](docs/spec_kit/versiones/v4_aplicativo/7_quickstart.md) | Arranque y la regresión TRIPLE (tres motores) |
+| [5_data_model.md](docs/spec_kit/versiones/v4_aplicativo/5_data_model.md) | Qué tablas cruza cada consulta — sin tablas nuevas |
+| [6_contracts.md](docs/spec_kit/versiones/v4_aplicativo/6_contracts.md) | Los endpoints de las consultas y su sobre `{consulta, total, datos}` |
+| [7_quickstart.md](docs/spec_kit/versiones/v4_aplicativo/7_quickstart.md) | Arranque, el token y la regresión de las versiones anteriores |
 | [8_tasks.md](docs/spec_kit/versiones/v4_aplicativo/8_tasks.md) | Las fases de construcción, en orden |
 
 ## 5. Material conceptual del curso

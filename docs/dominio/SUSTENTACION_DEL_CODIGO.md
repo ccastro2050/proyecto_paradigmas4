@@ -136,9 +136,9 @@ Select-String -Path api_facturas\Servicios\*.cs `
 
 | Capa | Qué hace |
 |---|---|
-| **Repositorio** | Busca. No encuentra. Devuelve `null`. **No decide nada** |
-| **Servicio** | Ve el `null` y lanza `NoEncontradoExcepcion` — *«esto no existe»*, en lenguaje del **negocio** |
-| **Controlador** | Atrapa esa excepción y responde `StatusCode(404, …)` |
+| **Repositorio** | Busca. No encuentra. Devuelve `None`. **No decide nada** |
+| **Servicio** | Ve el `None` y lanza `LookupError` — *«esto no existe»*, en lenguaje del **negocio** |
+| **Controlador** | Atrapa esa excepción y responde `HTTPException(404, …)` |
 
 > **Y por qué importa tanto esta separación:** porque *«no existe»* es un hecho
 > del negocio y *«404»* es una convención de un protocolo. El día que este
@@ -146,7 +146,7 @@ Select-String -Path api_facturas\Servicios\*.cs `
 > desde una prueba, **el 404 no significa nada** — pero *«no existe»* sigue
 > significando lo mismo.
 >
-> Un servicio que devuelve `NotFound()` solo sirve dentro de una petición HTTP. Y
+> Un servicio que devuelve `HTTPException(404)` solo sirve dentro de una petición HTTP. Y
 > entonces no es una capa: es un pedazo del controlador que se mudó de archivo.
 
 ---
@@ -192,27 +192,43 @@ git diff --stat v4..v5 -- api_facturas/
 
 ---
 
-## 6 · `Producto` y `ProductoCrear` son clases distintas. ¿Qué tiene una que la otra no?
+## 6 · `Producto`, `ProductoReemplazo` y `ProductoActualizar` son tres modelos. ¿Por qué no uno?
 
-```csharp
-// models/Producto.cs — la ENTIDAD: el molde de los objetos que viajan
-public class Producto {
-    public required string Codigo { get; set; }
-    public required string Nombre { get; set; }
-    public int Stock { get; set; }
-    public decimal Valorunitario { get; set; }
-}
+```python
+# La FRONTERA: lo que se acepta de afuera (models/producto.py)
+class Producto(BaseModel):
+    codigo: str = Field(min_length=1, max_length=10)
+    nombre: str = Field(min_length=1, max_length=100)
+    stock: int = Field(ge=0)
+    valorunitario: float = Field(ge=0)
 
-// models/ProductoCrear.cs — la FRONTERA: lo que se acepta de afuera
-public class ProductoCrear {
-    [Required] [StringLength(10, MinimumLength = 1)] public string?  Codigo { get; set; }
-    [Required] [MinLength(1)]                        public string?  Nombre { get; set; }
-    [Required] [Range(0, int.MaxValue)]              public int?     Stock { get; set; }
-    [Required] [Range(0, double.MaxValue)]           public decimal? Valorunitario { get; set; }
-}
+
+# El REEMPLAZO y la ACTUALIZACION PARCIAL son modelos DISTINTOS, y es la
+# misma idea con otra ropa: en el PUT todo es obligatorio; en el PATCH, todo
+# opcional. El tipo dice la semantica del verbo.
+class ProductoReemplazo(BaseModel):
+    nombre: str = Field(min_length=1, max_length=100)
+    stock: int = Field(ge=0)
+    valorunitario: float = Field(ge=0)
+
+
+class ProductoActualizar(BaseModel):
+    nombre: str | None = Field(default=None, min_length=1, max_length=100)
+    stock: int | None = Field(default=None, ge=0)
+    valorunitario: float | None = Field(default=None, ge=0)
 ```
 
-| | `Producto` | `ProductoCrear` |
+> **En Python la «entidad» no existe como clase, y conviene decirlo:** lo que
+> sale de los repositorios son **diccionarios** —la fila tal como la devolvió
+> el motor—. Hay modelo donde hay **frontera de entrada**, porque ahí hay algo
+> que validar; no hay modelo de salida, porque no habría nada que validar y
+> sería una clase por el gusto de tener una.
+>
+> El gemelo .NET del curso **sí** tiene las dos clases, y ahí se ve lo que
+> cada lenguaje cobra: allá el compilador caza una columna mal escrita; aquí
+> llega en silencio hasta la pantalla.
+
+| | `Producto` (POST) | `ProductoActualizar` (PATCH) |
 |---|---|---|
 | Para qué | Lo que **viaja** entre capas | Lo que **se acepta** de afuera |
 | Los tipos | **no admiten nulo** (`required`, `int`) | **todos admiten nulo** (`string?`, `int?`) |
@@ -273,8 +289,8 @@ GET   /api/producto/PRZZZ
 
 ## 8 · Una línea con `await`: ¿qué hace el hilo en ese instante?
 
-```csharp
-var producto = await _repositorio.ObtenerPorCodigoAsync(codigo);
+```python
+producto = await self._repositorio.obtener_por_codigo(codigo)
 ```
 
 **El hilo se va. No espera.**
@@ -333,13 +349,10 @@ var producto = await _repositorio.ObtenerPorCodigoAsync(codigo);
 
 ## 10 · La prueba hueca
 
-```csharp
-[Fact]
-public async Task CrearProducto_Funciona()
-{
-    var resultado = await _servicio.CrearAsync(new ProductoCrear { Codigo = "X" });
-    Assert.NotNull(resultado);
-}
+```python
+async def test_crear_producto_funciona():
+    resultado = await servicio.crear({"codigo": "X"})
+    assert resultado is not None
 ```
 
 **Esa prueba pasa siempre, y no comprueba nada.**
@@ -347,19 +360,16 @@ public async Task CrearProducto_Funciona()
 | Lo que parece | Lo que hace |
 |---|---|
 | «Comprueba que crear un producto funciona» | Comprueba que **el método devolvió algo** |
-| Si se rompe la regla, falla | **No.** `NotNull` pasa con un objeto vacío, con un error envuelto, con cualquier cosa |
+| Si se rompe la regla, falla | **No.** `assert resultado is not None` pasa con un diccionario vacío, con un error envuelto, con cualquier cosa |
 
 **Cómo se arregla:** afirmando **lo que la regla promete**, no que hubo
 respuesta.
 
-```csharp
-[Fact]
-public async Task CrearProducto_ConCodigoRepetido_Responde409()
-{
-    await _servicio.CrearAsync(new ProductoCrear { Codigo = "PR001", /* … */ });
-    await Assert.ThrowsAsync<ConflictoExcepcion>(() =>
-        _servicio.CrearAsync(new ProductoCrear { Codigo = "PR001", /* … */ }));
-}
+```python
+async def test_crear_ruta_repetida_choca():
+    await servicio.crear({"ruta": "/tablero", "descripcion": "x"})
+    with pytest.raises(ConflictoError):
+        await servicio.crear({"ruta": "/tablero", "descripcion": "otra"})
 ```
 
 > **Cómo se reconoce una prueba hueca sin ser experto: tápele el cuerpo al

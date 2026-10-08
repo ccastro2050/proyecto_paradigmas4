@@ -22,14 +22,21 @@
 |---|---|---|---|
 | **200** | Salió bien | el controlador | `GET /api/producto` |
 | **204** | Salió bien y **no hay contenido**: la tabla está vacía | el controlador | `GET /api/empresa` sin empresas |
-| **400** | Los **parámetros** no sirven — una regla de negocio sobre la forma | el **servicio**, con `ArgumentException` | `PATCH /api/producto/PR001` con body `{}` |
-| **401** | **No sé quién es usted** | **todavía nadie**: no hay control de acceso | — |
-| **403** | **Sé quién es, y no puede** | **todavía nadie** | — |
-| **404** | **Eso no existe** | el servicio, con `NoEncontradoExcepcion` | `GET /api/factura/9999` |
+| **400** | Los **parámetros** no sirven — una regla de negocio sobre la forma | el **servicio**, con `ValueError` | `POST /api/ruta` con `{"ruta": "tablero"}` (sin barra) |
+| **401** | **No sé quién es usted** | `usuario_actual`, la dependencia del router | `GET /api/producto` sin cabecera `Authorization` |
+| **403** | **Sé quién es, y no puede** | `exige_permiso`, que le pregunta a `verificar_acceso_ruta` | `GET /api/usuario` con el token de `vendedor1` |
+| **404** | **Eso no existe** | el servicio, con `LookupError` | `GET /api/factura/9999` |
 | **405** | La ruta existe, pero **no con ese verbo** | el enrutador | `PUT /api/factura/3` |
-| **409** | La petición está bien y **choca con el estado** | el servicio, con `ConflictoExcepcion` | anular una factura ya anulada |
+| **409** | La petición está bien y **choca con el estado** | el servicio o el repositorio, con `ConflictoError` | anular una factura ya anulada · crear una `ruta` repetida |
 | **422** | El **body no tiene la forma** pedida | FastAPI, antes del controlador | `POST /api/producto` sin `nombre` |
-| **500** | Algo se rompió, o la base de datos rechazó | el `catch` final | stock insuficiente |
+| **500** | Algo se rompió, o la base de datos rechazó | el `except` final | stock insuficiente · borrar un usuario que todavía tiene roles |
+
+> **Los dos códigos del control de acceso se miden, no se suponen.** Con los
+> tres usuarios sembrados y los tres motores, las nueve celdas dan lo mismo
+> ([`PLAN_V3.md`](PLAN_V3.md) §6). Y hay un detalle de la norma que esta API
+> cumple y casi nadie: el 401 viaja con la cabecera
+> `WWW-Authenticate: Bearer`, que le dice al cliente **cómo** identificarse —
+> no solo que no lo hizo.
 
 ---
 
