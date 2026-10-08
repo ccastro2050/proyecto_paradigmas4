@@ -1,8 +1,15 @@
-fastapi
-uvicorn
-sqlalchemy[asyncio]
-asyncpg
-greenlet
-pydantic
-aiomysql
-aioodbc
+# ======================================================================
+# Lo que la API necesita — y nada mas. Cada linea dice para que esta.
+# ======================================================================
+fastapi                 # el marco web: rutas, validacion y Swagger solo
+uvicorn                 # el servidor ASGI que corre a FastAPI
+sqlalchemy[asyncio]     # SOLO como ejecutor de SQL escrito a mano (text())
+asyncpg                 # driver async de PostgreSQL  — motor de la v1..v4
+greenlet               # lo exige SQLAlchemy async por debajo
+pydantic                # los modelos de entrada (la frontera de la API)
+aiomysql                # driver async de MariaDB     — v5
+aioodbc                 # driver async de SQL Server  — v5 (habla ODBC)
+
+# ---- v3, el control de acceso -----------------------------------------
+bcrypt                  # el hash de la contrasena (costo 12). Nunca texto plano
+pyjwt                   # el token firmado que la API entrega al entrar

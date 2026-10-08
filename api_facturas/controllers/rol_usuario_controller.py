@@ -1,0 +1,195 @@
+"""
+Controller de rol_usuario — la capa HTTP del puente usuario <-> rol.
+
+Traduccion de excepciones (ver 6_contracts.md):
+    body invalido        -> 422 (Pydantic: email mal formado, id no positivo)
+    ValueError           -> 400 (lo que viene EN LA URL)
+    LookupError          -> 404 (la pareja o el usuario no existen)
+    ConflictoError       -> 409 (ya existe, o el usuario o el rol no existen)
+    cualquier otra       -> 500 (error del motor)
+
+El prefijo del recurso es `/api/rol-usuario` —con guion—, aunque la tabla se
+llame `rol_usuario`. No es un descuido: en una URL se estila el guion, y en
+SQL el guion bajo. Cada capa escribe en su idioma, y el repositorio es el
+unico que tiene que saber los dos.
+
+Los cinco verbos estan aqui, y en un puente cada uno significa otra cosa
+—ver la tabla del controller de rutarol, que lo explica en detalle—. Lo
+propio de ESTE puente es el sexto endpoint:
+`PUT /api/rol-usuario/usuario/{email}` manda la lista completa de roles, y
+por debajo no abre una transaccion en Python: llama al procedimiento
+`actualizar_roles_usuario`, que ya hace eso en la base de datos.
+"""
+
+from fastapi import APIRouter, HTTPException
+
+from excepciones import ConflictoError
+from models.rol_usuario import (RolesDeUsuario, RolUsuarioActualizar,
+                                RolUsuarioCrear)
+from servicios.ensamblador import crear_servicio_rol_usuario
+
+router = APIRouter(prefix="/api", tags=["RolUsuario (puente)"])
+
+
+def _error(estado: int, mensaje: str, detalle: str) -> HTTPException:
+    """Arma el sobre de error uniforme {estado, mensaje, detalle}."""
+    return HTTPException(
+        status_code=estado,
+        detail={"estado": estado, "mensaje": mensaje, "detalle": detalle},
+    )
+
+
+# ----------------------------------------------------------------------
+# GET /api/rol-usuario — Listar las parejas, con el nombre del rol
+# ----------------------------------------------------------------------
+@router.get("/rol-usuario")
+async def listar(limite: int = 1000):
+    try:
+        datos = await crear_servicio_rol_usuario().listar(limite)
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    return {"tabla": "rol_usuario", "limite": limite, "total": len(datos),
+            "datos": datos}
+
+
+# ----------------------------------------------------------------------
+# GET /api/rol-usuario/usuario/{email} — Que roles tiene este usuario
+# ----------------------------------------------------------------------
+@router.get("/rol-usuario/usuario/{email}")
+async def listar_por_usuario(email: str):
+    try:
+        datos = await crear_servicio_rol_usuario().listar_por_usuario(email)
+    except ValueError as exc:
+        raise _error(400, "Solicitud invalida.", str(exc)) from exc
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    # Lista vacia NO es 404: el usuario puede existir sin roles todavia.
+    return {"consulta": "roles del usuario", "fkemail": email,
+            "total": len(datos), "datos": datos}
+
+
+# ----------------------------------------------------------------------
+# GET /api/rol-usuario/rol/{id_rol} — Que usuarios tienen este rol
+# ----------------------------------------------------------------------
+@router.get("/rol-usuario/rol/{id_rol}")
+async def listar_por_rol(id_rol: int):
+    try:
+        datos = await crear_servicio_rol_usuario().listar_por_rol(id_rol)
+    except ValueError as exc:
+        raise _error(400, "Solicitud invalida.", str(exc)) from exc
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    return {"consulta": "usuarios del rol", "fkidrol": id_rol,
+            "total": len(datos), "datos": datos}
+
+
+# ----------------------------------------------------------------------
+# POST /api/rol-usuario — Dar un rol a un usuario
+# ----------------------------------------------------------------------
+@router.post("/rol-usuario", status_code=201)
+async def crear(asignacion: RolUsuarioCrear):
+    try:
+        await crear_servicio_rol_usuario().crear(asignacion.fkemail,
+                                                 asignacion.fkidrol)
+    except ValueError as exc:
+        raise _error(400, "Solicitud invalida.", str(exc)) from exc
+    except ConflictoError as exc:
+        raise _error(409, "La asignacion choca con los datos que ya existen.",
+                     str(exc)) from exc
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    return {"mensaje": "Rol asignado.", "fkemail": asignacion.fkemail,
+            "fkidrol": asignacion.fkidrol}
+
+
+# ----------------------------------------------------------------------
+# PUT /api/rol-usuario/usuario/{email} — TODOS los roles, de una vez
+# (va ANTES del PUT de la pareja: la ruta fija primero)
+# ----------------------------------------------------------------------
+@router.put("/rol-usuario/usuario/{email}")
+async def reemplazar_roles_del_usuario(email: str, cuerpo: RolesDeUsuario):
+    try:
+        resultado = await crear_servicio_rol_usuario().reemplazar_roles(
+            email, cuerpo.ids_rol)
+    except ValueError as exc:
+        raise _error(400, "Solicitud invalida.", str(exc)) from exc
+    except LookupError as exc:
+        # Quien decide esto es el procedimiento de la base de datos:
+        # «Usuario % no existe» llega aqui convertido en LookupError.
+        raise _error(404, "No encontrado.", str(exc)) from exc
+    except ConflictoError as exc:
+        raise _error(409, "La lista choca con los datos que ya existen.",
+                     str(exc)) from exc
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    # El procedimiento devuelve {email, roles}: se pasa tal cual, porque es
+    # el estado que quedo —no lo que se pidio—.
+    return {"mensaje": "Roles del usuario reemplazados.", "datos": resultado}
+
+
+# ----------------------------------------------------------------------
+# PUT /api/rol-usuario/{email}/{id_rol} — MOVER la pareja
+# ----------------------------------------------------------------------
+@router.put("/rol-usuario/{email}/{id_rol}")
+async def reemplazar(email: str, id_rol: int, nueva: RolUsuarioCrear):
+    try:
+        await crear_servicio_rol_usuario().reemplazar(
+            email, id_rol, nueva.fkemail, nueva.fkidrol)
+    except ValueError as exc:
+        raise _error(400, "Solicitud invalida.", str(exc)) from exc
+    except LookupError as exc:
+        raise _error(404, "No encontrado.", str(exc)) from exc
+    except ConflictoError as exc:
+        raise _error(409, "La pareja nueva choca con los datos que ya "
+                          "existen.", str(exc)) from exc
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    return {"mensaje": "Asignacion movida.",
+            "antes": {"fkemail": email, "fkidrol": id_rol},
+            "ahora": {"fkemail": nueva.fkemail, "fkidrol": nueva.fkidrol}}
+
+
+# ----------------------------------------------------------------------
+# PATCH /api/rol-usuario/{email}/{id_rol} — mover UN lado
+# ----------------------------------------------------------------------
+@router.patch("/rol-usuario/{email}/{id_rol}")
+async def actualizar(email: str, id_rol: int, cambio: RolUsuarioActualizar):
+    datos = cambio.model_dump(exclude_unset=True)
+    if not datos:
+        raise _error(400, "Solicitud invalida.",
+                     "No se envio ningun lado para mover.")
+    try:
+        await crear_servicio_rol_usuario().reemplazar(
+            email, id_rol,
+            datos.get("fkemail") or email,
+            datos.get("fkidrol") or id_rol)
+    except ValueError as exc:
+        raise _error(400, "Solicitud invalida.", str(exc)) from exc
+    except LookupError as exc:
+        raise _error(404, "No encontrado.", str(exc)) from exc
+    except ConflictoError as exc:
+        raise _error(409, "La pareja nueva choca con los datos que ya "
+                          "existen.", str(exc)) from exc
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    return {"mensaje": "Asignacion actualizada.",
+            "antes": {"fkemail": email, "fkidrol": id_rol},
+            "ahora": {"fkemail": datos.get("fkemail") or email,
+                      "fkidrol": datos.get("fkidrol") or id_rol}}
+
+
+# ----------------------------------------------------------------------
+# DELETE /api/rol-usuario/{email}/{id_rol} — quitar ESE rol
+# ----------------------------------------------------------------------
+@router.delete("/rol-usuario/{email}/{id_rol}")
+async def eliminar(email: str, id_rol: int):
+    try:
+        filas = await crear_servicio_rol_usuario().eliminar(email, id_rol)
+    except ValueError as exc:
+        raise _error(400, "Solicitud invalida.", str(exc)) from exc
+    except Exception as exc:
+        raise _error(500, "Error interno.", str(exc)) from exc
+    if filas == 0:
+        raise _error(404, "No encontrado.",
+                     f"El usuario {email} no tiene el rol {id_rol}.")
+    return {"mensaje": "Rol quitado.", "filas_eliminadas": filas}

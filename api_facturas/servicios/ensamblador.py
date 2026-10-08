@@ -36,6 +36,18 @@ from repositorios.repositorio_persona_postgresql import (
     RepositorioPersonaPostgreSQL,
 )
 from repositorios.repositorio_rol_mariadb import RepositorioRolMariaDB
+from repositorios.repositorio_rol_usuario_mariadb import RepositorioRolUsuarioMariaDB
+from repositorios.repositorio_rol_usuario_postgresql import RepositorioRolUsuarioPostgreSQL
+from repositorios.repositorio_rol_usuario_sqlserver import RepositorioRolUsuarioSqlServer
+from repositorios.repositorio_rutarol_mariadb import RepositorioRutaRolMariaDB
+from repositorios.repositorio_rutarol_postgresql import RepositorioRutaRolPostgreSQL
+from repositorios.repositorio_rutarol_sqlserver import RepositorioRutaRolSqlServer
+from repositorios.repositorio_usuario_mariadb import RepositorioUsuarioMariaDB
+from repositorios.repositorio_usuario_postgresql import RepositorioUsuarioPostgreSQL
+from repositorios.repositorio_usuario_sqlserver import RepositorioUsuarioSqlServer
+from repositorios.repositorio_ruta_mariadb import RepositorioRutaMariaDB
+from repositorios.repositorio_ruta_postgresql import RepositorioRutaPostgreSQL
+from repositorios.repositorio_ruta_sqlserver import RepositorioRutaSqlServer
 from repositorios.repositorio_rol_postgresql import RepositorioRolPostgreSQL
 from repositorios.repositorio_rol_sqlserver import RepositorioRolSqlServer
 from repositorios.repositorio_producto_mariadb import RepositorioProductoMariaDB
@@ -50,6 +62,10 @@ from repositorios.repositorio_vendedor_postgresql import (
 )
 from servicios.abstracciones.i_servicio_cliente import IServicioCliente
 from servicios.abstracciones.i_servicio_rol import IServicioRol
+from servicios.abstracciones.i_servicio_rol_usuario import IServicioRolUsuario
+from servicios.abstracciones.i_servicio_rutarol import IServicioRutaRol
+from servicios.abstracciones.i_servicio_usuario import IServicioUsuario
+from servicios.abstracciones.i_servicio_ruta import IServicioRuta
 from servicios.abstracciones.i_servicio_empresa import IServicioEmpresa
 from servicios.abstracciones.i_servicio_factura import IServicioFactura
 from servicios.abstracciones.i_servicio_persona import IServicioPersona
@@ -57,6 +73,10 @@ from servicios.abstracciones.i_servicio_producto import IServicioProducto
 from servicios.abstracciones.i_servicio_vendedor import IServicioVendedor
 from servicios.servicio_cliente import ServicioCliente
 from servicios.servicio_rol import ServicioRol
+from servicios.servicio_rol_usuario import ServicioRolUsuario
+from servicios.servicio_rutarol import ServicioRutaRol
+from servicios.servicio_usuario import ServicioUsuario
+from servicios.servicio_ruta import ServicioRuta
 from servicios.servicio_empresa import ServicioEmpresa
 from servicios.servicio_factura import ServicioFactura
 from servicios.servicio_persona import ServicioPersona
@@ -78,6 +98,10 @@ _FABRICAS = {
             "vendedor": RepositorioVendedorPostgreSQL,
             "factura": RepositorioFacturaPostgreSQL,
             "rol": RepositorioRolPostgreSQL,
+            "rol_usuario": RepositorioRolUsuarioPostgreSQL,
+            "rutarol": RepositorioRutaRolPostgreSQL,
+            "usuario": RepositorioUsuarioPostgreSQL,
+            "ruta": RepositorioRutaPostgreSQL,
         },
     },
     "mariadb": {
@@ -90,6 +114,10 @@ _FABRICAS = {
             "vendedor": RepositorioVendedorMariaDB,
             "factura": RepositorioFacturaMariaDB,
             "rol": RepositorioRolMariaDB,
+            "rol_usuario": RepositorioRolUsuarioMariaDB,
+            "rutarol": RepositorioRutaRolMariaDB,
+            "usuario": RepositorioUsuarioMariaDB,
+            "ruta": RepositorioRutaMariaDB,
         },
     },
     # v4 — el tercer motor: ESTE bloque es todo lo que costó agregarlo.
@@ -103,6 +131,10 @@ _FABRICAS = {
             "vendedor": RepositorioVendedorSqlServer,
             "factura": RepositorioFacturaSqlServer,
             "rol": RepositorioRolSqlServer,
+            "rol_usuario": RepositorioRolUsuarioSqlServer,
+            "rutarol": RepositorioRutaRolSqlServer,
+            "usuario": RepositorioUsuarioSqlServer,
+            "ruta": RepositorioRutaSqlServer,
         },
     },
 }
@@ -164,3 +196,23 @@ def crear_servicio_factura() -> IServicioFactura:
 def crear_servicio_rol() -> IServicioRol:
     """Arma el servicio de rol con el repositorio del motor activo."""
     return ServicioRol(_crear_repositorio("rol"))
+
+
+def crear_servicio_ruta() -> IServicioRuta:
+    """Arma el servicio de ruta con el repositorio del motor activo."""
+    return ServicioRuta(_crear_repositorio("ruta"))
+
+
+def crear_servicio_usuario() -> IServicioUsuario:
+    """Arma el servicio de usuario con el repositorio del motor activo."""
+    return ServicioUsuario(_crear_repositorio("usuario"))
+
+
+def crear_servicio_rutarol() -> IServicioRutaRol:
+    """Arma el servicio de rutarol con el repositorio del motor activo."""
+    return ServicioRutaRol(_crear_repositorio("rutarol"))
+
+
+def crear_servicio_rol_usuario() -> IServicioRolUsuario:
+    """Arma el servicio de rol_usuario con el repositorio del motor activo."""
+    return ServicioRolUsuario(_crear_repositorio("rol_usuario"))

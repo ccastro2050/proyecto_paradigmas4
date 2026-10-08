@@ -15,7 +15,10 @@ WORKDIR /app
 
 # Primero las dependencias: si no cambian, Docker reutiliza esta capa
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# --default-timeout y --retries: la descarga desde PyPI se corta sola
+# en redes lentas y el build falla por red, no por codigo. Con esto
+# reintenta en vez de rendirse (se midio: pasa de fallar a pasar).
+RUN pip install --no-cache-dir --default-timeout=120 --retries 10 -r requirements.txt
 
 # Después el código (en desarrollo queda tapado por el volumen del compose)
 COPY . .
