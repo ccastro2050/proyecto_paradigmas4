@@ -12,10 +12,22 @@ no tiene Swagger y depende de su colección).
 1. Instale **Postman** (postman.com/downloads). Si le pide cuenta, puede
    usar la opción de cliente ligero sin registrarse.
 2. **Import** (botón arriba a la izquierda) → arrastre el archivo
-   `coleccion_v2.postman_collection.json` de esta carpeta (acumulativa:
-   trae la v1 y la v2 — igual que el proyecto).
-3. Con el proyecto corriendo (`docker compose up -d`), abra cualquier
-   petición y dele **Send**.
+   `coleccion_v4.postman_collection.json` de esta carpeta (acumulativa:
+   trae de la v1 a la v4 — igual que el proyecto).
+3. Con el proyecto corriendo (`docker compose up -d`), abra la carpeta
+   **«0 · ENTRAR»** y dele **Send** a *«1 · Entrar como admin»*.
+4. Ya está: abra cualquier otra petición y dele **Send**.
+
+> ### El paso 3 no es opcional, y conviene entender por qué
+>
+> Desde la v3 la API está **cerrada**: sin token responde **401**. La
+> colección trae la autenticación puesta a nivel de **colección** —`Bearer
+> {{token}}`— y la petición de entrar guarda el token en esa variable con un
+> script. O sea: se le da Send **una vez** y las otras 55 funcionan sin
+> copiar ni pegar nada.
+>
+> Si de pronto todo empieza a responder 401, el token venció (dura 60
+> minutos): vuelva a darle Send a esa primera petición.
 
 ## El orden cuenta una historia
 
