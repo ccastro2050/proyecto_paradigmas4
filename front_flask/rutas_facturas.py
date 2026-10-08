@@ -37,6 +37,21 @@ import cliente_api
 bp = Blueprint("facturas", __name__)
 
 
+def _exigir_permiso():
+    """Sin sesion, al login; con sesion y sin el permiso, al inicio.
+
+    CORTESIA, NO PROTECCION —hay que repetirlo—: la proteccion es el 401 y el
+    403 que responde la API en cada peticion. Esto solo evita que la persona
+    se encuentre un error crudo donde deberia haber una explicacion.
+    """
+    if "usuario" not in session:
+        return redirect(url_for("login"))
+    if "/factura" not in session.get("permisos", []):
+        flash("Su rol no tiene permiso para esa seccion.", "error")
+        return redirect(url_for("inicio"))
+    return None
+
+
 def _borrador():
     """El maestro y los renglones a medio armar."""
     return session.setdefault("borrador_factura",
@@ -76,9 +91,9 @@ def _opciones():
 @bp.route("/facturas")
 def lista():
     """La TABLA de facturas. El formulario vive en /facturas/nueva."""
-    # v3: aqui vuelve la comprobacion de sesion
-    # if "usuario" not in session:
-    #     return redirect(url_for("login"))
+    ida = _exigir_permiso()
+    if ida:
+        return ida
     ok, facturas, errores = cliente_api.listar_facturas()
     for e in errores:
         flash(e, "error")
@@ -93,9 +108,9 @@ def crear():
     botón que se pulsó — que es como se hacía en HTML mucho antes de que
     hubiera componentes.
     """
-    # v3: aqui vuelve la comprobacion de sesion
-    # if "usuario" not in session:
-    #     return redirect(url_for("login"))
+    ida = _exigir_permiso()
+    if ida:
+        return ida
 
     clientes, vendedores, productos = _opciones()
     precios = {p["codigo"]: p for p in productos}
@@ -171,9 +186,9 @@ def crear():
 
 @bp.route("/facturas/<int:numero>")
 def detalle(numero):
-    # v3: aqui vuelve la comprobacion de sesion
-    # if "usuario" not in session:
-    #     return redirect(url_for("login"))
+    ida = _exigir_permiso()
+    if ida:
+        return ida
     ok, factura, errores = cliente_api.obtener_factura(numero)
     if not ok:
         for e in errores:
@@ -190,9 +205,9 @@ def anular(numero):
     el procedimiento DEVUELVE EL STOCK de cada renglón. Un DELETE haría
     desaparecer el documento y dejaría el inventario descuadrado.
     """
-    # v3: aqui vuelve la comprobacion de sesion
-    # if "usuario" not in session:
-    #     return redirect(url_for("login"))
+    ida = _exigir_permiso()
+    if ida:
+        return ida
     ok, errores = cliente_api.anular_factura(numero)
     flash("Factura %s anulada — el stock se restauró." % numero if ok
           else " ".join(errores), "exito" if ok else "error")

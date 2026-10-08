@@ -40,17 +40,18 @@ def _config(clave):
     cfg = ENTIDADES.get(clave)
     if cfg is None:
         abort(404)
-    # ========================================================
-    # APAGADO: el control de acceso todavia no esta construido. La API no
-    # expone POST /api/sesion ni responde 401, asi que exigir sesion aqui
-    # mandaria a un login que no puede funcionar.
-    # Al construirlo se descomentan estas cinco lineas.
-    # ========================================================
-    # if "usuario" not in session:
-    #     abort(redirect(url_for("login")))
-    # if cfg.get("permiso") and cfg["permiso"] not in session.get("permisos", []):
-    #     flash("Su rol no tiene permiso para esa seccion.", "error")
-    #     abort(redirect(url_for("inicio")))
+    # Sin sesion, al login. Y con sesion pero sin el permiso, de vuelta al
+    # inicio con un mensaje — en vez de dejar que la persona vea una pantalla
+    # que la API va a rechazar con 403 peticion por peticion.
+    #
+    # Insistiendo, porque es la confusion mas comun de esta version: esto NO
+    # protege nada. Es amabilidad. Quien quite la cookie y pida el endpoint
+    # directo recibe 401 de la API; quien tenga token sin permiso recibe 403.
+    if "usuario" not in session:
+        abort(redirect(url_for("login")))
+    if cfg.get("permiso") and cfg["permiso"] not in session.get("permisos", []):
+        flash("Su rol no tiene permiso para esa seccion.", "error")
+        abort(redirect(url_for("inicio")))
     return cfg
 
 

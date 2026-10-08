@@ -31,6 +31,9 @@ def _exigir_sesion():
     proteccion es el 401 de la API."""
     if "usuario" not in session:
         return redirect(url_for("login"))
+    if "/usuario" not in session.get("permisos", []):
+        flash("Su rol no tiene permiso para esa seccion.", "error")
+        return redirect(url_for("inicio"))
     return None
 
 

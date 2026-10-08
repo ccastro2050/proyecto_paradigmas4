@@ -44,10 +44,18 @@
     <div class="collapse navbar-collapse" id="menuPrincipal">
         <div class="navbar-nav flex-wrap me-auto">
             <a class="nav-link" href="{{ url_for('inicio') }}">Inicio</a>
-            {# v4 — el tablero va PRIMERO: es lo que se mira al entrar. #}
+            {# v4 — el tablero va PRIMERO: es lo que se mira al entrar.
+               Y los tres, como el resto del menu, solo si quien entro tiene
+               el permiso. `tiene()` lo pone el context processor de app.py. #}
+            {% if tiene("/home") %}
             <a class="nav-link" href="{{ url_for('tablero.tablero') }}"><strong>Tablero</strong></a>
-        <a class="nav-link" href="{{ url_for('facturas.lista') }}"><strong>Facturas</strong></a>
-        <a class="nav-link" href="{{ url_for('usuarios_roles.lista') }}">Usuarios y roles</a>
+            {% endif %}
+            {% if tiene("/factura") %}
+            <a class="nav-link" href="{{ url_for('facturas.lista') }}"><strong>Facturas</strong></a>
+            {% endif %}
+            {% if tiene("/usuario") %}
+            <a class="nav-link" href="{{ url_for('usuarios_roles.lista') }}">Usuarios y roles</a>
+            {% endif %}
             {# El menu se arma con los PERMISOS de quien entro. Y ojo: esconder
                una entrada NO protege nada — quien escriba la direccion a mano
                llega igual, y lo que lo para es el 403 de la API. #}
@@ -65,8 +73,7 @@
     </div>
     {% else %}
     <div class="ms-auto">
-        {# El boton vuelve con la v3: hoy la API no expone POST /api/sesion. #}
-        <span class="badge text-bg-light text-dark">sin control de acceso todavía</span>
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('login') }}">Entrar</a>
     </div>
     {% endif %}
   </div>

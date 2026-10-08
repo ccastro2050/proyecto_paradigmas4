@@ -38,9 +38,9 @@ hablan del mismo nombre, y la base de datos es la que manda.
 # El id del rol Administrador, como lo siembra la base.
 ID_ROL_ADMINISTRADOR = 1
 
-# Solo las entidades cuyo endpoint EXISTE hoy en la API.
-# Las otras cinco —rol, ruta, usuario, rol_usuario y rutarol— llegan con la
-# v2 y la v3; declararlas aqui ahora seria ofrecer pantallas que dan 404.
+# LAS DIEZ ENTIDADES, todas con su endpoint construido en la API. El `desde`
+# dice en que version aparecio cada una: 1 las que no tienen foranea, 2 las
+# que si, 3 las del control de acceso.
 ENTIDADES = {
     "producto": dict(descripcion="Código, nombre, stock y valor unitario", desde=1, url="productos", titulo="Productos", endpoint="/api/producto", pk="codigo",
         permiso="/producto",
@@ -64,6 +64,18 @@ ENTIDADES = {
         permiso="/rol",
         campos=[("nombre", "Nombre", None)],
         editable=True, pk_generada=True),
+    "ruta": dict(descripcion="Las interfaces y acciones protegibles", desde=3, url="rutas", titulo="Rutas", endpoint="/api/ruta", pk="id",
+        permiso="/ruta",
+        campos=[("ruta", "Ruta", None), ("descripcion", "Descripción", None)],
+        editable=True, pk_generada=True),
+    # `usuario` es la unica cuya llave primaria NO es generada y ES un texto:
+    # el POST la lleva. Y `ocultar_en_lista` no es cosmetica — la API NUNCA
+    # devuelve la contrasena, asi que la columna saldria vacia y haria pensar
+    # que no hay ninguna puesta.
+    "usuario": dict(descripcion="Quiénes pueden entrar al sistema", desde=3, url="usuarios", titulo="Usuarios", endpoint="/api/usuario", pk="email",
+        permiso="/usuario",
+        campos=[("email", "Email", None), ("contrasena", "Contraseña", None)],
+        editable=True, ocultar_en_lista=["contrasena"]),
     "cliente": dict(descripcion="Con su persona y su empresa, elegidas de un desplegable", desde=2, url="clientes", titulo="Clientes", endpoint="/api/cliente", pk="id",
         permiso="/cliente",
         campos=[("credito", "Crédito", None),
@@ -75,4 +87,20 @@ ENTIDADES = {
         campos=[("carnet", "Carnet", None), ("direccion", "Dirección", None),
                 ("fkcodpersona", "Persona", "persona")],
         editable=True, pk_generada=True),
+    # ── LAS DOS PUENTE: `pk=None` y `puente=[...]` ───────────────────────
+    # No tienen llave propia: su identidad son LAS DOS columnas, y por eso
+    # `editable=False` —no hay ficha que editar, hay parejas que se agregan y
+    # se quitan— y el borrado pide las dos.
+    #
+    # Y junto a «Usuarios y roles» (/usuarios-con-roles) estan la misma
+    # relacion vista de dos maneras: aqui pareja por pareja, alla el juego
+    # completo con casillas. Verlas al lado es el punto.
+    "rol_usuario": dict(descripcion="La tabla puente, pareja a pareja", desde=3, url="rol-usuario", titulo="Roles por usuario", endpoint="/api/rol-usuario",
+        pk=None, permiso="/usuario",
+        campos=[("fkemail", "Usuario", "usuario"), ("fkidrol", "Rol", "rol")],
+        editable=False, puente=["fkemail", "fkidrol"]),
+    "rutarol": dict(descripcion="Qué rol entra a qué interfaz", desde=3, url="ruta-rol", titulo="Permisos por rol", endpoint="/api/rutarol",
+        pk=None, permiso="/permiso",
+        campos=[("fkidruta", "Interfaz o acción", "ruta"), ("fkidrol", "Rol", "rol")],
+        editable=False, puente=["fkidruta", "fkidrol"]),
 }

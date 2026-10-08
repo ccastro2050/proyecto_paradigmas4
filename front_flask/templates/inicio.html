@@ -22,13 +22,14 @@
 <div class="alert alert-warning d-flex align-items-start gap-2" role="alert">
     <div>
         <strong>Todavía no pide identificarse, y es a propósito.</strong>
-        El control de acceso —contraseña con hash, sesión con token, 401 y
-        403— <strong>es parte de esta versión y todavía no está
-        construido</strong>: la API atiende a cualquiera que llegue al 8005.
+        El control de acceso <strong>está construido</strong>: la contraseña
+        se guarda con hash bcrypt, la sesión viaja en un token firmado, y la
+        API responde <strong>401</strong> sin token y <strong>403</strong>
+        sin permiso —preguntándole a la base de datos en cada petición—.
         <br>
-        El código del login está escrito y <strong>comentado</strong> en
-        <code>app.py</code> y en las rutas, con la nota de dónde se vuelve a
-        encender. Lo que falta no es esta pieza: es el otro lado.
+        Lo que usted ve en el menú son sus permisos, y conviene saber que
+        <strong>esconder una entrada no protege nada</strong>: si escribe la
+        dirección a mano, lo que lo para es el 403 de la API, no este menú.
     </div>
 </div>
 
@@ -65,7 +66,9 @@
   {% if delaversion or sueltasv %}
   <h3 class="h6 text-body-secondary text-uppercase small mb-3">{{ encabezado }}</h3>
   <div class="row g-3 mb-4">
-      {% for ruta, titulo, _, descripcion in sueltasv %}
+      {# cinco datos por tarjeta: ruta, titulo, version, descripcion
+         y el permiso —que ya filtro app.py, aqui se ignora—. #}
+      {% for ruta, titulo, _, descripcion, _permiso in sueltasv %}
       {{ tarjeta(ruta, titulo, descripcion) }}
       {% endfor %}
       {% for clave, e in delaversion %}

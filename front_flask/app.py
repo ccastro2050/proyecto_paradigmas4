@@ -50,10 +50,14 @@ app.register_blueprint(bp_facturas)
 # Las tarjetas del inicio que NO salen del registro, porque no son
 # un CRUD de campos: la factura se emite y se anula, el usuario con sus
 # roles viaja con casillas, y el tablero no tiene tabla.
+# El cuarto elemento es EL PERMISO, igual que en `entidades.py`: estas tres
+# tambien se esconden si quien entro no lo tiene. Antes salian para todos, y
+# era una incoherencia a la vista: el menu ofrecia lo que la API iba a
+# rechazar con 403.
 TARJETAS_SUELTAS = [
-    ("/tablero", "Tablero", 4, "Diez consultas que cruzan cuatro o más tablas"),
-    ("/facturas", "Facturas", 2, "Maestro-detalle: la factura y sus renglones, en un solo envío"),
-    ("/usuarios-con-roles", "Usuarios y roles", 3, "El usuario y sus roles, con casillas"),
+    ("/tablero", "Tablero", 4, "Diez consultas que cruzan cuatro o más tablas", "/home"),
+    ("/facturas", "Facturas", 2, "Maestro-detalle: la factura y sus renglones, en un solo envío", "/factura"),
+    ("/usuarios-con-roles", "Usuarios y roles", 3, "El usuario y sus roles, con casillas", "/usuario"),
 ]
 
 
@@ -81,9 +85,14 @@ def menu():
     permitidas = session.get("permisos", [])
     visibles = {clave: entidad for clave, entidad in ENTIDADES.items()
                 if entidad.get("permiso") in permitidas}
+    sueltas = [t for t in TARJETAS_SUELTAS if t[4] in permitidas]
     return {"menu_entidades": visibles, "hay_sesion": "usuario" in session,
             "usuario_actual": session.get("usuario"),
-            "roles_actuales": session.get("roles", []), "tarjetas_sueltas": TARJETAS_SUELTAS}
+            "roles_actuales": session.get("roles", []),
+            "tarjetas_sueltas": sueltas,
+            # Para que las plantillas puedan preguntar por un permiso suelto
+            # sin repetir la lista: `tiene("/factura")`.
+            "tiene": lambda ruta: ruta in permitidas}
 
 
 def login_requerido(vista):

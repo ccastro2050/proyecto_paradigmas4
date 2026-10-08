@@ -67,6 +67,9 @@ def tablero():
     """
     if "usuario" not in session:
         return redirect(url_for("login"))
+    if "/home" not in session.get("permisos", []):
+        flash("Su rol no tiene permiso para el tablero.", "error")
+        return redirect(url_for("inicio"))
 
     # Se lee UNA vez, en el hilo de la peticion, y viaja como argumento.
     token = session.get("token")
