@@ -89,7 +89,7 @@ Para que el próximo no tenga que creer:
 | Qué se comprobó | Con qué |
 |---|---|
 | Los 15 controllers de la API | `ls api_facturas/controllers/*_controller.py` |
-| Las 45 rutas y 91 operaciones | `curl -s localhost:8005/openapi.json` y contarlas |
+| Las 45 rutas y 85 operaciones | `curl -s localhost:8005/openapi.json` y contarlas |
 | Que el control de acceso funciona | Entrar como `admin`, `vendedor1` y `cliente1` y pedir cinco rutas con cada token: 200 y 403 donde toca |
 | Que el permiso NO está en el token | Con un token ya emitido: 403 → el admin concede la ruta → **200 sin volver a entrar** → el admin la quita → 403 |
 | Que la base SÍ tenía los procedimientos | `grep -c 'CREATE OR REPLACE PROCEDURE' db/init.sql` → **16** |

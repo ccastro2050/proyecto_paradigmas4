@@ -23,7 +23,7 @@
 | El **tablero** que las muestra todas en una página | `localhost:8046/tablero` |
 | `usuario-con-roles`: el usuario y sus roles **en un envío** | `POST /api/usuario-con-roles` con `{"email", "contrasena", "roles":[2,3]}` |
 | Las **14 pantallas** del front, una por recurso | El menú, con sesión de `admin` |
-| La API cerrada: **45 rutas, 91 operaciones**, 89 con permiso | `curl localhost:8005/openapi.json` |
+| La API cerrada: **45 rutas, 85 operaciones**, 83 con permiso | `curl localhost:8005/openapi.json` |
 
 ---
 

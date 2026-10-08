@@ -36,7 +36,12 @@ class RolUsuarioCrear(BaseModel):
 
 
 class RolUsuarioActualizar(BaseModel):
-    """Para el PATCH: llega SOLO el lado que se mueve."""
+    """Para el PATCH, que esta APAGADO: llega SOLO el lado que se mueve.
+
+    Se queda escrito aunque su endpoint no este en la API: el contrato de
+    la v3 declara cinco endpoints para esta puente y el PATCH no es uno
+    —la explicacion esta en el controller—.
+    """
 
     fkemail: str | None = Field(default=None, max_length=100,
                                 pattern=FORMA_EMAIL)
@@ -44,7 +49,12 @@ class RolUsuarioActualizar(BaseModel):
 
 
 class RolesDeUsuario(BaseModel):
-    """PUT /api/rol-usuario/usuario/{email} — los roles de un usuario, de una vez.
+    """Para el PUT de la lista completa de roles, que esta APAGADO aqui.
+
+    Y apagarlo no le quita nada al sistema, porque esa operacion SI existe
+    en el contrato: `PUT /api/usuario-con-roles/{email}` hace exactamente
+    esto, y es la que usa la pantalla de casillas. La misma relacion, dos
+    recursos, **un solo sitio donde se escribe**.
 
     Es la operacion que usa una pantalla de administracion: se marcan los
     roles y se guarda una sola vez. La base de datos ya tiene el

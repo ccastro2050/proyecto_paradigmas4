@@ -16,7 +16,7 @@ desde cero** en su propio proyecto.
 | | Cuánto | Dónde se ve |
 |---|---|---|
 | **La base de datos** | 12 tablas · 1 disparador · 16 procedimientos | `db/init.sql` |
-| **La API** | 15 controladores · **45 rutas, 91 operaciones** | http://localhost:8005/docs |
+| **La API** | 15 controladores · **45 rutas, 85 operaciones** | http://localhost:8005/docs |
 | **Las tres capas** | 15 servicios + 15 contratos · **42 repositorios** + 14 contratos | `api_facturas/` |
 | **El control de acceso** | token firmado · 401 y 403 en cada petición | `api_facturas/autorizacion/` |
 | **Las consultas de la v4** | **10**, cada una cruzando 4 o 5 tablas | http://localhost:8046/tablero |

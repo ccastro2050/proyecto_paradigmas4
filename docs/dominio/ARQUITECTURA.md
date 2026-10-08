@@ -188,8 +188,8 @@ contar, y conviene hacerlo:
 > inyección de dependencias deja hacer sin esfuerzo.
 
 Y lo que la API expone, contado del propio `/openapi.json` —no de memoria—:
-**45 rutas y 91 operaciones** repartidas en 16 etiquetas. Dos están abiertas
-(el diagnóstico y `POST /api/sesion/entrar`); las otras 89 exigen token, y
+**45 rutas y 85 operaciones** repartidas en 16 etiquetas. Dos están abiertas
+(el diagnóstico y `POST /api/sesion/entrar`); las otras 83 exigen token, y
 además permiso.
 
 ---

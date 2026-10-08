@@ -67,7 +67,7 @@ navegador. Daría el mismo número **a veces**, y falla por tres lados:
 
 | | Criterio | Cómo se comprueba |
 |---|---|---|
-| **1** | Los endpoints de v1–v3 responden igual | La **regresión**: el smoke test de las tres versiones anteriores, completo. Son **75 de las 91 operaciones** que la API expone hoy; las otras 16 son las que agrega esta versión |
+| **1** | Los endpoints de v1–v3 responden igual | La **regresión**: el smoke test de las tres versiones anteriores, completo. Son **69 de las 85 operaciones** que la API expone hoy; las otras 16 son las que agrega esta versión |
 | **2** | Las diez consultas responden **200** con el sobre `{consulta, total, datos}` | [7_quickstart.md](7_quickstart.md) §2, una por una |
 | **3** | Cada una cruza **4 tablas o más** | Se lee el SQL del repositorio y se cuentan los `JOIN` |
 | **4** | Las diez exigen **token y permiso** | Sin token: 401. Con un rol sin `/home`: 403 |

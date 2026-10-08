@@ -197,37 +197,59 @@ interfaces-sin-usuarios
 
 ## 6. Los cinco verbos, recurso por recurso
 
-Esto es lo que de verdad publica la API, contado de `swagger.json`:
+Esto es lo que de verdad publica la API, contado del propio
+`/openapi.json` — **45 rutas y 85 operaciones**:
 
 | Recurso | GET | POST | PUT | PATCH | DELETE |
 |---|---|---|---|---|---|
 | `producto` · `persona` · `empresa` · `cliente` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `vendedor` · `usuario` · `rol` · `ruta` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `factura` | ✅ | ✅ | 🔸 | 🔸 | 🔸 |
+| `vendedor` · `rol` · `ruta` · `usuario` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `usuario-con-roles` | ✅ | ✅ | ✅ | ✅ | ✅ |
 | `rol-usuario` · `rutarol` | ✅ | ✅ | 🔸 | 🔸 | ✅ |
-| `usuario-con-roles` | ✅ | ✅ | ✅ | 🔸 | ✅ |
-| `sesion` | 🔸 | ✅ | 🔸 | 🔸 | 🔸 |
-| `permisos` | 🔸 | 🔸 | 🔸 | 🔸 | ✅ |
+| `factura` | ✅ | ✅ | — | — | — |
+| `sesion` | ✅ | ✅ | — | — | ✅ |
+| `permisos` | ✅ | — | — | — | — |
 | `consultas` | ✅ | — | — | — | — |
 
-**✅ activo · 🔸 escrito y apagado · — no aplica**
+**✅ activo · 🔸 escrito y apagado · — no existe**
 
-> **Las 🔸 NO son huecos: son código escrito, comentado y explicado.** Ocho
-> recursos tienen los cinco verbos vivos; los demás tienen el verbo **escrito
-> en el controlador, apagado con un comentario que dice por qué**, y con el
-> servicio y el repositorio **activos** debajo. Encenderlo es quitar las barras.
->
-> Son **19 métodos**, y están así a propósito: esto es material de clase, y un
-> estudiante tiene que poder ver **cómo se programa cada verbo**, incluso el que
-> esta versión del spec no pide. Borrarlos enseñaría solo a obedecer un spec;
-> dejarlos apagados enseña a obedecerlo **y** a programar lo que no pide.
+### Los nueve recursos con los cinco verbos vivos
 
-| Y por qué están apagados | Cuáles |
+Nueve de los catorce tienen el CRUD completo, y eso es lo normal: una entidad
+con campos sueltos se crea, se reemplaza, se modifica en parte y se borra.
+
+### Las 🔸 NO son huecos: son código escrito, comentado y explicado
+
+Son **seis métodos** —tres en cada tabla puente—, y están así a propósito:
+esto es material de clase, y un estudiante tiene que poder ver **cómo se
+programa cada verbo**, incluso el que el contrato de esta versión no pide.
+Borrarlos enseñaría solo a obedecer un contrato; dejarlos apagados enseña a
+obedecerlo **y** a programar lo que no pide.
+
+El servicio y el repositorio que están debajo **sí están activos**, y eso
+también es parte de la lección: **la capa de negocio puede saber hacer cosas
+que la API decide no ofrecer.** Encender el endpoint es quitar las
+almohadillas, nada más.
+
+| Cuáles | Por qué están apagados |
 |---|---|
-| El recurso **no se modifica, se anula** | `PUT`/`PATCH`/`DELETE` de `factura` |
-| En una tabla puente, «actualizar» es **mover la fila**: borrar y crear | `PUT`/`PATCH` de `rol-usuario` y `rutarol` |
-| Una sesión **no se edita**: se abre y se deja vencer | todo lo demás de `sesion` |
-| El reparto de permisos lo hace la pantalla con `GET` y `DELETE` | el resto de `permisos` |
+| `PUT` y `PATCH` de la pareja, en `rol-usuario` y `rutarol` | En una tabla puente las dos columnas **SON** la llave: no hay campo suelto que modificar, y una pareja existe o no existe. «Actualizar» solo puede significar MOVER la fila —borrar una e insertar otra—, y eso ya se hace con el `DELETE` y el `POST` que sí están |
+| El `PUT` de la **lista completa** (`/rutarol/rol/{id}` y `/rol-usuario/usuario/{email}`) | Porque esa operación **sí existe en el contrato, en otro recurso**: `PUT /api/usuario-con-roles/{email}` manda el juego completo de roles y es la que usa la pantalla de casillas. La misma relación, dos recursos, **un solo sitio donde se escribe** |
+
+> **Y los seis son los mismos seis que están apagados en el gemelo .NET del
+> curso.** Las dos versiones del sistema exponen el **mismo** contrato, y eso
+> no es casualidad: es el requisito. Si una ofreciera un endpoint que la otra
+> no, compararlas dejaría de enseñar lo que tiene que enseñar — que lo que
+> cambia es el stack, no la API.
+
+### Las — son otra cosa: ahí no hay código
+
+| Cuáles | Por qué no existen |
+|---|---|
+| `PUT` · `PATCH` · `DELETE` de `factura` | **Una factura no se edita: se emite y se anula.** Anular cambia el estado y devuelve el stock; borrarla haría imposible la consulta de anulaciones de la v4 —y una factura borrada no se puede auditar—. La base de datos **sí** trae `sp_actualizar_factura_y_productosporfactura` y `sp_borrar_…`: el contrato del repositorio declara **cuatro** operaciones y no los llama. **Lo que la base de datos puede hacer no es lo que la API tiene que ofrecer** |
+| `PUT` · `PATCH` de `sesion` | Una sesión no se modifica. Se abre (`POST /entrar`), se consulta (`GET`), se renueva (`POST /renovar`) y se cierra (`DELETE`) |
+| Todo lo que no es `GET` en `permisos` | Ese recurso **solo informa**: las rutas de quien pregunta, para pintar el menú. Repartir permisos es `rutarol`, que para eso tiene sus cinco |
+| Todo lo que no es `GET` en `consultas` | Un reporte se lee. No se crea ni se borra |
 | El login llama al **servicio**, no a la API | `POST /api/usuario/verificar-contrasena` |
 
 ---

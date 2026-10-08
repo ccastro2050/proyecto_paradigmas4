@@ -591,7 +591,7 @@
           }
         },
         {
-          "name": "Puente: los roles de un usuario, de una vez",
+          "name": "Puente: el PUT de la pareja esta APAGADO (-> 405)",
           "request": {
             "method": "PUT",
             "header": [
@@ -600,12 +600,30 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{base}}/api/rol-usuario/usuario/admin@correo.com",
-            "description": "Manda el juego COMPLETO de roles. Por debajo llama al procedimiento `actualizar_roles_usuario`, que ya existia: si la base de datos lo tiene, la API lo llama.",
+            "url": "{{base}}/api/rol-usuario/admin@correo.com/1",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"ids_rol\": [\n    1\n  ]\n}"
-            }
+              "raw": "{\n  \"fkemail\": \"admin@correo.com\",\n  \"fkidrol\": 2\n}"
+            },
+            "description": "405, y es lo correcto: el contrato de la v3 declara CINCO endpoints para esta puente —listar, por cada lado, crear y quitar— y el PUT no es uno de ellos.\n\nEn una tabla puente las dos columnas SON la llave: no hay un campo suelto que modificar, y una pareja existe o no existe. Mover una pareja se hace con el DELETE y el POST que si estan.\n\nEl codigo del PUT esta ESCRITO y comentado al final de rutarol_controller.py, con la explicacion: hay dos cosas que aprender —como se programa el verbo, y que una API no lleva todos los verbos en todos los recursos—.\n\n405 y no 404: la RUTA existe con otro verbo. Lo decide el enrutador de FastAPI, no el controlador."
+          }
+        },
+        {
+          "name": "Los roles de un usuario, de una vez (el contrato SI la trae)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/usuario-con-roles/admin@correo.com",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roles\": [\n    1\n  ]\n}"
+            },
+            "description": "Esta es la operacion de la lista completa, y vive en `usuario-con-roles`, no en la puente.\n\nPor debajo llama al procedimiento `actualizar_usuario_con_roles`: si la base de datos ya tiene el procedimiento, la API lo llama.\n\nY la contrasena no viaja: cuando no llega, el procedimiento no la toca. Cambiar un rol no puede obligar a reescribir la clave."
           }
         },
         {
