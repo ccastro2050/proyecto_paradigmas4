@@ -150,5 +150,5 @@ que el manual existe para impedir.
 | Qué | Dónde |
 |---|---|
 | Los valores, como variables | [`marca.css`](../../front_flask/static/marca.css) |
-| Qué pide la versión 4 sobre la marca | el `2_spec.md` de `v4_aplicativo` |
+| Qué pide la versión sobre la marca | el [mapa de versiones](../spec_kit/versiones/0_mapa_versiones.md) |
 | Por qué el contraste se calcula y no se opina | [`CONCEPTOS_IDENTIDAD_VISUAL.md`](../conceptos/CONCEPTOS_IDENTIDAD_VISUAL.md) |
