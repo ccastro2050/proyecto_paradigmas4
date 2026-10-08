@@ -1384,16 +1384,66 @@ INSERT INTO ruta (ruta, descripcion) VALUES
 (N'/ruta/crear', N'Crear ruta (POST)'),
 (N'/ruta/eliminar', N'Eliminar ruta (POST)');
 
--- Usuarios
+-- ============================================================
+-- USUARIOS: LAS CONTRASENAS CON HASH, Y SE SABEN CUALES SON
+--
+-- Dos reglas, y la segunda es la que suele faltar:
+--
+--   1. NINGUNA fila guarda texto legible. La columna es VARCHAR(200) —y no
+--      20— precisamente porque un hash de bcrypt ocupa 60 caracteres.
+--
+--   2. Las contrasenas en claro estan ESCRITAS EN LA DOCUMENTACION, porque
+--      del hash no se puede volver a la clave —eso es lo que lo hace un
+--      hash—. Sin saberlas no hay forma de iniciar sesion, y sin iniciar
+--      sesion no se comprueba un solo criterio del control de acceso.
+--
+-- EL HASH ES BCRYPT CON COSTO 12. El `$2b$12$` del principio lo dice: `2b`
+-- es la variante y `12` el costo. Subir el costo a 13 duplica el tiempo de
+-- calculo — y es para lo que se diseno bcrypt: para encarecerlo cuando las
+-- maquinas sean mas rapidas, sin cambiar de funcion.
+--
+-- Y CADA HASH ES DISTINTO AUNQUE LA CLAVE SEA LA MISMA. Los dos usuarios de
+-- carlos.castro comparten contrasena y sus hash no se parecen: bcrypt trae
+-- SALT incorporado. Sin el, dos hash iguales delatarian que esas dos
+-- personas usan la misma clave.
+--
+-- Las contrasenas en claro, para las pruebas (7_quickstart.md):
+--
+--   admin@correo.com                      admin123       Administrador
+--   vendedor1@correo.com                  vendedor123    Vendedor + Cajero
+--   jefe@correo.com                       jefe123        Administrador + Cajero + Contador
+--   cliente1@correo.com                   cliente123     Cliente
+--   test_encript@correo.com               test123        Administrador
+--   nuevo@correo.com                      nuevo123       Administrador + Vendedor + Cajero
+--   carlos.castro@usbmed.edu.co           carlos123      todos los roles
+--   carloscastro5033@correo.itm.edu.co    carlos123      todos los roles
+--
+-- LOS TRES QUE IMPORTAN PARA PROBAR EL CONTROL DE ACCESO:
+--
+--   admin@correo.com       Administrador: entra a las 15 rutas
+--   vendedor1@correo.com   Vendedor + Cajero: SOLO /home, /factura y /cliente
+--   cliente1@correo.com    Cliente: SOLO /home y /producto
+--
+-- Con esos tres se comprueba el 403: entrar como vendedor1 y pedir
+-- /api/usuario tiene que responder 403, no 401. Y NO porque la interfaz
+-- esconda el boton: escribiendo la direccion a mano.
+--
+-- NOTA DE HISTORIA, porque explica un comentario del repositorio: hasta
+-- octubre de 2026 dos de estas filas tenian la contrasena en TEXTO PLANO.
+-- `bcrypt.checkpw` no sabe leer eso y lanza, asi que el repositorio de
+-- usuario atrapa la excepcion y responde «no coincide» en vez de caerse con
+-- un 500. Ese codigo se queda: un dato malo en la base de datos no puede
+-- tumbar la API.
+-- ============================================================
 INSERT INTO usuario (email, contrasena) VALUES
-(N'admin@correo.com', N'$2a$12$3UgI.Eof.FhzsYUWESI9n.qFaqkV2JPhvW3L/1GTKowNJnGaD8F.G'),
-(N'vendedor1@correo.com', N'$2a$12$Dgog4VaHqMzhliPVJy1BcOMd6.izEGNeRDtZ.O7SPmBLc6UVthVTG'),
-(N'jefe@correo.com', N'jefe123'),
-(N'cliente1@correo.com', N'cli123'),
-(N'test_encript@correo.com', N'$2a$11$Ci0J2yBltDgQHfjadgkl0OtbcF5pUf97vTq/4Xr0KEU/86l8ybjBe'),
-(N'nuevo@correo.com', N'$2a$11$cmtGBxllwc7MCzpnKVSWuumiOgCaG6PaKWcN1z9N0bjjnkobbFDzO'),
-(N'carlos.castro@usbmed.edu.co', N'$2a$10$YYl6bHCflCnk8suUrms3ie.rnpLvfD9nHJtehZwhcSkINelGwt6iC'),
-(N'carloscastro5033@correo.itm.edu.co', N'$2a$10$YYl6bHCflCnk8suUrms3ie.rnpLvfD9nHJtehZwhcSkINelGwt6iC');
+(N'admin@correo.com', N'$2b$12$ByjZLfhewGNvoxqU1CAOIusDEFZR7UZ.N.47OrrmA.HIeY9q8FDpe'),
+(N'vendedor1@correo.com', N'$2b$12$QJ7xuAik.u79cBO.eyo.COZuhtC2vmL6Z/L2nALPTKGAis2ZGG6/G'),
+(N'jefe@correo.com', N'$2b$12$ZiFRCUe4pUVTtibUCUgek.1.Tqfm9uH4S0MzRM/FcMTfzcn0zR1P6'),
+(N'cliente1@correo.com', N'$2b$12$4sRtIeuYaaIO5NF8sT35Z.4E5g1HLbNsVhnaNh6taNRBp9LMaS5/u'),
+(N'test_encript@correo.com', N'$2b$12$1soopwZvxK.banta8u9O1Oo4AGaazWfZgqyETJg2HMcA1M9Orqk3i'),
+(N'nuevo@correo.com', N'$2b$12$CVR8yUCI9HXJqaujfycBeOoP9PsqHixHmSAtnt1u6hjs7IQNwGVPi'),
+(N'carlos.castro@usbmed.edu.co', N'$2b$12$0mNjoNsVa4od13DGAAbupeImjPHWg6P15/MswlD0bwQlMWIUBbgNS'),
+(N'carloscastro5033@correo.itm.edu.co', N'$2b$12$IXk9NjoABnMAuyp8bI4ZhuncHL6OC/LFbz2c324lrsHqrUNze/cF6');
 
 -- Clientes (con IDENTITY_INSERT para IDs explícitos)
 SET IDENTITY_INSERT cliente ON;

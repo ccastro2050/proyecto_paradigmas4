@@ -21,14 +21,27 @@ por debajo no abre una transaccion en Python: llama al procedimiento
 `actualizar_roles_usuario`, que ya hace eso en la base de datos.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from autorizacion.dependencias import exige_permiso
 from excepciones import ConflictoError
 from models.rol_usuario import (RolesDeUsuario, RolUsuarioActualizar,
                                 RolUsuarioCrear)
 from servicios.ensamblador import crear_servicio_rol_usuario
 
-router = APIRouter(prefix="/api", tags=["RolUsuario (puente)"])
+# ----------------------------------------------------------------------
+# LA GUARDIA, en el router y no en cada endpoint (v3)
+# ----------------------------------------------------------------------
+# `exige_permiso` corre ANTES del cuerpo de CUALQUIER endpoint de este
+# archivo, y por dentro hace dos preguntas: hay token valido? (si no, 401) y
+# tiene este correo la ruta «/usuario»? (si no, 403). La consulta la responde
+# `verificar_acceso_ruta`, en la base de datos, EN CADA PETICION.
+#
+# Va en el router a proposito: asi un endpoint nuevo en este archivo nace
+# protegido. Endpoint por endpoint, el dia que alguien agregue uno y se le
+# olvide, queda abierto —y nadie lo nota, porque funciona—.
+router = APIRouter(prefix="/api", tags=["RolUsuario (puente)"],
+                   dependencies=[Depends(exige_permiso("/usuario"))])
 
 
 def _error(estado: int, mensaje: str, detalle: str) -> HTTPException:

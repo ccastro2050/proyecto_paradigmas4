@@ -15,6 +15,11 @@ compárelos — misma idea, dos idiomas.)
 
 import os
 
+from repositorios.repositorio_acceso_mariadb import RepositorioAccesoMariaDB
+from repositorios.repositorio_acceso_postgresql import (
+    RepositorioAccesoPostgreSQL,
+)
+from repositorios.repositorio_acceso_sqlserver import RepositorioAccesoSqlServer
 from repositorios.repositorio_cliente_mariadb import RepositorioClienteMariaDB
 from repositorios.repositorio_cliente_postgresql import (
     RepositorioClientePostgreSQL,
@@ -61,6 +66,8 @@ from repositorios.repositorio_vendedor_postgresql import (
     RepositorioVendedorPostgreSQL,
 )
 from servicios.abstracciones.i_servicio_cliente import IServicioCliente
+from servicios.abstracciones.i_servicio_permisos import IServicioPermisos
+from servicios.abstracciones.i_servicio_sesion import IServicioSesion
 from servicios.abstracciones.i_servicio_rol import IServicioRol
 from servicios.abstracciones.i_servicio_rol_usuario import IServicioRolUsuario
 from servicios.abstracciones.i_servicio_rutarol import IServicioRutaRol
@@ -72,6 +79,8 @@ from servicios.abstracciones.i_servicio_persona import IServicioPersona
 from servicios.abstracciones.i_servicio_producto import IServicioProducto
 from servicios.abstracciones.i_servicio_vendedor import IServicioVendedor
 from servicios.servicio_cliente import ServicioCliente
+from servicios.servicio_permisos import ServicioPermisos
+from servicios.servicio_sesion import ServicioSesion
 from servicios.servicio_rol import ServicioRol
 from servicios.servicio_rol_usuario import ServicioRolUsuario
 from servicios.servicio_rutarol import ServicioRutaRol
@@ -91,6 +100,7 @@ _FABRICAS = {
     "postgres": {
         "variable_cadena": "DB_POSTGRES",
         "repositorios": {
+            "acceso": RepositorioAccesoPostgreSQL,
             "producto": RepositorioProductoPostgreSQL,
             "persona": RepositorioPersonaPostgreSQL,
             "empresa": RepositorioEmpresaPostgreSQL,
@@ -107,6 +117,7 @@ _FABRICAS = {
     "mariadb": {
         "variable_cadena": "DB_MARIADB",
         "repositorios": {
+            "acceso": RepositorioAccesoMariaDB,
             "producto": RepositorioProductoMariaDB,
             "persona": RepositorioPersonaMariaDB,
             "empresa": RepositorioEmpresaMariaDB,
@@ -124,6 +135,7 @@ _FABRICAS = {
     "sqlserver": {
         "variable_cadena": "DB_SQLSERVER",
         "repositorios": {
+            "acceso": RepositorioAccesoSqlServer,
             "producto": RepositorioProductoSqlServer,
             "persona": RepositorioPersonaSqlServer,
             "empresa": RepositorioEmpresaSqlServer,
@@ -216,3 +228,32 @@ def crear_servicio_rutarol() -> IServicioRutaRol:
 def crear_servicio_rol_usuario() -> IServicioRolUsuario:
     """Arma el servicio de rol_usuario con el repositorio del motor activo."""
     return ServicioRolUsuario(_crear_repositorio("rol_usuario"))
+
+
+def crear_repositorio_acceso():
+    """El repositorio de acceso, SIN servicio encima.
+
+    Es la unica funcion del ensamblador que devuelve un repositorio pelado, y
+    tiene su razon: quien lo usa es la dependencia que hace valer el 403
+    (`autorizacion/dependencias.py`), y ahi no hay ninguna regla de negocio
+    que aplicar —solo una pregunta que la base de datos contesta—. Envolverlo
+    en un servicio vacio seria una capa de adorno.
+    """
+    return _crear_repositorio("acceso")
+
+
+def crear_servicio_sesion() -> IServicioSesion:
+    """Arma el servicio de sesion: TRES repositorios del motor activo.
+
+    Es el primero de la API que necesita mas de uno —usuario para la
+    contrasena, el puente y los roles para los nombres—, y se ve que la
+    fabrica no sufre: tres llamadas a la misma funcion.
+    """
+    return ServicioSesion(_crear_repositorio("usuario"),
+                          _crear_repositorio("rol_usuario"),
+                          _crear_repositorio("rol"))
+
+
+def crear_servicio_permisos() -> IServicioPermisos:
+    """Arma el servicio de permisos con el repositorio del motor activo."""
+    return ServicioPermisos(_crear_repositorio("acceso"))

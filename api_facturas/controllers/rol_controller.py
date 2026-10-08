@@ -11,12 +11,26 @@ Traduccion de excepciones (ver 6_contracts.md):
     cualquier otra       -> 500 (error del motor: BD caida, FK violada...)
 """
 
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import (APIRouter, Depends, HTTPException,
+                     Response)
 
+from autorizacion.dependencias import exige_permiso
 from models.rol import Rol, RolActualizar, RolReemplazo
 from servicios.ensamblador import crear_servicio_rol
 
-router = APIRouter(prefix="/api", tags=["Rol"])
+# ----------------------------------------------------------------------
+# LA GUARDIA, en el router y no en cada endpoint (v3)
+# ----------------------------------------------------------------------
+# `exige_permiso` corre ANTES del cuerpo de CUALQUIER endpoint de este
+# archivo, y por dentro hace dos preguntas: hay token valido? (si no, 401) y
+# tiene este correo la ruta «/rol»? (si no, 403). La consulta la responde
+# `verificar_acceso_ruta`, en la base de datos, EN CADA PETICION.
+#
+# Va en el router a proposito: asi un endpoint nuevo en este archivo nace
+# protegido. Endpoint por endpoint, el dia que alguien agregue uno y se le
+# olvide, queda abierto —y nadie lo nota, porque funciona—.
+router = APIRouter(prefix="/api", tags=["Rol"],
+                   dependencies=[Depends(exige_permiso("/rol"))])
 
 
 def _error(estado: int, mensaje: str, detalle: str) -> HTTPException:
