@@ -44,7 +44,7 @@ detalle, usuarios y roles. Credenciales de BD (didácticas): `sa` /
 En Python, esa fila viaja como el modelo entidad:
 
 ```python
-public class Producto
+class Producto(BaseModel)
 {
     public required string Codigo { get; set; }
     public required string Nombre { get; set; }

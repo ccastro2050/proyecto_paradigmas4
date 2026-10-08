@@ -300,19 +300,19 @@ clave foránea.** La v3 no rompió nada.
 ## 10. CRITERIOS 8 y 9 — en el NAVEGADOR
 
 **Estos dos no se pueden comprobar con `curl`**, y conviene decir por qué: la
-interfaz gráfica guarda el token **en el circuito de Flask (Jinja2)** —en memoria
-del servidor, atado a la conexión del navegador—. Una petición de `curl` no
-tiene circuito, así que no tiene sesión.
+interfaz gráfica guarda el token en la **cookie de sesión de Flask**, que va
+firmada. Una petición de `curl` no trae esa cookie, así que para la interfaz
+es alguien que no se ha identificado — y la manda al login.
 
 Abra `http://localhost:8046`.
 
 | | Qué hacer | Qué tiene que pasar |
 |---|---|---|
 | **8a** | Entrar sin identificarse | El menú tiene **una** entrada: «Iniciar sesión» |
-| **8b** | Entrar como `admin@correo.com` / `admin123` | El menú muestra **las 12** interfaces, y arriba sale el correo con la etiqueta «Administrador» |
-| **8c** | Salir y entrar como `vendedor1@correo.com` / `vendedor123` | El menú muestra **Facturas y Clientes**, y **NO** Usuarios, Personas, Empresas, Roles, Rutas ni Productos |
-| **8d** | Salir y entrar como `cliente1@correo.com` / `cliente123` | El menú muestra **Productos** y **NO** Facturas ni Clientes — al revés que el vendedor |
-| **9** | Como `vendedor1`, **escribir `/usuarios` en la barra de direcciones** | La interfaz **se abre** y muestra el aviso **«Su rol no tiene permiso para esta operacion»** y **cero filas** |
+| **8b** | Entrar como `admin@correo.com` / `admin123` | El menú muestra **las 14** pantallas —diez entidades más tablero, facturas y usuario-con-roles—, y arriba sale el correo con la etiqueta «Administrador» |
+| **8c** | Salir y entrar como `vendedor1@correo.com` / `vendedor123` | El menú muestra **Tablero, Facturas y Clientes**, y **NO** Usuarios, Personas, Empresas, Roles, Rutas ni Productos |
+| **8d** | Salir y entrar como `cliente1@correo.com` / `cliente123` | El menú muestra **Tablero y Productos** y **NO** Facturas ni Clientes — al revés que el vendedor |
+| **9** | Como `vendedor1`, **escribir `/usuarios` en la barra de direcciones** | La interfaz **lo devuelve al inicio** con el aviso **«Su rol no tiene permiso para esa seccion»**. Y si pide el endpoint de la API directo —`/api/usuario` con su token— recibe **403** |
 
 ### El criterio 9 es el único que no se puede simular
 
@@ -333,11 +333,17 @@ el menu no muestra «Usuarios»  ·  pero esto existe:
 > **Si mostrara los datos, el control estaba en el menú — y no era control de
 > acceso: era decoración.**
 
-### Y una advertencia práctica
+### Y una nota práctica, al contrario de lo que se suele esperar
 
-**Recargar con F5 cierra la sesión.** Es el costo de que el token no baje al
-navegador: vive en el circuito, y el F5 lo tumba. Está en
-[3_plan.md](3_plan.md) §4.1 con su razón.
+**Recargar con F5 NO cierra la sesión.** La cookie de Flask sobrevive, y la
+sesión con ella. Lo que la cierra es el botón **Salir** —que hace
+`session.clear()`— o que el token venza al cabo de una hora.
+
+> **En el curso gemelo de Blazor pasa lo contrario**, y vale compararlo: allá
+> el token vive en el circuito del servidor y **el F5 lo tumba**. Mismo
+> requisito, dos tecnologías, dos comportamientos — y los dos defendibles.
+> Está en [3_plan.md](3_plan.md) §4.1 y en
+> [4_research.md](4_research.md) §D8 con su razón.
 
 ---
 

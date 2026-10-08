@@ -22,25 +22,29 @@
 > **Cada fase termina en algo que se puede comprobar.** No se pasa a la
 > siguiente sin eso.
 
-## Fase 1 — Los modelos
+## Fase 1 — El contrato
 
-- [ ] `models/consultas.py`: **diez `record`**, uno por consulta, con el
-      nombre de cada propiedad diciendo qué trae.
-- [ ] **No** un `Dictionary<string, object>`: ver [3_plan.md](3_plan.md) §2.
+- [ ] `repositorios/abstracciones/i_repositorio_consultas.py`: **diez métodos
+      con nombre**, uno por pregunta, devolviendo `list[dict]`.
+- [ ] **Ninguno recibe el SQL por parámetro.** Un `ejecutar(sql)` convierte el
+      contrato en un túnel a la base de datos: ver [3_plan.md](3_plan.md) §2.
+- [ ] Aquí **no** hay `models/consultas.py`, y está escrito por qué: una
+      consulta no tiene entidad, tiene columnas.
 
-## Fase 2 — La interfaz del repositorio
+## Fase 2 — La interfaz del servicio
 
-- [ ] `repositorios/i_repositorio_consultas.py`: diez firmas `Task<List<T>>`.
+- [ ] `servicios/abstracciones/i_servicio_consultas.py`: las mismas diez.
 
 ## Fase 3 — El SQL
 
-- [ ] `repositorios/repositorio_consultas_postgres.py`: las diez consultas.
+- [ ] `repositorios/repositorio_consultas_postgresql.py`: las diez consultas.
 - [ ] **Cada una cruza 4 tablas o más.** Las 6 y 9 con `LEFT JOIN`.
-- [ ] **`CAST(… AS INT)`** en todas las columnas de conteo: ver
+- [ ] **Las dos consultas que cambian de dialecto** (la 8 y la 5): ver
       [4_research.md](4_research.md) §D4.
-- [ ] Los **alias** de columna coincidiendo con las propiedades del `record` —
-      SQLAlchemy (solo como ejecutor, con text()) mapea **por nombre**, y sin alias el campo llega vacío **sin
-      error**.
+- [ ] Los **nombres de columna** son los que el front busca. Aquí nada falla
+      si no coinciden: la clave llega distinta y la pantalla sale vacía **sin
+      error**. En el gemelo .NET el `record` no se puede construir y revienta
+      — ruidoso, pero avisa.
 
 **Verificación:** las diez consultas corren en un cliente SQL y devuelven filas.
 

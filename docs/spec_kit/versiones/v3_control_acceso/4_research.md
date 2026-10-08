@@ -139,19 +139,25 @@ código está mal.
 
 **Se pone en cero**, y queda escrito aquí para que la decisión se vea.
 
-## D8 — El token en el navegador: ¿`localStorage` o el circuito?
+## D8 — Dónde guarda el front el token: ¿`localStorage` o la cookie de sesión?
 
-**El circuito.** En Flask (Jinja2) el token puede quedarse **en memoria del
-servidor** y no bajar nunca al navegador.
+**La cookie de sesión de Flask**, que va **firmada** con `CLAVE_SESION`.
 
 | Opción | Argumento |
 |---|---|
-| **`localStorage`** | Sobrevive al F5. Es lo que se hace en React, Angular, Flask WebAssembly |
-| **El circuito** ✅ | **El token no baja al navegador.** Ningún script de la página lo puede leer |
+| **`localStorage`** | Sobrevive al F5 y es lo que se hace en React o Angular. Pero **cualquier script de la página lo puede leer**: basta una dependencia comprometida para que el token se vaya a otro servidor |
+| **La cookie de sesión** ✅ | Flask la **firma**: el navegador no la puede alterar sin romper la firma. Y `session` es de Flask, no del navegador: lo que se guarda ahí no es accesible por JavaScript |
 
-> **Lo que se pierde:** recargar con F5 cierra la sesión. Para el curso es el
-> cambio correcto, y es una ventaja real de Flask (Jinja2) que vale la pena
-> nombrar — en un front que corre en el navegador **no hay** esta opción.
+> **Lo que NO se gana, y hay que decirlo:** la cookie **sí viaja** al navegador
+> y en cada petición. No es lo mismo que «el token no sale del servidor».
+>
+> Lo que sí se gana frente a `localStorage` es que ningún script de la página
+> la lee, y que Flask la firma. Y frente al circuito de un front con estado en
+> el servidor —como el Blazor del curso gemelo— se gana algo muy práctico:
+> **el F5 no cierra la sesión.**
+>
+> **Las tres opciones tienen su precio.** Lo que no se puede es elegir sin
+> saber cuál se está pagando.
 
 ## D9 — Lo que NO se investigó, y por qué
 

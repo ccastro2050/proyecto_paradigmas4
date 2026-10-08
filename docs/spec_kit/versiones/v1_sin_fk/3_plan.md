@@ -84,12 +84,12 @@ dos lenguajes distintos.
 ## 3. Arquitectura en capas (flujo de una petición)
 
 ```
-HTTP → FastAPI routing        (los atributos [HttpGet]/[HttpPost]… deciden el método)
-     → validación de la PETICIÓN (anotaciones de la petición del verbo → 422 automático)
-     → ProductoController     (try/catch: traduce excepciones a códigos HTTP)
-     → IServicioProducto      (interfaz — reglas de negocio)
-     → IRepositorioProducto   (interfaz — el servicio no sabe qué motor hay detrás)
-     → RepositorioProductoPostgres (SQLAlchemy (solo como ejecutor, con text()) + parámetros @)
+HTTP → FastAPI routing        (los decoradores @router.get/@router.post deciden el método)
+     → validación del MODELO   (los Field() del modelo del verbo → 422 automático)
+     → producto_controller     (try/except: traduce excepciones a códigos HTTP)
+     → IServicioProducto       (Protocol — reglas de negocio)
+     → IRepositorioProducto    (Protocol — el servicio no sabe qué motor hay detrás)
+     → RepositorioProductoPostgreSQL (SQLAlchemy como ejecutor, con text() y :param)
      → PostgreSQL
 ```
 
@@ -101,20 +101,35 @@ concretas.
 
 ### 4.1 Interfaces de Python desde v1
 ```python
-public interface IRepositorioProducto
-{
-    Task<List<Producto>> ObtenerTodosAsync(int limite);   // lista de objetos Producto
-    Task<Producto?> ObtenerPorCodigoAsync(string codigo); // el modelo, o null
-    Task CrearAsync(Producto producto);                   // recibe el modelo
-    Task<int> ActualizarAsync(string codigo, Dictionary<string, object> datos); // PUT y PATCH
-    Task<int> EliminarAsync(string codigo);
-}
+from typing import Protocol
+
+
+class IRepositorioProducto(Protocol):
+    async def obtener_todos(self, limite: int) -> list[dict]: ...
+    async def obtener_por_codigo(self, codigo: str) -> dict | None: ...
+    async def crear(self, datos: dict) -> bool: ...
+    async def actualizar(self, codigo: str, datos: dict) -> int: ...
+    async def eliminar(self, codigo: str) -> int: ...
 ```
-El servicio recibe **la interfaz** por constructor (la inyecta el
-ensamblador). Esto es lo que compra la **v5**: un segundo motor será otra clase
-con `: IRepositorioProducto`. Las lecturas devuelven **objetos del modelo**;
-`ActualizarAsync` va con diccionario porque un PATCH puede traer solo
-algunos campos.
+
+El servicio recibe **el contrato** por el constructor (lo inyecta el
+ensamblador). Esto es lo que compra la **v5**: otro motor será otra clase con
+los mismos cinco métodos.
+
+> **Y aquí hay una diferencia con el gemelo .NET que conviene ver:** una clase
+> de Python cumple un `Protocol` **sin heredar de nada**. Basta con tener los
+> métodos —tipado estructural, PEP 544—. En C# hay que escribir
+> `: IRepositorioProducto` o no compila.
+>
+> Las dos formas tienen su precio: allá el compilador avisa si falta un
+> método; aquí se descubre al llamarlo. Lo que no cambia es la **decisión**:
+> el servicio depende de la abstracción.
+
+> **`actualizar` recibe un diccionario** y las demás también, porque un PATCH
+> puede traer solo algunos campos y el repositorio arma el `SET` con lo que
+> llegó. Los **nombres** de esas claves salen de los modelos Pydantic, no del
+> cliente: por eso es seguro interpolarlos en el SQL, y los **valores** van
+> parametrizados.
 
 ### 4.2 La validación vive en las PETICIONES (una por verbo)
 FastAPI valida el body contra la petición del verbo ANTES de ejecutar el

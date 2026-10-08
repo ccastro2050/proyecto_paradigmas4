@@ -37,11 +37,11 @@ ConsultasController  →  IServicioConsultas  →  IRepositorioConsultas
 
 | Pieza | Qué hace |
 |---|---|
-| `controllers/consultas_controller.py` | 10 acciones `[HttpGet("nombre-de-la-consulta")]`. Traduce a HTTP y nada más |
+| `controllers/consultas_controller.py` | 10 endpoints `@router.get("/nombre-de-la-consulta")`. Traduce a HTTP y nada más |
 | `servicios/servicio_consultas.py` | **Vacío de reglas, y existe igual** |
-| `repositorios/i_repositorio_consultas.py` | Las diez firmas |
-| `repositorios/repositorio_consultas_postgres.py` | El SQL, con su dialecto |
-| `models/consultas.py` | Diez `record`, uno por consulta |
+| `repositorios/abstracciones/i_repositorio_consultas.py` | Las diez firmas de datos |
+| `repositorios/repositorio_consultas_postgresql.py` | El SQL, con su dialecto (más sus dos hermanos) |
+| `servicios/abstracciones/i_servicio_consultas.py` | Las diez firmas del negocio |
 
 > **¿Para qué un servicio que no valida nada?** Porque el día que una consulta
 > necesite una regla —un rango de fechas obligatorio, un tope de filas— hay
@@ -49,12 +49,21 @@ ConsultasController  →  IServicioConsultas  →  IRepositorioConsultas
 > terminaría en el controlador, que es donde no va. **La capa no se salta
 > porque hoy esté vacía.**
 
-> **Son `record` y no clases** porque no tienen comportamiento ni identidad:
-> son el resultado de una pregunta, no una entidad del dominio.
-
-> **Y son diez modelos con nombre, no un `Dictionary<string, object>`.** La API
-> responderia lo mismo, y nadie sabría qué esperar sin ejecutarla. **El nombre
-> de cada propiedad ES la documentación.**
+> ### Y aquí NO hay modelos de consulta, a propósito
+>
+> Una consulta de reporte **no tiene entidad: tiene columnas**. Los diez
+> métodos devuelven `list[dict]` —la fila como la trajo el motor— y no hay un
+> `models/consultas.py`. Forzarlas a un modelo inventaría diez tipos que no
+> existen en ninguna tabla.
+>
+> **Lo que sí se exige es que cada pregunta tenga su método con nombre.** Un
+> `ejecutar(sql)` en el contrato sería el equivalente de devolver un
+> diccionario sin documentar: funciona, no dice nada, y además convierte el
+> repositorio en un túnel para mandarle cualquier cosa a la base de datos.
+>
+> **Lo que no está declarado no se puede preguntar**, y esa es la misma
+> lección que en el gemelo .NET se aprende con los `record`: el **nombre** es
+> la documentación. Allá el nombre está en el tipo; aquí, en el método.
 
 ## 3. El tablero
 

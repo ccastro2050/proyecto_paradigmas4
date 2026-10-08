@@ -11,7 +11,7 @@
 > | [3_plan.md](3_plan.md) | CÓMO: la capa de consultas y el tablero |
 > | [4_research.md](4_research.md) | Decisiones y alternativas *(lectura opcional)* |
 > | [5_data_model.md](5_data_model.md) | La MISMA bdfacturas: cero tablas nuevas |
-> | [6_contracts.md](6_contracts.md) | Los 10 endpoints de `/api/consultas` |
+> | [6_contracts.md](6_contracts.md) | Los 10 endpoints de `/api/consultas` y los 6 de `usuario-con-roles` |
 > | [7_quickstart.md](7_quickstart.md) | Arranque y el smoke test de las diez |
 > | [8_tasks.md](8_tasks.md) | Orden de construcción por fases verificables |
 > | [9_checklist.md](9_checklist.md) | Lo que tiene que estar antes de cerrar |
@@ -67,7 +67,7 @@ navegador. Daría el mismo número **a veces**, y falla por tres lados:
 
 | | Criterio | Cómo se comprueba |
 |---|---|---|
-| **1** | Los 70 endpoints de v1–v3 responden igual | La **regresión**: el smoke test de las tres versiones anteriores, completo |
+| **1** | Los endpoints de v1–v3 responden igual | La **regresión**: el smoke test de las tres versiones anteriores, completo. Son **75 de las 91 operaciones** que la API expone hoy; las otras 16 son las que agrega esta versión |
 | **2** | Las diez consultas responden **200** con el sobre `{consulta, total, datos}` | [7_quickstart.md](7_quickstart.md) §2, una por una |
 | **3** | Cada una cruza **4 tablas o más** | Se lee el SQL del repositorio y se cuentan los `JOIN` |
 | **4** | Las diez exigen **token y permiso** | Sin token: 401. Con un rol sin `/home`: 403 |
@@ -79,21 +79,36 @@ navegador. Daría el mismo número **a veces**, y falla por tres lados:
 > **El criterio 8 es el que distingue un tablero de una lámina.** Un tablero
 > que no cambia cuando el sistema cambia está leyendo de otro lado.
 
-## 4. El tropiezo del tipo, que el compilador no ve
+## 4. Los dos tropiezos del dialecto, medidos en los tres motores
 
-`COUNT()` y `SUM(entero)` **no devuelven lo mismo en los dos motores**:
+Las diez consultas se escriben una vez y se traducen a los otros dos
+dialectos. **Ocho pasan palabra por palabra.** Cambian dos, y las dos
+aparecieron ejecutándolas:
 
-| | `COUNT()` devuelve | Y entonces |
+| | Qué pasa | Cómo se nota |
 |---|---|---|
-| **MariaDB** | `bigint` | Un modelo con `int` **revienta al deserializar**. Ruidoso: se nota de una |
-| **PostgreSQL** | `int` | Un `SUM(decimal) / COUNT(*)` **trunca** el promedio. No se queja |
+| **`STRING_AGG` con `DISTINCT`** (consulta 8) | PostgreSQL lo acepta. T-SQL **no admite DISTINCT adentro** —«Incorrect syntax near ','»— y MariaDB no tiene `STRING_AGG`: usa `GROUP_CONCAT` con `SEPARATOR` | **Falla a gritos.** La consulta no corre, y se arregla leyendo el error |
+| **La división que trunca** (consulta 5) | En **T-SQL**, `COUNT()` devuelve `INT` y dividir un `DECIMAL` entre un `INT` **trunca**: el ticket promedio sale sin centavos. PostgreSQL y MariaDB promueven el tipo solos | **No falla: miente.** Responde 200 con un número redondo que parece bueno. Hace falta `CAST(… AS DECIMAL(18,2))` |
 
-> **El segundo es peor**, y por eso está escrito aquí: el primero se cae y se
-> arregla; el segundo entrega un número equivocado que parece bien.
->
-> **Se resuelve en el SQL, con `CAST(… AS INT)`**, y no cambiando los modelos a
-> `long`: así los dos dialectos devuelven la misma forma y la v5 no tiene que
-> tocar ni un modelo.
+> **El segundo es el peligroso**, y por eso está escrito aquí: el primero se
+> cae y se arregla; el segundo entrega un número equivocado que parece bien.
+> Un error que revienta se arregla; uno que miente se queda.
+
+### Y un tropiezo que en Python NO existe, y conviene saber por qué
+
+`COUNT()` y `SUM(entero)` devuelven **`bigint`** —64 bits— en los tres
+motores. En el gemelo .NET del curso eso revienta: el modelo pide `int`, la
+librería no puede construir el objeto y responde 500 al materializar la
+**primera fila**. Allá las diez consultas llevan `CAST(… AS INT)` por eso.
+
+Aquí no hace falta, y la razón no es que Python sea mejor: **no hay modelo que
+materializar**. La fila llega como diccionario y el entero de Python no tiene
+tamaño fijo. El tropiezo era del tipado estático, no del motor.
+
+> **Y el precio de esa comodidad se paga en el otro extremo:** una columna de
+> más —o mal escrita— en el SELECT, en C# la caza la librería; aquí llega en
+> silencio hasta la pantalla. **Los dos lenguajes cobran, en momentos
+> distintos.** De eso trata el curso.
 
 ## 5. Lo que esta versión deja PENDIENTE, y se declara
 

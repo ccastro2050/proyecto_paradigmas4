@@ -79,78 +79,101 @@ autorizacion/guardia_permisos.py       el filtro que responde 403
 controllers/permisos_controller.py           GET /api/permisos/mios, para el menú
 ```
 
-**El atributo, que es la pieza central:**
+**La guardia, que es la pieza central:**
 
 ```python
-[Route("api/usuario")]
-la dependencia de autenticación                        // exige TOKEN      -> 401
-[ExigePermiso("/usuario")] // exige PERMISO    -> 403
-public class UsuarioController : ControllerBase
+from autorizacion.dependencias import exige_permiso
+
+router = APIRouter(prefix="/api", tags=["Usuario"],
+                   dependencies=[Depends(exige_permiso("/usuario"))])
+#                                        ^ exige TOKEN    -> 401
+#                                          y PERMISO      -> 403
 ```
+
+> **Una sola dependencia hace las dos cosas**, y no es por ahorrar: por dentro,
+> `exige_permiso` depende de `usuario_actual`, y FastAPI resuelve esa cadena
+> antes de entrar al endpoint. Si el token falta o no sirve, `usuario_actual`
+> responde 401 y el permiso nunca se consulta. En el gemelo .NET son dos
+> atributos —`[Authorize]` y `[ExigePermiso]`— porque allá el marco los
+> encadena por fuera.
 
 | | Por qué así |
 |---|---|
-| **Es un FILTRO, no una línea al principio de cada método** | Si fuera una línea, el día que alguien escriba un endpoint nuevo y se le olvide, **ese endpoint queda abierto** — y nadie lo nota, porque funciona |
+| **Va en el ROUTER, no en cada endpoint** | Si fuera una línea dentro de cada función, el día que alguien escriba un endpoint nuevo y se le olvide, **ese endpoint queda abierto** — y nadie lo nota, porque funciona |
 | **Se consulta EN CADA PETICIÓN** | Es más trabajo —una consulta por operación— y es lo que hace que **quitarle un permiso surta efecto sin volver a identificarse** |
 | **El nombre de la ruta sale de la tabla `ruta`** | `/usuario`, `/factura`… son los valores que la base de datos ya trae sembrados. No se inventan |
 
 ### 3.3 La interfaz gráfica
 
 ```
-servicios/estado_sesion.py                quién está identificado, en ESTE circuito
-servicios/servicio_sesion.py              el único que funciona sin token
-models/respuesta_sesion.py
-Components/Pages/Sesion.html            la interfaz de identificación
-Components/Layout/SesionActual.html      quién está dentro, y cómo salir
-Components/Layout/NavMenu.html           el menú ARMADO CON LOS PERMISOS
+app.py                      la sesión, el menú por permisos y login_requerido
+cliente_api.py              iniciar_sesion() y mis_permisos(); pone la cabecera
+templates/login.html        la pantalla de identificación
+templates/base.html         el menú ARMADO CON LOS PERMISOS, y quién está dentro
 ```
 
-**Y doce archivos que crecen:** cada servicio del front suma un método
-`Autorizar()` que pone el token en la cabecera antes de cada petición.
+**Y nada más.** Son dos archivos de Python y dos plantillas: el front no gana
+una capa por tener sesión, porque `cliente_api.py` ya era el único que habla
+HTTP y ahí es donde entra la cabecera.
 
 ## 4. Las cuatro decisiones del front, con su razón
 
-### 4.1 El token vive en el SERVIDOR, no en el navegador
+### 4.1 El token vive en la COOKIE DE SESIÓN de Flask, no en `localStorage`
 
-`EstadoSesion` es `scoped`, que en Flask (Jinja2) significa **uno por
-circuito**: cada navegador conectado tiene el suyo.
-
-| | |
-|---|---|
-| **Qué se gana** | El token **nunca baja al navegador**. Ningún script de la página lo puede leer |
-| **Qué se pierde, y hay que decirlo** | Al recargar con F5 el circuito se cae y la sesión se va |
-
-> **Si fuera `singleton` —el error fácil, porque «total, es una sola
-> aplicación»— habría UN token para todos los que entren**, y el último que se
-> identificara le cambiaría la sesión a los demás.
-
-### 4.2 El token se manda a mano, no con un `DelegatingHandler`
-
-Lo elegante sería un handler que ponga la cabecera en todas las peticiones. **Y
-no se hace**, por una razón concreta: en Flask (Jinja2) la cadena de handlers de
-un `HttpClient` se arma **una vez por nombre de cliente** y se reutiliza, así
-que un handler que dependa de un servicio `scoped` puede recibir **el scope
-equivocado** — el token de otra sesión.
-
-> Es un problema conocido y **silencioso**. Inyectar `EstadoSesion` en cada
-> servicio es más largo de escribir y no falla de esa manera.
-
-### 4.3 El modo de renderizado se declara UNA vez, y el dibujo previo se APAGA
-
-```razor
-<Routes @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
+```python
+app.secret_key = os.environ.get("CLAVE_SESION", "clave-solo-para-desarrollo")
+session["token"] = sesion["token"]
 ```
 
 | | |
 |---|---|
-| **Por qué en `App.html` y no en cada interfaz** | Así también es interactivo el **layout**, y con él el menú. Declarado interfaz por interfaz, el layout se queda **estático** — y un componente estático corre en el scope de la petición HTTP, no en el del circuito: **el menú nunca vería la sesión** |
-| **Por qué sin dibujo previo** | El dibujo previo ocurre **antes** de que el circuito exista, con un `EstadoSesion` vacío. La interfaz **parpadearía** entre «identifíquese» y los datos |
+| **Qué se gana** | Flask **firma** esa cookie con `secret_key`: el navegador no la puede alterar sin romper la firma. Y sobrevive al F5, porque no depende de ninguna conexión abierta |
+| **Qué se pierde, y hay que decirlo** | La cookie **sí baja al navegador**. No es `HttpOnly` por arte de magia —Flask la marca así, y eso impide que la lea un script, pero sigue viajando en cada petición |
 
-> **Y esto es lo que la v3 cambia respecto a la v1 y la v2**, donde el dibujo
-> previo estaba encendido: hasta que apareció la sesión, no había nada en el
-> circuito de lo que la interfaz dependiera.
+> **Lo que NO se hace es `localStorage`**, que es la tentación: ahí cualquier
+> script de la página lo puede leer, y basta una dependencia comprometida para
+> que el token se vaya a otro servidor.
+>
+> **Y la clave que firma la cookie sale del entorno**, no del código: una clave
+> escrita en el repositorio es una clave publicada.
+
+### 4.2 La cabecera se pone en UN solo archivo
+
+```python
+def _cabecera(token=None):
+    if token is None:
+        token = session.get("token")
+    return {"Authorization": f"Bearer {token}"} if token else {}
+```
+
+Todas las funciones de `cliente_api.py` la usan. **Y si no hay token, se manda
+sin ella** —y la API responde 401, que es lo correcto: el front no simula una
+sesión que no existe.
+
+> **Por qué no un envoltorio automático** sobre `requests`: porque el front
+> tiene **un** cliente y una función de cabecera; agregar una capa de sesión de
+> `requests` para ahorrar una línea escondería dónde se pone el token, que es
+> justo lo que hay que poder mostrar en clase.
+
+### 4.3 El tablero lee el token ANTES de abrir los hilos
+
+Las diez consultas de la v4 se piden en paralelo, y ahí aparece algo que
+sorprende:
+
+```python
+token = session.get("token")        # en el hilo de la petición
+with ThreadPoolExecutor(...) as grupo:
+    grupo.map(pedir, CONSULTAS)     # y viaja como ARGUMENTO
+```
+
+`session` pertenece al contexto de la petición de Flask, y **un hilo nuevo no
+lo tiene**. El camino que no sirvió —envolver con
+`copy_current_request_context`— revienta con
+`ValueError: <Token ...> was created in a different Context`, y está escrito
+en `rutas_tablero.py` para que nadie lo intente dos veces.
 
 ### 4.4 El menú no es la protección, y la interfaz lo dice
+
 
 El menú se arma con `GET /api/permisos/mios`. **Y eso no protege nada:** es
 HTML que ya está en el navegador de quien pregunta, y la dirección se puede

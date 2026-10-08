@@ -21,15 +21,21 @@
 
 ## El código
 
-- [ ] Diez `record` en `models/consultas.py`, con nombres que dicen qué traen.
+- [ ] Diez métodos con **nombre propio** en el repositorio: ninguno recibe el
+      SQL por parámetro. Un `ejecutar(sql)` sería un túnel a la base de datos.
 - [ ] Diez firmas en `IRepositorioConsultas`.
 - [ ] **Cada consulta cruza 4 tablas o más**, y dos cruzan cinco.
 - [ ] Las consultas 6 y 9 usan `LEFT JOIN` — preguntan por **ausencias**.
-- [ ] `CAST(… AS INT)` en todas las columnas de conteo.
-- [ ] Cada columna del `SELECT` tiene **alias** que coincide con la propiedad.
+- [ ] **Las dos consultas del dialecto**, escritas distinto donde toca: la 8
+      (`STRING_AGG` con `DISTINCT`) y la 5 (el `CAST` del promedio, que solo
+      SQL Server necesita). Las otras ocho, idénticas en los tres.
+- [ ] Cada columna del `SELECT` tiene el **nombre con el que el front la
+      busca**. Aquí no hay modelo que falle si no coincide: la clave llegaría
+      distinta y la pantalla saldría vacía **sin error**.
 - [ ] El servicio existe **aunque no valide nada**, y está escrito por qué.
-- [ ] El controlador lleva `la dependencia de autenticación` y `[ExigePermiso("/home")]`.
-- [ ] **El registro en `main.py` está**, y la fábrica —si la hay— tiene su
+- [ ] El router lleva `dependencies=[Depends(exige_permiso("/home"))]` —en el
+      router, no en cada endpoint: así el que se agregue mañana nace protegido.
+- [ ] **El registro en `main.py` está**, y el ensamblador tiene su
       `CrearRepositorioConsultas()` en las **dos** implementaciones.
 
 ## La interfaz gráfica

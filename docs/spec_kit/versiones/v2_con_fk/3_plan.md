@@ -33,7 +33,7 @@
 | Capa | Qué sabe | Qué NO sabe |
 |---|---|---|
 | **Controlador** | Verbos, códigos de estado, el sobre de la respuesta | Nada de SQL |
-| **Servicio** | Las reglas del dominio | **Nada de HTTP.** No conoce `IActionResult` ni los códigos |
+| **Servicio** | Las reglas del dominio | **Nada de HTTP.** No conoce `HTTPException` ni los códigos: lanza `ValueError`, `LookupError` o `ConflictoError` |
 | **Repositorio** | El SQL, o el `CALL` del procedimiento | Nada de reglas |
 
 **Y la regla que la v2 pone a prueba:** el servicio **no puede** devolver un

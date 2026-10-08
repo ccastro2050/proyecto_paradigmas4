@@ -42,7 +42,7 @@ en la pestaña de descripción.
 
 La colección usa la variable `base` = `http://localhost:8005` (el proyecto
 del curso). Si está probando **SU reconstrucción** (la de la
-[GUIA_IA](../docs/GUIA_IA.md), que corre en el puerto 8105): clic en la
+[GUIA_IA](../docs/conceptos/GUIA_IA.md), que corre en el puerto 8105): clic en la
 colección → pestaña **Variables** → cambie `base` a
 `http://localhost:8105`. Una sola edición y las 27 peticiones apuntan a su
 proyecto.
