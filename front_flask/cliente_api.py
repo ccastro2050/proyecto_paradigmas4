@@ -119,14 +119,15 @@ def eliminar(endpoint: str, clave):
 # ── v3: LA SESION ────────────────────────────────────────────────────
 
 def iniciar_sesion(email: str, contrasena: str):
-    """POST /api/sesion — devuelve (ok, sesion, errores).
+    """POST /api/sesion/entrar — devuelve (ok, sesion, errores).
 
     Las credenciales van EN EL CUERPO, no en la URL. El endpoint viejo
     `verificar-contrasena` las recibia por la URL, y una contrasena en la URL
     queda en el historial del navegador y en los logs de cualquier proxy del
     camino.
     """
-    r = _llamar("POST", "/api/sesion", json={"email": email, "contrasena": contrasena})
+    r = _llamar("POST", "/api/sesion/entrar",
+                json={"email": email, "contrasena": contrasena})
     if r is None:
         return False, None, ["El servicio no está disponible."]
     if r.status_code == 200:

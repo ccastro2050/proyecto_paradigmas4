@@ -21,6 +21,15 @@ from repositorios.repositorio_acceso_postgresql import (
 )
 from repositorios.repositorio_acceso_sqlserver import RepositorioAccesoSqlServer
 from repositorios.repositorio_cliente_mariadb import RepositorioClienteMariaDB
+from repositorios.repositorio_consultas_mariadb import (
+    RepositorioConsultasMariaDB,
+)
+from repositorios.repositorio_consultas_postgresql import (
+    RepositorioConsultasPostgreSQL,
+)
+from repositorios.repositorio_consultas_sqlserver import (
+    RepositorioConsultasSqlServer,
+)
 from repositorios.repositorio_cliente_postgresql import (
     RepositorioClientePostgreSQL,
 )
@@ -47,6 +56,15 @@ from repositorios.repositorio_rol_usuario_sqlserver import RepositorioRolUsuario
 from repositorios.repositorio_rutarol_mariadb import RepositorioRutaRolMariaDB
 from repositorios.repositorio_rutarol_postgresql import RepositorioRutaRolPostgreSQL
 from repositorios.repositorio_rutarol_sqlserver import RepositorioRutaRolSqlServer
+from repositorios.repositorio_usuario_con_roles_mariadb import (
+    RepositorioUsuarioConRolesMariaDB,
+)
+from repositorios.repositorio_usuario_con_roles_postgresql import (
+    RepositorioUsuarioConRolesPostgreSQL,
+)
+from repositorios.repositorio_usuario_con_roles_sqlserver import (
+    RepositorioUsuarioConRolesSqlServer,
+)
 from repositorios.repositorio_usuario_mariadb import RepositorioUsuarioMariaDB
 from repositorios.repositorio_usuario_postgresql import RepositorioUsuarioPostgreSQL
 from repositorios.repositorio_usuario_sqlserver import RepositorioUsuarioSqlServer
@@ -66,12 +84,16 @@ from repositorios.repositorio_vendedor_postgresql import (
     RepositorioVendedorPostgreSQL,
 )
 from servicios.abstracciones.i_servicio_cliente import IServicioCliente
+from servicios.abstracciones.i_servicio_consultas import IServicioConsultas
 from servicios.abstracciones.i_servicio_permisos import IServicioPermisos
 from servicios.abstracciones.i_servicio_sesion import IServicioSesion
 from servicios.abstracciones.i_servicio_rol import IServicioRol
 from servicios.abstracciones.i_servicio_rol_usuario import IServicioRolUsuario
 from servicios.abstracciones.i_servicio_rutarol import IServicioRutaRol
 from servicios.abstracciones.i_servicio_usuario import IServicioUsuario
+from servicios.abstracciones.i_servicio_usuario_con_roles import (
+    IServicioUsuarioConRoles,
+)
 from servicios.abstracciones.i_servicio_ruta import IServicioRuta
 from servicios.abstracciones.i_servicio_empresa import IServicioEmpresa
 from servicios.abstracciones.i_servicio_factura import IServicioFactura
@@ -79,12 +101,14 @@ from servicios.abstracciones.i_servicio_persona import IServicioPersona
 from servicios.abstracciones.i_servicio_producto import IServicioProducto
 from servicios.abstracciones.i_servicio_vendedor import IServicioVendedor
 from servicios.servicio_cliente import ServicioCliente
+from servicios.servicio_consultas import ServicioConsultas
 from servicios.servicio_permisos import ServicioPermisos
 from servicios.servicio_sesion import ServicioSesion
 from servicios.servicio_rol import ServicioRol
 from servicios.servicio_rol_usuario import ServicioRolUsuario
 from servicios.servicio_rutarol import ServicioRutaRol
 from servicios.servicio_usuario import ServicioUsuario
+from servicios.servicio_usuario_con_roles import ServicioUsuarioConRoles
 from servicios.servicio_ruta import ServicioRuta
 from servicios.servicio_empresa import ServicioEmpresa
 from servicios.servicio_factura import ServicioFactura
@@ -105,12 +129,14 @@ _FABRICAS = {
             "persona": RepositorioPersonaPostgreSQL,
             "empresa": RepositorioEmpresaPostgreSQL,
             "cliente": RepositorioClientePostgreSQL,
+            "consultas": RepositorioConsultasPostgreSQL,
             "vendedor": RepositorioVendedorPostgreSQL,
             "factura": RepositorioFacturaPostgreSQL,
             "rol": RepositorioRolPostgreSQL,
             "rol_usuario": RepositorioRolUsuarioPostgreSQL,
             "rutarol": RepositorioRutaRolPostgreSQL,
             "usuario": RepositorioUsuarioPostgreSQL,
+            "usuario_con_roles": RepositorioUsuarioConRolesPostgreSQL,
             "ruta": RepositorioRutaPostgreSQL,
         },
     },
@@ -122,12 +148,14 @@ _FABRICAS = {
             "persona": RepositorioPersonaMariaDB,
             "empresa": RepositorioEmpresaMariaDB,
             "cliente": RepositorioClienteMariaDB,
+            "consultas": RepositorioConsultasMariaDB,
             "vendedor": RepositorioVendedorMariaDB,
             "factura": RepositorioFacturaMariaDB,
             "rol": RepositorioRolMariaDB,
             "rol_usuario": RepositorioRolUsuarioMariaDB,
             "rutarol": RepositorioRutaRolMariaDB,
             "usuario": RepositorioUsuarioMariaDB,
+            "usuario_con_roles": RepositorioUsuarioConRolesMariaDB,
             "ruta": RepositorioRutaMariaDB,
         },
     },
@@ -140,12 +168,14 @@ _FABRICAS = {
             "persona": RepositorioPersonaSqlServer,
             "empresa": RepositorioEmpresaSqlServer,
             "cliente": RepositorioClienteSqlServer,
+            "consultas": RepositorioConsultasSqlServer,
             "vendedor": RepositorioVendedorSqlServer,
             "factura": RepositorioFacturaSqlServer,
             "rol": RepositorioRolSqlServer,
             "rol_usuario": RepositorioRolUsuarioSqlServer,
             "rutarol": RepositorioRutaRolSqlServer,
             "usuario": RepositorioUsuarioSqlServer,
+            "usuario_con_roles": RepositorioUsuarioConRolesSqlServer,
             "ruta": RepositorioRutaSqlServer,
         },
     },
@@ -257,3 +287,19 @@ def crear_servicio_sesion() -> IServicioSesion:
 def crear_servicio_permisos() -> IServicioPermisos:
     """Arma el servicio de permisos con el repositorio del motor activo."""
     return ServicioPermisos(_crear_repositorio("acceso"))
+
+
+def crear_servicio_usuario_con_roles() -> IServicioUsuarioConRoles:
+    """Arma el servicio de usuario-con-roles con el motor activo."""
+    return ServicioUsuarioConRoles(_crear_repositorio("usuario_con_roles"))
+
+
+def crear_servicio_consultas() -> IServicioConsultas:
+    """Arma el servicio de las diez consultas con el motor activo.
+
+    Y aqui se ve, en una linea, para que sirvio toda la arquitectura: las
+    diez consultas de la v4 estan escritas tres veces —una por dialecto— y
+    este `_crear_repositorio` es el unico sitio que elige cual. El tablero no
+    sabe contra que motor esta mirando.
+    """
+    return ServicioConsultas(_crear_repositorio("consultas"))

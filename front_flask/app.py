@@ -11,6 +11,12 @@ alterar sin romper la firma.
 Lo que NO se hace es guardarlo en `localStorage`: ahi cualquier script de la
 pagina lo puede leer. La cookie de sesion de Flask tampoco es perfecta —viaja
 al navegador— pero es el mecanismo que el framework ya trae firmado.
+
+Y LA FRASE QUE HAY QUE REPETIR EN CLASE: nada de lo que hace este archivo
+protege nada. El `login_requerido` es cortesia —evita que la persona vea un
+401 crudo— y el menu filtrado es comodidad. La proteccion esta en la API, que
+responde 401 sin token y 403 sin permiso, aunque alguien escriba la direccion
+a mano.
 """
 
 import os
@@ -21,20 +27,21 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 import cliente_api
 from entidades import ENTIDADES
 from rutas_entidades import bp as bp_entidades
-# v2 — el usuario CON SUS ROLES: maestro-detalle con casillas,
-# que no cabe en el molde de las vistas genericas.
-# # from rutas_usuarios_roles import bp as bp_usuarios_roles
-# v4 — el tablero: diez consultas multitabla en una pagina.
-# # from rutas_tablero import bp as bp_tablero
 from rutas_facturas import bp as bp_facturas
+# v4 — el tablero: diez consultas multitabla en una pagina, pedidas en
+# paralelo (ver rutas_tablero.py).
+from rutas_tablero import bp as bp_tablero
+# v3 — el usuario CON SUS ROLES: maestro-detalle con casillas, que no cabe
+# en el molde de las vistas genericas.
+from rutas_usuarios_roles import bp as bp_usuarios_roles
 
 app = Flask(__name__)
 # La clave que FIRMA la cookie viaja por variable de entorno, no escrita en el
 # codigo: asi se cambia sin recompilar y no queda en el repositorio de nadie.
 app.secret_key = os.environ.get("CLAVE_SESION", "clave-solo-para-desarrollo")
 app.register_blueprint(bp_entidades)
-# app.register_blueprint(bp_usuarios_roles)   # la v3 trae usuario, rol y las puente
-# app.register_blueprint(bp_tablero)   # las 10 consultas son de la v4
+app.register_blueprint(bp_usuarios_roles)   # la v3: usuario, rol y las puente
+app.register_blueprint(bp_tablero)          # la v4: las diez consultas
 # v2 — la facturacion maestro-detalle: su propio blueprint, porque no
 # es un CRUD. Una factura no se edita: se emite y se anula.
 app.register_blueprint(bp_facturas)
@@ -44,11 +51,9 @@ app.register_blueprint(bp_facturas)
 # un CRUD de campos: la factura se emite y se anula, el usuario con sus
 # roles viaja con casillas, y el tablero no tiene tabla.
 TARJETAS_SUELTAS = [
+    ("/tablero", "Tablero", 4, "Diez consultas que cruzan cuatro o más tablas"),
     ("/facturas", "Facturas", 2, "Maestro-detalle: la factura y sus renglones, en un solo envío"),
-    # Estas dos NO se ofrecen todavia porque sus endpoints NO ESTAN
-    # CONSTRUIDOS, y una tarjeta que lleva a un 404 es peor que no tenerla.
-    # ("/usuarios-con-roles", "Usuarios y roles", 2, "El usuario y sus roles, con casillas"),
-    # ("/tablero", "Tablero", 4, "Diez consultas que cruzan cuatro o más tablas"),
+    ("/usuarios-con-roles", "Usuarios y roles", 3, "El usuario y sus roles, con casillas"),
 ]
 
 
@@ -69,19 +74,13 @@ def menu():
     ENTONCES PARA QUE SIRVE: para no mostrarle a alguien lo que no va a poder
     usar. Es comodidad. La proteccion esta en el servicio.
     """
-    # ========================================================
-    # POR AHORA se muestran TODAS las entidades declaradas.
-    #
-    # El filtro por permisos ES PARTE DE ESTA VERSION, pero el control de
-    # acceso todavia NO esta construido: no hay sesion ni permisos que
-    # consultar. Si se dejara el filtro, el menu saldria VACIO.
-    #
-    # Al construirlo se borra la linea de abajo y se descomentan estas:
-    #   permitidas = session.get("permisos", [])
-    #   visibles = {c: e for c, e in ENTIDADES.items()
-    #               if e.get("permiso") in permitidas}
-    # ========================================================
-    visibles = dict(ENTIDADES)
+    # El menu se arma con lo que /api/permisos/mios devolvio al entrar: cada
+    # entidad declara el nombre de su ruta y solo sale si esa ruta esta en la
+    # lista. Sin sesion no hay permisos y el menu sale vacio —que es lo
+    # correcto: todavia no se sabe quien mira—.
+    permitidas = session.get("permisos", [])
+    visibles = {clave: entidad for clave, entidad in ENTIDADES.items()
+                if entidad.get("permiso") in permitidas}
     return {"menu_entidades": visibles, "hay_sesion": "usuario" in session,
             "usuario_actual": session.get("usuario"),
             "roles_actuales": session.get("roles", []), "tarjetas_sueltas": TARJETAS_SUELTAS}
@@ -95,20 +94,10 @@ def login_requerido(vista):
     en vez de entender que le falta identificarse.
     """
 
-    # ========================================================
-    # APAGADO PORQUE EL CONTROL DE ACCESO TODAVIA NO ESTA CONSTRUIDO.
-    #
-    # La API no expone POST /api/sesion ni responde 401, asi que exigir
-    # sesion aqui mandaria a un login que no puede funcionar.
-    #
-    # ES UN HUECO DE ESTA VERSION, no una etapa futura: cuando se construya,
-    # se borra el `return vista(...)` de abajo y se descomenta lo de arriba. El codigo se deja para que se vea que la pieza
-    # existe y que lo que falta es el otro lado.
-    # ========================================================
     @wraps(vista)
     def envoltura(*args, **kwargs):
-        # if "usuario" not in session:
-        #     return redirect(url_for("login"))
+        if "usuario" not in session:
+            return redirect(url_for("login"))
         return vista(*args, **kwargs)
 
     return envoltura

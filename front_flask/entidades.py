@@ -27,6 +27,12 @@ diccionario es el nombre interno; la `url` es lo que se ve.
 Cada campo es `(nombre, etiqueta, fk)`, y el tercero es la clave de otra
 entidad cuando el campo es una llave foránea: entonces el formulario lo vuelve
 un `<select>` cargado desde la API.
+
+EL `permiso` ES EL NOMBRE DE LA RUTA EN LA TABLA `ruta`, tal cual —`/producto`,
+`/rol`—. Tiene que coincidir letra por letra con lo que la API exige en su
+`exige_permiso(...)` y con lo que devuelve `/api/permisos/mios`; si no
+coincide, la entrada del menu simplemente no aparece. Son tres sitios que
+hablan del mismo nombre, y la base de datos es la que manda.
 """
 
 # El id del rol Administrador, como lo siembra la base.
@@ -37,16 +43,16 @@ ID_ROL_ADMINISTRADOR = 1
 # v2 y la v3; declararlas aqui ahora seria ofrecer pantallas que dan 404.
 ENTIDADES = {
     "producto": dict(descripcion="Código, nombre, stock y valor unitario", desde=1, url="productos", titulo="Productos", endpoint="/api/producto", pk="codigo",
-        permiso="interfaz.productos",
+        permiso="/producto",
         campos=[("codigo", "Código", None), ("nombre", "Nombre", None),
                 ("stock", "Stock", None), ("valorunitario", "Valor unitario", None)],
         editable=True),
     "empresa": dict(descripcion="Las empresas a las que puede pertenecer un cliente", desde=1, url="empresas", titulo="Empresas", endpoint="/api/empresa", pk="codigo",
-        permiso="interfaz.empresas",
+        permiso="/empresa",
         campos=[("codigo", "Código", None), ("nombre", "Nombre", None)],
         editable=True),
     "persona": dict(descripcion="Quiénes son clientes y vendedores", desde=1, url="personas", titulo="Personas", endpoint="/api/persona", pk="codigo",
-        permiso="interfaz.personas",
+        permiso="/persona",
         campos=[("codigo", "Código", None), ("nombre", "Nombre", None),
                 ("email", "Email", None), ("telefono", "Teléfono", None)],
         editable=True),
@@ -55,17 +61,17 @@ ENTIDADES = {
     # está, el formulario lo vuelve un <select> CARGADO DESDE LA API. Esa es
     # la lección de la v2 — la llave foránea se ELIGE, no se escribe.
     "rol": dict(descripcion="Administrador, Vendedor, Cajero, Contador, Cliente", desde=1, url="roles", titulo="Roles", endpoint="/api/rol", pk="id",
-        permiso="interfaz.roles",
+        permiso="/rol",
         campos=[("nombre", "Nombre", None)],
         editable=True, pk_generada=True),
     "cliente": dict(descripcion="Con su persona y su empresa, elegidas de un desplegable", desde=2, url="clientes", titulo="Clientes", endpoint="/api/cliente", pk="id",
-        permiso="interfaz.clientes",
+        permiso="/cliente",
         campos=[("credito", "Crédito", None),
                 ("fkcodpersona", "Persona", "persona"),
                 ("fkcodempresa", "Empresa (opcional)", "empresa")],
         editable=True, pk_generada=True),
     "vendedor": dict(descripcion="Con su carnet y su persona", desde=2, url="vendedores", titulo="Vendedores", endpoint="/api/vendedor", pk="id",
-        permiso="interfaz.vendedores",
+        permiso="/vendedor",
         campos=[("carnet", "Carnet", None), ("direccion", "Dirección", None),
                 ("fkcodpersona", "Persona", "persona")],
         editable=True, pk_generada=True),

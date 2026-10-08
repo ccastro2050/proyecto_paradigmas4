@@ -30,6 +30,7 @@ from fastapi import FastAPI
 from controllers.cliente_controller import router as router_cliente
 from controllers.empresa_controller import router as router_empresa
 from controllers.factura_controller import router as router_factura
+from controllers.consultas_controller import router as router_consultas
 from controllers.permisos_controller import router as router_permisos
 from controllers.persona_controller import router as router_persona
 from controllers.producto_controller import router as router_producto
@@ -37,6 +38,9 @@ from controllers.rol_controller import router as router_rol
 from controllers.sesion_controller import router as router_sesion
 from controllers.rol_usuario_controller import router as router_rol_usuario
 from controllers.rutarol_controller import router as router_rutarol
+from controllers.usuario_con_roles_controller import (
+    router as router_usuario_con_roles,
+)
 from controllers.usuario_controller import router as router_usuario
 from controllers.ruta_controller import router as router_ruta
 from controllers.vendedor_controller import router as router_vendedor
@@ -55,12 +59,16 @@ app = FastAPI(
 app.include_router(router_sesion)
 app.include_router(router_permisos)
 
+# El tablero de la v4: diez consultas, diez rutas declaradas.
+app.include_router(router_consultas)
+
 # Un router por entidad — el molde de la v1, replicado (v2):
 app.include_router(router_producto)
 app.include_router(router_rol)
 app.include_router(router_rol_usuario)
 app.include_router(router_rutarol)
 app.include_router(router_usuario)
+app.include_router(router_usuario_con_roles)
 app.include_router(router_ruta)
 app.include_router(router_persona)
 app.include_router(router_empresa)
