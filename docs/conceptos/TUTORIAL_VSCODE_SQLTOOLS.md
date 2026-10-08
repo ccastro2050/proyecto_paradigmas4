@@ -6,7 +6,7 @@
 > el editor donde ya está su código — ideal para consultar mientras programa.
 >
 > **Prerrequisitos:** el proyecto corriendo (`docker compose up -d` desde la
-> raíz — ver el [README](../README.md)) y VS Code abierto en la carpeta del
+> raíz — ver el [README](../../README.md)) y VS Code abierto en la carpeta del
 > proyecto.
 
 ---

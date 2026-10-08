@@ -1,6 +1,6 @@
 # Lista de chequeo de requisitos — Versión 2
 
-> **La compuerta 3** del método (ver [SDD_SPECKIT](../../../SDD_SPECKIT.md)). Esta lista
+> **La compuerta 3** del método (ver [SDD_SPECKIT](../../../conceptos/SDD_SPECKIT.md)). Esta lista
 > revisa **la ESPECIFICACIÓN, no el código**: se pasa cuando los documentos
 > 2 a 8 de esta versión están escritos y ANTES de programar la primera
 > línea. Es el equivalente a mano de `checklists/requirements.md`, que en

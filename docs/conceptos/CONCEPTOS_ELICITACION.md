@@ -188,10 +188,10 @@ lo que este documento enseña a mirar:
 
 | Dónde | Qué papel cumple |
 |---|---|
-| [`2_spec.md`](spec_kit/versiones/0_mapa_versiones.md) de cada versión | El QUÉ, con sus criterios de aceptación. Es lo que en otro proyecto habrían producido las historias |
-| [`4_research.md`](spec_kit/versiones/0_mapa_versiones.md) | **Las decisiones y las alternativas que se descartaron.** Es lo más cercano a un acta: dice qué se preguntó y por qué se resolvió así |
-| [`5_data_model.md`](spec_kit/versiones/0_mapa_versiones.md) | El esquema tal como llegó, que aquí es el insumo dado |
-| [`3_plan.md`](spec_kit/versiones/0_mapa_versiones.md) | El CÓMO, y los hallazgos que lo cambiaron |
+| [`2_spec.md`](../spec_kit/versiones/0_mapa_versiones.md) de cada versión | El QUÉ, con sus criterios de aceptación. Es lo que en otro proyecto habrían producido las historias |
+| [`4_research.md`](../spec_kit/versiones/0_mapa_versiones.md) | **Las decisiones y las alternativas que se descartaron.** Es lo más cercano a un acta: dice qué se preguntó y por qué se resolvió así |
+| [`5_data_model.md`](../spec_kit/versiones/0_mapa_versiones.md) | El esquema tal como llegó, que aquí es el insumo dado |
+| [`3_plan.md`](../spec_kit/versiones/0_mapa_versiones.md) | El CÓMO, y los hallazgos que lo cambiaron |
 
 > **Y eso no vuelve inútil este documento, al contrario.** Cuando el equipo haga
 > su proyecto de aula sí va a tener que elicitar — con un cliente de verdad o

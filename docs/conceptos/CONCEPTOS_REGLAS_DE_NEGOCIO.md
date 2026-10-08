@@ -6,7 +6,7 @@
 > una.
 >
 > Su instancia para este proyecto es
-> [`../dominio/REGLAS_DE_NEGOCIO.md`](spec_kit/versiones/0_mapa_versiones.md).
+> [`../dominio/REGLAS_DE_NEGOCIO.md`](../spec_kit/versiones/0_mapa_versiones.md).
 
 ---
 

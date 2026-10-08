@@ -365,17 +365,17 @@ va escrito y decidido **antes**, no generado de paso.
 ## 8. En este proyecto
 
 **El documento del dominio es
-[`../dominio/DISENO_BD.md`](spec_kit/versiones/0_mapa_versiones.md)**: las cuatro etapas de
+[`../dominio/DISENO_BD.md`](../spec_kit/versiones/0_mapa_versiones.md)**: las cuatro etapas de
 este proyecto, con lo que se decidió y lo que se descartó en cada una.
 
 | Nivel | Dónde está |
 |---|---|
-| **Conceptual** | [`DISENO_BD.md`](spec_kit/versiones/0_mapa_versiones.md) §1 — las siete familias de entidades y las tres decisiones que no son obvias |
-| **Selección del motor** | [`DISENO_BD.md`](spec_kit/versiones/0_mapa_versiones.md) §2 — relacional y MariaDB 17, con lo descartado y **el costo declarado** |
-| **Relacional** | [`DISENO_BD.md`](spec_kit/versiones/0_mapa_versiones.md) §3 — la transformación, las dependencias medidas y **la única desnormalización**, que es de `RN-22` |
-| **Físico** | [`db/init.sql`](../../db/bdfacturas_postgres.sql): **37 tablas · 52 claves foráneas · 47 `CHECK` · 23 `UNIQUE` · 35 índices · 16 funciones · 7 disparadores · 6 vistas · 73 comentarios** — medido, no estimado |
-| **Reglas** | [`../dominio/REGLAS_DE_NEGOCIO.md`](spec_kit/versiones/0_mapa_versiones.md) — las 38, con dónde se defiende cada una |
-| **Datos** | [`../dominio/DATOS_DE_PRUEBA.md`](spec_kit/versiones/0_mapa_versiones.md) — 97 filas con su procedencia |
+| **Conceptual** | [`DISENO_BD.md`](../spec_kit/versiones/0_mapa_versiones.md) §1 — las siete familias de entidades y las tres decisiones que no son obvias |
+| **Selección del motor** | [`DISENO_BD.md`](../spec_kit/versiones/0_mapa_versiones.md) §2 — relacional y MariaDB 17, con lo descartado y **el costo declarado** |
+| **Relacional** | [`DISENO_BD.md`](../spec_kit/versiones/0_mapa_versiones.md) §3 — la transformación, las dependencias medidas y **la única desnormalización**, que es de `RN-22` |
+| **Físico** | [`db/init.sql`](../../db/init.sql): **37 tablas · 52 claves foráneas · 47 `CHECK` · 23 `UNIQUE` · 35 índices · 16 funciones · 7 disparadores · 6 vistas · 73 comentarios** — medido, no estimado |
+| **Reglas** | [`../dominio/REGLAS_DE_NEGOCIO.md`](../spec_kit/versiones/0_mapa_versiones.md) — las 38, con dónde se defiende cada una |
+| **Datos** | [`../dominio/DATOS_DE_PRUEBA.md`](../spec_kit/versiones/0_mapa_versiones.md) — 97 filas con su procedencia |
 
 > **Y hay que decir algo incómodo sobre este proyecto:** aquí el diseño de base
 > de datos **vino dado**. No se elicitó ni se construyó en este repositorio: se

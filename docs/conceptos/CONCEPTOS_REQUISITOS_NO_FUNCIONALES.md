@@ -5,7 +5,7 @@
 > cuando dos se pelean.
 >
 > Su instancia para este proyecto es
-> [`../dominio/REQUISITOS_NO_FUNCIONALES.md`](spec_kit/1_constitution.md).
+> [`../dominio/REQUISITOS_NO_FUNCIONALES.md`](../spec_kit/1_constitution.md).
 
 ---
 

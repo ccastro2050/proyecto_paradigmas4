@@ -102,7 +102,7 @@ con salt:  "clave123" -> $2a$11$Xq…   (Ana)
 > 20— precisamente porque un hash de bcrypt ocupa 60 caracteres. El tamaño de
 > la columna ya anticipaba esta versión.
 >
-> **La semilla de `db/bdfacturas_postgres.sql` tiene contraseñas en claro.**
+> **La semilla de `db/init.sql` tiene contraseñas en claro.**
 > Cerrar la v3 implica volver a sembrarlas con hash, **en el script** — no a
 > mano, o el siguiente `docker compose down -v` las devuelve a texto plano.
 
@@ -270,6 +270,6 @@ el menú no muestra /usuarios   ·   pero esto responde 200:
    fallo más frecuente en aplicaciones reales es justamente el de §5.
    <https://owasp.org/Top10/A01_2021-Broken_Access_Control/>
 8. **En este repositorio:** `verificar_acceso_ruta` y las tablas del acceso en
-   [`db/bdfacturas_postgres.sql`](../../db/bdfacturas_postgres.sql); los diez
+   [`db/init.sql`](../../db/init.sql); los diez
    criterios en
-   [la spec de la v3](spec_kit/versiones/0_mapa_versiones.md).
+   [la spec de la v3](../spec_kit/versiones/0_mapa_versiones.md).

@@ -5,7 +5,7 @@
 > que sirva y cómo se sabe que el catálogo está completo.
 >
 > Su instancia para este proyecto es
-> [`../dominio/REQUISITOS_FUNCIONALES.md`](spec_kit/versiones/0_mapa_versiones.md).
+> [`../dominio/REQUISITOS_FUNCIONALES.md`](../spec_kit/versiones/0_mapa_versiones.md).
 
 ---
 
@@ -19,7 +19,7 @@ condición necesaria—, y eso en español es «requisito»; «requerimiento» e
 **acción** de requerir, y en primera acepción un acto judicial. La norma se
 llama *Requirements engineering* y se traduce **ingeniería de requisitos**.
 Aquí está en el
-[`5_data_model.md`](spec_kit/versiones/0_mapa_versiones.md) de la v1,
+[`5_data_model.md`](../spec_kit/versiones/0_mapa_versiones.md) de la v1,
 que es donde se define cada tabla y cada columna.
 
 ---

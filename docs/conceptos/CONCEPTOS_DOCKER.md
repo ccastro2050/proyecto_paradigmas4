@@ -1157,5 +1157,5 @@ corriendo. Enciéndalo y repita el comando.
 5. Kubernetes — *Overview* (documentación oficial):
    <https://kubernetes.io/es/docs/concepts/overview/>
 6. En este repositorio: el `docker run` de la v1 en el
-   [README](../README.md) y en el
-   [modelo de datos de la v1](spec_kit/versiones/0_mapa_versiones.md).
+   [README](../../README.md) y en el
+   [modelo de datos de la v1](../spec_kit/versiones/0_mapa_versiones.md).

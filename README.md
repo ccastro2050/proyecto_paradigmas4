@@ -159,7 +159,7 @@ Ejecutar la versión del repo es solo el punto de partida. Lo que se evalúa es
 **reconstruirla usted mismo, en una carpeta propia (fuera del clon)**,
 siguiendo las especificaciones — con o sin ayuda de IA:
 
-> 🤖 **[Guía para construir la versión con IA](docs/GUIA_IA.md)** — los dos
+> 🤖 **[Guía para construir la versión con IA](docs/conceptos/GUIA_IA.md)** — los dos
 > caminos con su prompt listo para copiar: **chat web** (Gemini, DeepSeek,
 > ChatGPT) e **IDE agéntico** (Antigravity, Cursor, Claude Code).
 
@@ -176,7 +176,7 @@ siguiendo las especificaciones — con o sin ayuda de IA:
 | **Spec kit** | Los documentos que dicen QUÉ/CÓMO/EN QUÉ ORDEN — la fuente de verdad |
 | **Versión / tag** | Un incremento cerrado y verificado (`v1`, `v2`, …): se avanza solo en verde |
 
-> Detalle de todos estos conceptos: [docs/CONCEPTOS_DOCKER.md](docs/CONCEPTOS_DOCKER.md).
+> Detalle de todos estos conceptos: [docs/CONCEPTOS_DOCKER.md](docs/conceptos/CONCEPTOS_DOCKER.md).
 
 ---
 
@@ -272,17 +272,17 @@ aceptación (se cierra con tag). Detalle completo:
 
 | Documento | Qué cubre |
 |---|---|
-| [SDD y Spec Kit](docs/SDD_SPECKIT.md) | La metodología con la que se trabaja este curso: la spec manda sobre el código |
-| [Pruebas y calidad de las pruebas](docs/PRUEBAS_Y_CALIDAD_DE_PRUEBAS.md) | Cobertura, la métrica CRAP y mutation testing: cómo saber si sus pruebas de verdad protegen — y por qué hoy es reto opcional, no alcance del proyecto |
-| [Programación asincrónica](docs/PROGRAMACION_ASINCRONICA.md) | Qué resuelve el async/await en la web, qué se daña sin él (con diagramas), y cómo se ve en el código de este proyecto |
-| [El paradigma P.O.O.](docs/PARADIGMA_POO.md) | Qué es un paradigma, los 4 pilares, la P.O.O. de Python (`Protocol`, duck typing) y **Pydantic** como clases que validan datos |
-| [El flujo de una petición](docs/FLUJO_DE_UNA_PETICION.md) | Dónde "está" el GET (el decorador), quién captura el body del POST (Pydantic) y el viaje completo capa por capa — con la pareja PUT/PATCH para probar |
+| [SDD y Spec Kit](docs/conceptos/SDD_SPECKIT.md) | La metodología con la que se trabaja este curso: la spec manda sobre el código |
+| [Pruebas y calidad de las pruebas](docs/conceptos/PRUEBAS_Y_CALIDAD_DE_PRUEBAS.md) | Cobertura, la métrica CRAP y mutation testing: cómo saber si sus pruebas de verdad protegen — y por qué hoy es reto opcional, no alcance del proyecto |
+| [Programación asincrónica](docs/conceptos/PROGRAMACION_ASINCRONICA.md) | Qué resuelve el async/await en la web, qué se daña sin él (con diagramas), y cómo se ve en el código de este proyecto |
+| [El paradigma P.O.O.](docs/conceptos/PARADIGMA_POO.md) | Qué es un paradigma, los 4 pilares, la P.O.O. de Python (`Protocol`, duck typing) y **Pydantic** como clases que validan datos |
+| [El flujo de una petición](docs/conceptos/FLUJO_DE_UNA_PETICION.md) | Dónde "está" el GET (el decorador), quién captura el body del POST (Pydantic) y el viaje completo capa por capa — con la pareja PUT/PATCH para probar |
 | [Colección de Postman](postman/README.md) | Los 13 endpoints de la v1 listos para importar y probar con clics — incluida la pareja PUT=422 vs PATCH=200 |
-| [SOLID, capas y patrones de diseño](docs/SOLID_CAPAS_PATRONES.md) | Los 5 principios y las capas — y en qué versión se demuestra cada uno |
-| [Principios ACID](docs/PRINCIPIOS_ACID.md) | Las 4 garantías transaccionales, por qué una facturación las exige, y el contraste con BASE |
-| [Conceptos de Docker](docs/CONCEPTOS_DOCKER.md) | Imagen, contenedor, volumen, compose (con el `docker-compose.yml` del proyecto explicado línea por línea) y por qué NO se necesita Kubernetes |
-| [Tutorial pgAdmin](docs/TUTORIAL_PGADMIN.md) | Administrar la BD paso a paso: conectarse, explorar, editar datos (y verlos cambiar en la API), Query Tool y ERD |
-| [Tutorial SQLTools (VS Code)](docs/TUTORIAL_VSCODE_SQLTOOLS.md) | La BD sin salir del editor: extensión + driver, conexión, explorar, SELECT/INSERT/DELETE y ejecutar una sentencia entre varias |
+| [SOLID, capas y patrones de diseño](docs/conceptos/SOLID_CAPAS_PATRONES.md) | Los 5 principios y las capas — y en qué versión se demuestra cada uno |
+| [Principios ACID](docs/conceptos/PRINCIPIOS_ACID.md) | Las 4 garantías transaccionales, por qué una facturación las exige, y el contraste con BASE |
+| [Conceptos de Docker](docs/conceptos/CONCEPTOS_DOCKER.md) | Imagen, contenedor, volumen, compose (con el `docker-compose.yml` del proyecto explicado línea por línea) y por qué NO se necesita Kubernetes |
+| [Tutorial pgAdmin](docs/conceptos/TUTORIAL_PGADMIN.md) | Administrar la BD paso a paso: conectarse, explorar, editar datos (y verlos cambiar en la API), Query Tool y ERD |
+| [Tutorial SQLTools (VS Code)](docs/conceptos/TUTORIAL_VSCODE_SQLTOOLS.md) | La BD sin salir del editor: extensión + driver, conexión, explorar, SELECT/INSERT/DELETE y ejecutar una sentencia entre varias |
 
 ---
 

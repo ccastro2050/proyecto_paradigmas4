@@ -4,7 +4,7 @@
 > proyecto, qué lleva, cómo se hace uno que sirva, y cómo se comprueba.
 > **Este repositorio no tiene un `GLOSARIO.md` aparte**: los términos se
 > definen donde se usan — las tablas en
-> [`5_data_model.md`](spec_kit/versiones/0_mapa_versiones.md) y las
+> [`5_data_model.md`](../spec_kit/versiones/0_mapa_versiones.md) y las
 > reglas en el `2_spec.md` de su versión. Para un proyecto de aula con un
 > dominio ajeno, en cambio, el glosario aparte sí hace falta.
 
@@ -227,7 +227,7 @@ coherentes por dentro y desalineados entre sí.
   donde aparece por primera vez — las tablas en el `5_data_model.md`.
 - Alimenta a **todos** los documentos posteriores: es el número 4 de los quince
   de [`DOCUMENTOS_DE_INGENIERIA_DEL_SOFTWARE.md`](DOCUMENTOS_DE_INGENIERIA_DEL_SOFTWARE.md), y el
-  primero que se escribe según [`MAPA_DE_DOCUMENTOS.md`](../README.md).
+  primero que se escribe según [`MAPA_DE_DOCUMENTOS.md`](../../README.md).
 - Trae **una decisión sin decidir** —cómo se llama el rol principal— que está
   sin resolver a propósito, esperando al usuario experto. Un glosario que
   resuelve solo lo fácil no sirve para nada.

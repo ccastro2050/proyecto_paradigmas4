@@ -243,7 +243,7 @@ clarify NO crea un archivo: escribe dentro de 2_spec.md
 ```
 
 **A mano, en este curso:** eso es exactamente la
-[la sección de Clarificaciones de 2_spec.md](spec_kit/versiones/0_mapa_versiones.md),
+[la sección de Clarificaciones de 2_spec.md](../spec_kit/versiones/0_mapa_versiones.md),
 y el marcador `[NECESITA ACLARACIÓN: …]` (§4.4) hace las veces de
 pregunta. La diferencia no es el resultado, es **quién detecta la
 ambigüedad**: allá la busca el agente; aquí la busca usted — que es
@@ -296,9 +296,9 @@ Estado: NO convergido. Vuelva a implement y corra converge otra vez.
 ```
 
 **A mano, en este curso:** es la última fase de
-[8_tasks.md](spec_kit/versiones/0_mapa_versiones.md) —el
+[8_tasks.md](../spec_kit/versiones/0_mapa_versiones.md) —el
 cierre— corriendo el smoke test del
-[7_quickstart.md](spec_kit/versiones/0_mapa_versiones.md).
+[7_quickstart.md](../spec_kit/versiones/0_mapa_versiones.md).
 Si un criterio no pasa, la versión **no se cierra ni se le pone el tag**:
 se agregan tareas y se sigue. La regla del curso —"no se avanza con una
 fase en rojo"— y `converge` dicen exactamente lo mismo.
@@ -369,11 +369,11 @@ Cuatro razones, en orden de peso:
 
 El proyecto se construye **por versiones**, cada una con su propia spec:
 
-- **Constitución permanente:** [spec_kit/1_constitution.md](spec_kit/1_constitution.md)
+- **Constitución permanente:** [spec_kit/1_constitution.md](../spec_kit/1_constitution.md)
   — las reglas que ninguna versión puede violar.
-- **Mapa de versiones:** [spec_kit/versiones/0_mapa_versiones.md](spec_kit/versiones/0_mapa_versiones.md)
+- **Mapa de versiones:** [spec_kit/versiones/0_mapa_versiones.md](../spec_kit/versiones/0_mapa_versiones.md)
   — la ruta v1→v6 y las reglas de avance.
-- **La versión en curso:** [spec_kit/versiones/v1_producto_postgres/](spec_kit/versiones/0_mapa_versiones.md)
+- **La versión en curso:** [spec_kit/versiones/v1_producto_postgres/](../spec_kit/versiones/0_mapa_versiones.md)
   — la spec de la v1 ES el documento que se le entrega a la IA (o al
   estudiante) para construirla.
 
@@ -812,6 +812,6 @@ aprender la disciplina.
    <https://www.thoughtworks.com/insights/podcasts/technology-podcasts/what-is-spec-driven-development>
 6. AWS Kiro — documentación de specs (EARS, requirements/design/tasks):
    <https://kiro.dev/docs/specs/>
-7. En este repositorio: la [constitución](spec_kit/1_constitution.md), el
-   [mapa de versiones](spec_kit/versiones/0_mapa_versiones.md) y el
-   [spec kit de la v1](spec_kit/versiones/0_mapa_versiones.md).
+7. En este repositorio: la [constitución](../spec_kit/1_constitution.md), el
+   [mapa de versiones](../spec_kit/versiones/0_mapa_versiones.md) y el
+   [spec kit de la v1](../spec_kit/versiones/0_mapa_versiones.md).

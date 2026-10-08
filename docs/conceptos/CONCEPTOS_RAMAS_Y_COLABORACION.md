@@ -8,7 +8,7 @@
 > para qué, y qué efecto tiene.
 >
 > **Qué NO es.** No es la norma. **La norma es
-> [`1_constitution.md`](spec_kit/1_constitution.md) §4.1**, que
+> [`1_constitution.md`](../spec_kit/1_constitution.md) §4.1**, que
 > es obligatoria desde la v1 y se califica. Esto explica **por qué** esa norma
 > dice lo que dice.
 >
@@ -956,7 +956,7 @@ un proyecto propio:
 
 | Documento | Qué aporta |
 |---|---|
-| [`1_constitution.md`](spec_kit/1_constitution.md) §4.1 | **La norma.** Esto solo la explica |
+| [`1_constitution.md`](../spec_kit/1_constitution.md) §4.1 | **La norma.** Esto solo la explica |
 | [`CONCEPTOS_PLAN_DE_DESARROLLO.md`](CONCEPTOS_PLAN_DE_DESARROLLO.md) | Las rondas y el calendario que las ramas ejecutan |
 | [`SDD_SPECKIT.md`](SDD_SPECKIT.md) | Las tres compuertas: lo que el integrador revisa en el PR |
 | **`CRONOGRAMA.md`** | Lo que se puede leer de un `git log` |

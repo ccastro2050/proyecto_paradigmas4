@@ -21,7 +21,7 @@
 > [`SDD_SPECKIT.md`](SDD_SPECKIT.md), que es donde vive el kit.
 >
 > Fecha: 14 de septiembre de 2026. Es el conceptual de
-> [`MAPA_DE_DOCUMENTOS.md`](../README.md), que es su instancia para
+> [`MAPA_DE_DOCUMENTOS.md`](../../README.md), que es su instancia para
 > este proyecto.
 
 ---
@@ -154,7 +154,7 @@ nunca redactó un `6_contracts` no puede revisar el que le devuelva un agente:
 no sabe qué tendría que estar y no está. **Es el único camino que enseña.**
 
 > **El ejemplo:** el spec kit de este proyecto —los once de
-> [`docs/spec_kit/`](spec_kit/)— se escribió así, a mano, documento por
+> [`docs/spec_kit/`](../spec_kit/)— se escribió así, a mano, documento por
 > documento. Y por eso `4_research.md` puede decir **qué se descartó y por
 > qué**: nadie descarta alternativas que no consideró.
 
@@ -257,15 +257,15 @@ Esta es la tabla que hace posible la ruta A. Sin ella, «alimentar la IA con los
 documentos» es un deseo; con ella, es un procedimiento.
 
 Las rutas son las reales de este proyecto, bajo
-[`docs/spec_kit/`](spec_kit/).
+[`docs/spec_kit/`](../spec_kit/).
 
 ### Los tres que rigen todo el proyecto
 
 | `.md` del kit | **Sin esto no se puede escribir** | Ayuda, pero no es indispensable |
 |---|---|---|
 | `0_historias_de_usuario.md` *(no existe en este repositorio: ver abajo)* | Historias **firmadas** · glosario · respuestas de elicitación | Reglas de negocio (para las observaciones) |
-| [`1_constitution.md`](spec_kit/1_constitution.md) | **Requisitos NO funcionales** · diseño arquitectónico · manual de marca · política de errores | Reglas de negocio transversales |
-| [`versiones/0_mapa_versiones.md`](spec_kit/versiones/0_mapa_versiones.md) | Catálogo de **requisitos funcionales** con su prioridad · diseño de BD (qué tabla depende de cuál) · plan de desarrollo | Historias, para nombrar cada versión |
+| [`1_constitution.md`](../spec_kit/1_constitution.md) | **Requisitos NO funcionales** · diseño arquitectónico · manual de marca · política de errores | Reglas de negocio transversales |
+| [`versiones/0_mapa_versiones.md`](../spec_kit/versiones/0_mapa_versiones.md) | Catálogo de **requisitos funcionales** con su prioridad · diseño de BD (qué tabla depende de cuál) · plan de desarrollo | Historias, para nombrar cada versión |
 
 > **Ojo con el `0_historias_de_usuario.md`:** este repositorio **no lo tiene**, y
 > no es un olvido. Es el ejemplo de clase — su base viene dada y sus requisitos

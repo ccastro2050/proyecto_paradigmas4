@@ -188,4 +188,4 @@ La pareja PUT/PATCH con el mismo body es la lección más importante del
 flujo: el MISMO dato, dos verbos, dos resultados — porque cada verbo tiene
 su semántica y la API la hace cumplir. Y todo esto también se puede recorrer
 con clics en **http://localhost:8005/docs** (Swagger) o con la colección de
-[postman/](../postman/README.md).
+[postman/](../../postman/README.md).

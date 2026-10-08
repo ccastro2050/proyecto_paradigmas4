@@ -124,7 +124,7 @@ entonces se especifica la v4 (SQL Server: la fábrica pagará de nuevo).
 
 > **Qué es esta sección:** el registro de las ambigüedades detectadas ANTES
 > de planear, con la respuesta que se acordó y su razón. Es **la compuerta
-> 1** del método (ver [SDD_SPECKIT](../../../SDD_SPECKIT.md)): mientras
+> 1** del método (ver [SDD_SPECKIT](../../../conceptos/SDD_SPECKIT.md)): mientras
 > quede un `[NECESITA ACLARACIÓN: …]` en los requisitos de arriba, esta
 > versión no pasa a la planeación.
 >

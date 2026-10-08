@@ -143,7 +143,7 @@ respondida de la que salieron las historias de esta evaluación— está en
 ## 8. En este proyecto
 
 Las historias de este sistema están en
-el [`2_spec.md`](spec_kit/versiones/0_mapa_versiones.md) de cada versión,
+el [`2_spec.md`](../spec_kit/versiones/0_mapa_versiones.md) de cada versión,
 y su numeración no es casual: es el documento **`0`** del spec kit, **antes** de
 la constitución. Las necesidades van antes que las reglas de construcción.
 

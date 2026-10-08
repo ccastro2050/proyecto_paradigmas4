@@ -5,7 +5,7 @@
 > ver cómo cada cambio se refleja al instante en la API.
 >
 > **Prerrequisitos:** el proyecto corriendo (`docker compose up -d` desde la
-> raíz — ver el [README](../README.md)) y pgAdmin 4 instalado
+> raíz — ver el [README](../../README.md)) y pgAdmin 4 instalado
 > (<https://www.pgadmin.org/download/>).
 
 ---
@@ -73,7 +73,7 @@ Dos observaciones para la clase:
 
 - **La BD está completa desde la v1** aunque la API solo use `producto` — es
   la decisión documentada en el
-  [modelo de datos de la v1](spec_kit/versiones/0_mapa_versiones.md).
+  [modelo de datos de la v1](../spec_kit/versiones/0_mapa_versiones.md).
 - De paso, mire los otros nodos bajo `public`: **Functions** y **Procedures**
   (los SPs de facturación que usarán versiones futuras), **Sequences** (los
   autoincrementales de las PK `SERIAL`) y, dentro de cada tabla, sus
@@ -169,7 +169,7 @@ relaciones que el curso usa como ejemplo:
   `ruta`.
 
 Compare este diagrama con el del
-[modelo de datos de la v1](spec_kit/versiones/0_mapa_versiones.md):
+[modelo de datos de la v1](../spec_kit/versiones/0_mapa_versiones.md):
 es el mismo modelo — uno viene de la spec, el otro de la BD viva. Cuando
 coinciden, la spec no miente.
 
@@ -196,5 +196,5 @@ coinciden, la spec no miente.
   conecta, primero verifique que el proyecto esté corriendo:
   `docker compose ps`.
 - Las credenciales de este proyecto son didácticas y públicas a propósito
-  (ver la [constitución](spec_kit/1_constitution.md), Artículo 8) — en un
+  (ver la [constitución](../spec_kit/1_constitution.md), Artículo 8) — en un
   sistema real, jamás viajan en un tutorial.

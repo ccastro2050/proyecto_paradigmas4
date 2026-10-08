@@ -5,7 +5,7 @@
 > administrador oficial de PostgreSQL.
 >
 > Prerrequisito: el proyecto corriendo (`docker compose up -d --build` en la
-> raíz del repositorio, ver [README](../README.md)).
+> raíz del repositorio, ver [README](../../README.md)).
 
 ---
 
@@ -96,7 +96,7 @@ Para leer en esta pantalla:
   llavecita = llave primaria —, `nombre (nvarchar(100))`, `stock (int)`
   y `valorunitario (decimal(18,2))`. Compare con el modelo `Producto`
   de la API: los mismos tipos vistos desde el motor (es la tabla del
-  [modelo de datos](spec_kit/versiones/0_mapa_versiones.md)).
+  [modelo de datos](../spec_kit/versiones/0_mapa_versiones.md)).
 - **Claves / Restricciones / Desencadenadores** — la llave primaria y
   los **triggers** de facturación ("desencadenadores" en español), ya
   escritos y esperando a las versiones siguientes del curso. En el paso
@@ -244,7 +244,7 @@ Para leer en el diagrama:
   muchos-a-muchos entre factura y producto — la esquina donde la v2 del
   curso va a trabajar.
 - Ese dibujo ES el [modelo de datos de la
-  v1](spec_kit/versiones/0_mapa_versiones.md),
+  v1](../spec_kit/versiones/0_mapa_versiones.md),
   dibujado por el motor real.
 
 Si guarda el diagrama (`Ctrl+S`, póngale un nombre), queda dentro de la
@@ -263,7 +263,7 @@ Restore → Database…**. Pero ojo con un detalle propio de este proyecto:
 > que copiarlo con `docker compose cp`.
 
 Por eso el método estándar del curso es el de
-[backupdb/README.md](../backupdb/README.md) (dos comandos: backup dentro
+[backupdb/README.md](../../backupdb/README.md) (dos comandos: backup dentro
 del contenedor + copia a la carpeta `backupdb/`). Use los diálogos de
 SSMS cuando administre un PostgreSQL instalado directo en la máquina;
 aquí, prefiera los comandos del README.
