@@ -5,7 +5,7 @@
 > cuales fallan **en silencio**, que es lo que los hace caros.
 >
 > El requisito que manda está en
-> [`2_spec.md`](../spec_kit/versiones/v2_mas_tablas/2_spec.md). Esto es el relato.
+> [`2_spec.md`](../spec_kit/versiones/v2_con_fk/2_spec.md). Esto es el relato.
 >
 > **Material académico simulado** en el dominio; los tropiezos son reales, y uno
 > de ellos **apareció midiendo**, no leyendo.

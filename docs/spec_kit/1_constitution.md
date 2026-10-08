@@ -1,90 +1,131 @@
-# Constitución del Proyecto Paradigmas
+# Constitución del proyecto
 
-> Principios **innegociables** que gobiernan todo el proyecto. Esta
-> constitución es **permanente**: describe el sistema COMPLETO al que se llega
-> al final, y no cambia entre versiones.
->
-> El proyecto se construye **por versiones** (desarrollo incremental guiado por
-> especificaciones): ver el [mapa de versiones](versiones/0_mapa_versiones.md).
-> Cada artículo aplica desde la versión que introduce su alcance — por ejemplo,
-> en la v1 solo existe `api_facturas` con PostgreSQL, así que los artículos
-> sobre el front, los otros motores y docker compose son la META, no el estado
-> actual.
+> **Documento permanente.** Estas reglas rigen TODAS las versiones del
+> curso. Cada versión tiene además su propia especificación en
+> [versiones/](versiones/0_mapa_versiones.md); ante conflicto, la
+> constitución gana.
 
 ---
 
-## Artículo 1 — Propósito didáctico ante todo
+## Artículo 1 — El curso es POR VERSIONES y la especificación manda
 
-Este proyecto existe para **enseñar paradigmas de programación y arquitectura de
-software** a estudiantes universitarios. Ante cualquier disyuntiva entre "lo más
-profesional" y "lo más claro para aprender", gana la claridad:
+- El sistema se construye por **versiones incrementales** (v1, v2, …), cada
+  una con su spec kit propio (documentos 2 a 8). Una versión está TERMINADA
+  solo cuando pasa sus criterios de aceptación; entonces se hace commit,
+  **tag** (`v1`, `v2`, …) y solo después se escribe la spec siguiente.
+- **No se anticipa** (**YAGNI**, *You Aren't Gonna Need It* — "no lo vas a
+  necesitar"): nada de fábricas multi-motor, capas "por si acaso" ni tablas
+  de más antes de la versión que las pida. El código de cada versión solo
+  puede nombrar lo que su spec nombra.
+- El repositorio siempre contiene la **versión en curso, funcionando**.
 
-- Todo el código, comentarios, docstrings, mensajes y documentación se escriben en **español**.
-- Cada archivo abre con un docstring/comentario que explica su papel en la arquitectura.
-- Se prefiere código explícito y repetitivo-pero-legible sobre metaprogramación compacta.
+## Artículo 2 — Stack: Python y FastAPI, con el SQL a la vista
 
-## Artículo 2 — Arquitectura de 3 capas estricta
+- Lenguaje **Python 3.12** sobre **FastAPI**: routers por recurso, modelos
+  **Pydantic** en la frontera de entrada, y `async/await` en todo el acceso
+  a datos.
+- **SIN ORM de entidades.** El SQL se escribe **a mano**, queda a la vista y
+  va **siempre parametrizado** (`:parametro` — nunca concatenar valores).
+  SQLAlchemy entra **solo como ejecutor asíncrono**, con `text()`: ejecuta la
+  consulta que nosotros escribimos y JAMÁS la genera por nosotros. Si una
+  consulta existe, está escrita en un repositorio y se puede leer.
+- Paquetes externos permitidos en la v1 (y ninguno más sin que una spec lo
+  pida): **`fastapi`**, **`uvicorn`**, **`sqlalchemy`** (el ejecutor),
+  **`asyncpg`** (el controlador de PostgreSQL) y **`pydantic`**.
+  Desde la v5, uno por motor: **`aiomysql`** para MariaDB y **`aioodbc`**
+  para SQL Server. Son los que están hoy en `requirements.txt`, sin uno más.
+- **Swagger no se instala**: FastAPI lo genera solo en `/docs`, leyendo el
+  código. Un documento que se mantiene al día sin que nadie lo mantenga.
+
+## Artículo 3 — Arquitectura en capas con interfaces, desde el día 1
 
 ```
-CAPA 1: FRONT (Flask, :8000)  — solo pinta HTML y llama APIs; NUNCA toca la BD
-CAPA 2: API (FastAPI)        — api_facturas :8005
-CAPA 3: DATOS                 — PostgreSQL | MariaDB | SQL Server (bdfacturas)
+HTTP → Controller (valida el body contra la PETICIÓN del verbo → 422)
+     → IServicioProducto      (interfaz — reglas de negocio)
+     → IRepositorioProducto   (interfaz — el servicio no sabe qué motor hay)
+     → RepositorioProducto<Motor>  (SQLAlchemy (solo como ejecutor, con text()), SQL a mano parametrizado)
+     → la base de datos
 ```
 
-- El front **no importa drivers de base de datos**; solo habla HTTP con las APIs.
-- Las APIs no generan HTML; solo JSON.
-- Cada capa se puede reemplazar sin tocar las otras (el front funciona igual con
-  las dos APIs; las APIs funcionan igual con los 3 motores).
+- El controlador no toca SQL; el servicio no conoce HTTP ni el motor; el
+  repositorio no conoce HTTP. Los contratos son `interface` de Python.
+- **Solo el ensamblador** (la sección de registro de dependencias en
+  `main.py`) decide **qué implementación** se usa. Todo lo demás
+  **recibe interfaces por constructor**, nunca instancia lo que necesita.
 
-## Artículo 3 — Independencia del motor de base de datos
+  > **Cuidado con leer esto como «está prohibido nombrar clases
+  > concretas»: no lo es.** `ProductoController` y `ServicioProducto` son
+  > clases concretas y se nombran sin problema — de cada una hay **una
+  > sola**. Lo que la regla prohíbe es que una clase **se fabrique sola**
+  > lo que necesita: ningún servicio escribe `new RepositorioX…()`, porque
+  > ahí sí hay **dos alternativas** y elegir una lo casaría con un motor.
+- El negocio comunica problemas con excepciones
+  (`ArgumentException` → 400 · `NoEncontradoExcepcion` → 404) y el
+  controlador las traduce a HTTP.
 
-- El motor activo se elige con **una sola variable**: `DB_PROVIDER`
-  (`postgres` | `mariadb` | `sqlserver`). Nunca con cambios de código.
-- Los tres motores contienen la **misma base de datos** (`bdfacturas_*_local`):
-  mismas 12 tablas, mismos datos de ejemplo, mismos triggers y procedimientos
-  almacenados, traducidos al dialecto de cada motor.
-- Todo acceso a datos pasa por interfaces (Protocol) + fábrica de repositorios,
-  aplicando inversión de dependencias (SOLID). Ver `docs/PRINCIPIOS_SOLID_ACID.md`.
+## Artículo 4 — Un solo comando
 
-## Artículo 4 — Un solo comando para arrancar
+`docker compose up -d --build` deja TODO el sistema de la versión
+funcionando, desde la primera versión. El código va montado como volumen y
+corre con `uvicorn --reload`: guardar un `.py` recompila y reinicia solo.
 
-`docker compose up -d --build` debe dejar TODO funcionando: front, 2 APIs,
-3 motores con datos, y phpMyAdmin. Sin pasos manuales, sin instalar nada local
-más allá de Docker. Los estudiantes tienen máquinas heterogéneas: el entorno
-vive completo en contenedores.
+## Artículo 5 — La base de datos se diseña UNA VEZ, en la fase 0
 
-## Artículo 5 — Persistencia y reproducibilidad
+La BD `bdfacturas` tiene **dos orígenes**, y conviene no confundirlos:
 
-- Los datos viven en **volúmenes** Docker (`pgdata`, `mariadbdata`, `mssqldata`):
-  sobreviven a `docker compose down` y a reinicios del PC.
-- `docker compose down -v` devuelve las BD a su estado original (los `init.sql`
-  se re-ejecutan sobre volúmenes vacíos). Ese es el "botón de pánico" oficial.
-- Los scripts de inicialización son **idempotentes o de una sola vez**: los motores
-  solo los ejecutan con volumen vacío (Postgres/MariaDB) o tras verificar que la
-  BD no existe (SQL Server via `sqlserver-init`).
+- **Las 12 tablas vienen del curso de Bases de Datos** — el modelo ya estaba
+  hecho y se reusa tal cual. Son **89 líneas de código** del script.
+- **Los 3 disparadores y los 16 procedimientos se escriben en ESTE proyecto**,
+  en la fase 0, antes de la v1: son **las reglas del negocio**, y salen de la
+  elicitación. Son **760 líneas de código** — el **89 %** del script. (El
+  conteo excluye comentarios: así no cambia cuando se comenta mejor.)
 
-## Artículo 6 — Convenciones fijas
+Ese trabajo está en
+[`docs/dominio/elicitacion/`](../dominio/elicitacion/1_PREGUNTAS.md),
+[`REGLAS_DE_NEGOCIO.md`](../dominio/REGLAS_DE_NEGOCIO.md) y
+[`DISENO_BD.md`](../dominio/DISENO_BD.md).
+
+> **Las tablas no deciden nada.** Que el stock no quede negativo o que una
+> factura no se anule dos veces vive en los disparadores y los procedimientos —
+> y ninguno existía antes de este proyecto.
+
+**Desde la v1 en adelante, la base de datos VIENE DADA al código.** Se crea COMPLETA
+—12 tablas, disparadores, procedimientos y datos de ejemplo— con los scripts
+de `db/`: **se copian, no se generan**. Lo que crece por versiones es la API.
+El código de cada versión solo puede nombrar las tablas que su spec le
+permite.
+
+> **Por qué se diseña una vez y no por versiones.** Porque un modelo de datos
+> que cambia en cada entrega obliga a migrar los datos, a rehacer los
+> disparadores y a reescribir los procedimientos — y nada de eso es lo que el
+> curso enseña. **El modelo se piensa entero al principio, que es cuando se
+> piensa un modelo**, y después se construye la API por tramos.
+>
+> **Y por eso ninguna IA genera el esquema.** Si una propone un `CREATE TABLE`,
+> está rehaciendo un trabajo que ya se hizo — y lo va a hacer sin haber estado
+> en la elicitación.
+
+## Artículo 6 — Todo en español, comentado para principiantes
+
+- Nombres, rutas, mensajes, comentarios y documentación: **en español**.
+- El código lleva **comentarios línea a línea**: qué significa cada
+  construcción del lenguaje y para qué sirve aquí. El repositorio es
+  material de estudio, no solo software.
+
+## Artículo 7 — Contratos exactos
+
+Los endpoints, formatos y códigos de estado de cada versión están en su
+`6_contracts.md` y se cumplen **al pie de la letra** — incluido el
+contraste didáctico PUT (reemplazo completo → 422 si falta un campo) vs
+PATCH (parcial → 200 con el mismo body).
+
+## Artículo 8 — Convenciones fijas
 
 | Cosa | Convención |
 |---|---|
-| Puertos públicos | front 8000 · · api_facturas 8005 · phpMyAdmin 8081 |
-| Puertos de BD hacia el host | PostgreSQL **15435** · MariaDB **13306** · SQL Server **11433** (desplazados para no chocar con motores locales) |
-| Hosts internos (entre contenedores) | `postgres:5432` · `mariadb:3306` · `sqlserver:1433` · `api-facturas:8005` |
-| Credenciales BD | usuario `paradigmas` / clave `paradigmas123` (SQL Server: `sa` / `Paradigmas123!`) |
-| Bases de datos | `bdfacturas_postgres_local` · `bdfacturas_mariadb_local` · `bdfacturas_sqlserver_local` |
-| Nombres de código | snake_case en español; clases PascalCase; interfaces con prefijo `i_`/`I` |
-| Documentación de APIs | api_facturas: `/docs` |
-
-## Artículo 7 — Desarrollo con recarga en caliente
-
-El código fuente se monta como volumen dentro de los contenedores
-(`./front_flask:/app`, etc.) y los servidores corren con `--debug`/`--reload`:
-guardar un archivo recarga la aplicación sin reconstruir imágenes. Reconstruir
-(`--build`) solo es necesario cuando cambian dependencias o Dockerfiles.
-
-## Artículo 8 — Seguridad en su justa medida académica
-
-- Las contraseñas de usuarios de la aplicación se almacenan con **BCrypt** (nunca texto plano en código nuevo).
-- Los valores SQL siempre van **parametrizados** (nunca concatenados).
-- Las credenciales de infraestructura (paradigmas/paradigmas123) son públicas y
-  didácticas **a propósito**: este entorno jamás se despliega a producción.
+| Puertos del proyecto | API facturas **8005** · interfaz gráfica **8046** · MariaDB **13335** · PostgreSQL **15435** — ninguno se repite en 2026_2, y el registro es [`PUERTOS.md`](../../../PUERTOS.md) |
+| Rutas | `/` (diagnóstico) · `/swagger` (documentación interactiva) · `/api/producto` (v1) |
+| Nombres | PascalCase en español; interfaces con prefijo `I`; carpetas `controllers/ models/ models/ servicios/ repositorios/ excepciones.py pruebas/` (`models/` = clases entidad; `models/` = el body de cada verbo) |
+| Sobre de respuesta | Lecturas: `{tabla, limite, total, datos}` · Errores: `{estado, mensaje, detalle}` (+ `errores:[…]` en el 422) |
+| Errores | Body inválido (la petición) → **422** · `ArgumentException` → **400** · `NoEncontradoExcepcion` → **404** · `SqlException` y demás → **500** |
+| Credenciales (didácticas) | BD: `sa` / `Paradigmas123!` · base `bdfacturas_postgres_local` |

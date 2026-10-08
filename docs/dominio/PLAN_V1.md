@@ -3,7 +3,7 @@
 > **Qué es este documento.** Cómo se construyó la v1: con qué insumos, qué se
 > decidió **antes** de escribir código, en qué orden, y **con qué se tropezó**.
 > Es el relato; el requisito que manda está en
-> [`2_spec.md`](../spec_kit/versiones/v1_producto_postgres/2_spec.md).
+> [`2_spec.md`](../spec_kit/versiones/v1_sin_fk/2_spec.md).
 >
 > **Para qué sirve leerlo.** Para ver que un plan no es una lista de tareas: es
 > una **cadena de decisiones**, y cada una cierra puertas. Las decisiones están
@@ -84,7 +84,7 @@ más**.
 ## 3. Las decisiones antes de programar
 
 Las ocho están razonadas en
-[`4_research.md`](../spec_kit/versiones/v1_producto_postgres/4_research.md). Aquí van las
+[`4_research.md`](../spec_kit/versiones/v1_sin_fk/4_research.md). Aquí van las
 cuatro que más cerraron puertas.
 
 ### 3.1 · El SQL a la vista: **Dapper, no Entity Framework**

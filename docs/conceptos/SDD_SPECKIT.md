@@ -373,7 +373,7 @@ El proyecto se construye **por versiones**, cada una con su propia spec:
   — las reglas que ninguna versión puede violar.
 - **Mapa de versiones:** [spec_kit/versiones/0_mapa_versiones.md](../spec_kit/versiones/0_mapa_versiones.md)
   — la ruta v1→v6 y las reglas de avance.
-- **La versión en curso:** [spec_kit/versiones/v1_producto_postgres/](../spec_kit/versiones/0_mapa_versiones.md)
+- **La versión en curso:** [spec_kit/versiones/v1_sin_fk/](../spec_kit/versiones/0_mapa_versiones.md)
   — la spec de la v1 ES el documento que se le entrega a la IA (o al
   estudiante) para construirla.
 
@@ -765,7 +765,7 @@ su nombre.
 Tres reglas de nombre que no se rompen:
 
 1. La carpeta de la versión es `vN_tema`, en minúsculas y con guion bajo
-   (`v1_producto_postgres`). El tema dice qué agrega la versión.
+   (`v1_sin_fk`). El tema dice qué agrega la versión.
 2. **El número de un documento nunca cambia entre versiones:** el
    `6_contracts.md` de la v3 se llama igual que el de la v1. Se compara de
    una versión a otra sin buscar equivalencias.

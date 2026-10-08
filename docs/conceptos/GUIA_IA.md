@@ -47,13 +47,13 @@ de cada uno en el mismo orden):
 | # | Archivo | Papel |
 |---|---|---|
 | 1 | `docs/spec_kit/1_constitution.md` | Las reglas permanentes |
-| 2 | `docs/spec_kit/versiones/v1_producto_postgres/2_spec.md` | QUÉ construir y los criterios de aceptación |
-| 3 | `.../v1_producto_postgres/3_plan.md` | CÓMO: stack, carpetas, capas |
-| 4 | `.../v1_producto_postgres/4_research.md` | Decisiones y alternativas (el porqué del plan) |
-| 5 | `.../v1_producto_postgres/5_data_model.md` | La BD completa (dada) y la tabla producto |
-| 6 | `.../v1_producto_postgres/6_contracts.md` | Los 7 endpoints exactos |
-| 7 | `.../v1_producto_postgres/7_quickstart.md` | El smoke test de validación |
-| 8 | `.../v1_producto_postgres/8_tasks.md` | Las fases, en orden |
+| 2 | `docs/spec_kit/versiones/v1_sin_fk/2_spec.md` | QUÉ construir y los criterios de aceptación |
+| 3 | `.../v1_sin_fk/3_plan.md` | CÓMO: stack, carpetas, capas |
+| 4 | `.../v1_sin_fk/4_research.md` | Decisiones y alternativas (el porqué del plan) |
+| 5 | `.../v1_sin_fk/5_data_model.md` | La BD completa (dada) y la tabla producto |
+| 6 | `.../v1_sin_fk/6_contracts.md` | Los 7 endpoints exactos |
+| 7 | `.../v1_sin_fk/7_quickstart.md` | El smoke test de validación |
+| 8 | `.../v1_sin_fk/8_tasks.md` | Las fases, en orden |
 
 Además de los 8 documentos, la versión trae **un artefacto que NO se sube al
 chat ni lo genera la IA**: `db/init.sql` (el script completo de la BD) —
@@ -83,7 +83,7 @@ para ver cómo se llegó a lo que existe. Su trabajo de reconstrucción va en un
    integrada (*Terminal → New Terminal*, PowerShell), parado en su carpeta:
 
    ```powershell
-   mkdir docs\spec_kit\versiones\v1_producto_postgres, db, api_facturas\models, api_facturas\controllers, api_facturas\servicios\abstracciones, api_facturas\repositorios\abstracciones, api_facturas\pruebas
+   mkdir docs\spec_kit\versiones\v1_sin_fk, db, api_facturas\models, api_facturas\controllers, api_facturas\servicios\abstracciones, api_facturas\repositorios\abstracciones, api_facturas\pruebas
    ```
 
 4. **Cree los ARCHIVOS VACÍOS** — **USTED los irá llenando** uno a uno,
@@ -105,13 +105,13 @@ para ver cómo se llegó a lo que existe. Su trabajo de reconstrucción va en un
    |---|---|
    | `db\init.sql` | `db\` |
    | `docs\spec_kit\1_constitution.md` | `docs\spec_kit\` |
-   | Los 7 `.md` de `docs\spec_kit\versiones\v1_producto_postgres\` | `docs\spec_kit\versiones\v1_producto_postgres\` |
+   | Los 7 `.md` de `docs\spec_kit\versiones\v1_sin_fk\` | `docs\spec_kit\versiones\v1_sin_fk\` |
 
    (Estos 9 vienen dados — la IA no los genera: las specs se le SUBEN al
    chat, y `db/init.sql` es la BD completa ya escrita.)
 
 **Antes de abrir el chat, verifique:** `docs\spec_kit\1_constitution.md` debe
-existir, `docs\spec_kit\versiones\v1_producto_postgres\` debe tener **7 archivos**
+existir, `docs\spec_kit\versiones\v1_sin_fk\` debe tener **7 archivos**
 (2_spec a 8_tasks) y `db\init.sql` debe tener contenido (~1.050 líneas).
 Si algo está vacío, falta el paso 5.
 
@@ -125,7 +125,7 @@ mi_v1_producto/                   ← SU carpeta
 │   └── spec_kit/                 ← las especificaciones, IGUAL que en el repo
 │       ├── 1_constitution.md     ←   las reglas permanentes (viven en la raíz)
 │       └── versiones/
-│           └── v1_producto_postgres/ ← los 7 documentos de la v1 (la v2
+│           └── v1_sin_fk/ ← los 7 documentos de la v1 (la v2
 │                                       tendrá su propia carpeta al lado)
 ├── .gitignore                    ← Fase 6 (excluye .venv/, __pycache__/, .env*)
 ├── docker-compose.yml            ← Fase 0 (servicio postgres) y Fase 6 (servicio api-facturas)
@@ -319,7 +319,7 @@ la referencia). El agente construye en SU proyecto:
 1. Cree una carpeta nueva y vacía para su proyecto (ej.: `mi_v1_producto/`) y
    copie dentro: los 8 documentos de la tabla A.1 en una carpeta `docs\spec_kit\`
    replicando la estructura por versiones (`docs\spec_kit\1_constitution.md` +
-   `docs\spec_kit\versiones\v1_producto_postgres\` con los 7 de la versión — los
+   `docs\spec_kit\versiones\v1_sin_fk\` con los 7 de la versión — los
    mismos comandos de A.2, pasos 3 a 5), y el script `db/init.sql` del
    repositorio en `db/init.sql` (la BD completa viene dada — el agente no
    debe generarla).
@@ -335,7 +335,7 @@ la referencia). El agente construye en SU proyecto:
 Construye la VERSIÓN 1 de este proyecto, partiendo de cero.
 
 Primero lee, en este orden, los 8 documentos que están bajo docs/spec_kit/
-(1_constitution.md en la raíz; los demás en versiones/v1_producto_postgres/):
+(1_constitution.md en la raíz; los demás en versiones/v1_sin_fk/):
 1_constitution, 2_spec, 3_plan, 4_research, 5_data_model, 6_contracts,
 7_quickstart y 8_tasks. Después resume en máximo 10 líneas qué vas a construir y espera mi
 confirmación antes de tocar nada. El código va en la raíz de este proyecto

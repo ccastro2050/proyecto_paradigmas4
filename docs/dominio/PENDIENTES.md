@@ -40,9 +40,14 @@ que esta v4 sea la misma que las otras:
 
 | | Qué pasa |
 |---|---|
-| **Los tags `v2`, `v3` y `v4`** | Describen el mapa **viejo** —un motor por versión—. Con el mapa nuevo, «segundo motor» y «tercer motor» son la **v5** |
-| **Las carpetas del spec kit** | Se llaman `v1_producto_postgres`, `v2_mas_tablas`, `v3_segundo_motor`, `v4_sqlserver_docker`. En los otros repositorios son `v1_sin_fk` … `v5_otros_motores` |
-| **Qué habría que hacer** | Renombrarlas y reescribir lo que cada una especifica. Y decidir qué pasa con los tags, que quedarían describiendo otra cosa |
+| **Las carpetas del spec kit** | **Ya están al día.** Son las cinco del mapa nuevo —`v1_sin_fk`, `v2_con_fk`, `v3_control_acceso`, `v4_aplicativo`, `v5_otros_motores`—, con sus nueve documentos cada una, adaptados a Python |
+| **Los tags `v2`, `v3` y `v4`** | **Siguen describiendo el mapa viejo** —un motor por versión—. Con el mapa nuevo, «segundo motor» y «tercer motor» son la v5 |
+| **Qué se decidió con los tags** | **No se mueven.** Un tag es la foto de lo que se entregó ese día; reescribirlo sería falsificar la historia. Quien los lea encuentra la advertencia en [`CRONOGRAMA.md`](CRONOGRAMA.md) §4 |
+
+> **Por qué las carpetas sí y los tags no.** La carpeta dice *qué hay que
+> construir* —es un plan, y un plan se corrige—. El tag dice *qué se construyó*
+> —es un hecho, y un hecho no se corrige—. La misma distinción que separa la
+> especificación del acta.
 
 ---
 
@@ -66,8 +71,8 @@ escribirlos sería inventar:
 
 | | |
 |---|---|
-| **Por versión** | En los otros repositorios cada carpeta de versión trae su `GUIA_IA<N>.md`. Aquí hay **una sola**, suelta, en `docs/conceptos/GUIA_IA.md` |
-| **Por estudiante** | Los otros traen **quince** —Carlos, Paco y Luis, una por versión—. Aquí **ninguna**, y es coherente: no hay equipo simulado |
+| **Por versión** | **Ya están las cinco**, una por carpeta: `GUIA_IA1` … `GUIA_IA5`. Más la general de `docs/conceptos/GUIA_IA.md`, que explica el método; las de versión dicen qué pedirle a la IA en cada una |
+| **Por estudiante** | Los otros repositorios traen **quince** —Carlos, Paco y Luis, una por versión—. Aquí **ninguna**, y es coherente: hay **un solo autor** ([`CRONOGRAMA.md`](CRONOGRAMA.md) §1), no hay equipo que repartir |
 
 ---
 

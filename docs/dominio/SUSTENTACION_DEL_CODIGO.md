@@ -52,7 +52,7 @@ git shortlog -sne
 califica cuando sí hay equipo—:
 
 ```powershell
-git log -1 --format='%an' -- docs/spec_kit/versiones/v1_producto_postgres/2_spec.md
+git log -1 --format='%an' -- docs/spec_kit/versiones/v1_sin_fk/2_spec.md
 ```
 
 > **Y una advertencia sobre contar commits**, que vale igual: mide
