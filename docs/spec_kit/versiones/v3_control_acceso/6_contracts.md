@@ -33,7 +33,7 @@ respuestas nuevas aparecen cuando falta.
 
 ---
 
-## A. `POST /api/sesion` — el único endpoint nuevo
+## A. `POST /api/sesion/entrar` — el único endpoint nuevo
 
 ```
 body { "email": "admin@correo.com", "contrasena": "admin123" }
@@ -107,7 +107,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 | | Por qué |
 |---|---|
 | `GET /` | El diagnóstico. Sirve para saber si la API está viva, y para eso no hace falta identificarse |
-| `POST /api/sesion` | **No puede exigir lo que todavía no existe** |
+| `POST /api/sesion/entrar` | **No puede exigir lo que todavía no existe** |
 
 **Todo lo demás exige token.** Las 12 rutas de la v1 y la v2, sin excepción.
 
@@ -119,7 +119,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 Authorization: Bearer <token>
 
 -> 200 { "email": "cliente1@correo.com", "total": 2,
-         "datos": ["interfaz.inicio", "interfaz.productos"] }
+         "datos": ["/home", "/producto"] }
 -> 401 sin token
 ```
 
@@ -171,7 +171,7 @@ Cliente        inicio, productos
 {
   "estado": 403,
   "mensaje": "Su rol no tiene permiso para esta operacion.",
-  "ruta": "interfaz.usuarios"
+  "ruta": "/usuario"
 }
 ```
 

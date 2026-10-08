@@ -38,7 +38,7 @@ Manda **`PLAN_DE_TRABAJO.md`** §5.
 |---|---|
 | Tablas nuevas | **ninguna** |
 | Recursos nuevos | **ninguno** |
-| Endpoints nuevos | **dos** — `POST /api/sesion` y el de permisos |
+| Endpoints nuevos | **dos** — `POST /api/sesion/entrar` y el de permisos |
 | Endpoints que cambian | **los 68 que ya había** |
 
 > **Por eso es la versión más fácil de subestimar.** Mirar cuántos endpoints
@@ -96,7 +96,7 @@ verificar_acceso_ruta(@p_email, @p_fkidruta)
 ### La IA tiene que COMENTAR lo que escribe
 
 > **Y en esta versión con más razón**, porque el código de seguridad es el que
-> peor se lee seis meses después. Un `[ExigePermiso("interfaz.facturas")]` sin
+> peor se lee seis meses después. Un `[ExigePermiso("/factura")]` sin
 > comentario no dice de dónde sale esa cadena ni quién la reparte.
 
 **La interpretabilidad se califica** desde la v2, hablando y en persona.

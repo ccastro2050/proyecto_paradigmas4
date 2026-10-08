@@ -25,7 +25,7 @@ un número por intuición es lo que hace perder una tarde.
 > está resuelto en la base de datos —el procedimiento `verificar_acceso_ruta`
 > existe desde el primer día— y lo que falta es llamarlo.
 
-> **`BCrypt.Net-Next` ya estaba** desde antes, y el hash de la contraseña **ya
+> **`bcrypt` ya estaba** desde antes, y el hash de la contraseña **ya
 > funcionaba**. Lo que faltaba no era el hash: era la **puerta**.
 
 ## 2. Las tres piezas, y por qué son tres
@@ -60,7 +60,7 @@ models/sesion.py                 lo que recibe quien se identifica
 models/sesion_crear.py         { email, contrasena }  ← EN EL CUERPO
 servicios/i_servicio_sesion.py
 servicios/servicio_sesion.py       compara el hash y arma el token
-controllers/sesion_controller.py   POST /api/sesion — el único [AllowAnonymous]
+controllers/sesion_controller.py   POST /api/sesion/entrar — el único [AllowAnonymous]
 ```
 
 **Dos decisiones de diseño que vale la pena leer dos veces:**
@@ -84,7 +84,7 @@ controllers/permisos_controller.py           GET /api/permisos/mios, para el men
 ```python
 [Route("api/usuario")]
 la dependencia de autenticación                        // exige TOKEN      -> 401
-[ExigePermiso("interfaz.usuarios")] // exige PERMISO    -> 403
+[ExigePermiso("/usuario")] // exige PERMISO    -> 403
 public class UsuarioController : ControllerBase
 ```
 
@@ -92,7 +92,7 @@ public class UsuarioController : ControllerBase
 |---|---|
 | **Es un FILTRO, no una línea al principio de cada método** | Si fuera una línea, el día que alguien escriba un endpoint nuevo y se le olvide, **ese endpoint queda abierto** — y nadie lo nota, porque funciona |
 | **Se consulta EN CADA PETICIÓN** | Es más trabajo —una consulta por operación— y es lo que hace que **quitarle un permiso surta efecto sin volver a identificarse** |
-| **El nombre de la ruta sale de la tabla `ruta`** | `interfaz.usuarios`, `interfaz.facturas`… son los valores que la base de datos ya trae sembrados. No se inventan |
+| **El nombre de la ruta sale de la tabla `ruta`** | `/usuario`, `/factura`… son los valores que la base de datos ya trae sembrados. No se inventan |
 
 ### 3.3 La interfaz gráfica
 
@@ -182,4 +182,4 @@ escribir a mano.
 | **Recuperar la contraseña por correo** | Hace falta un servidor de correo. No lo pide el curso |
 | **Segundo factor** | Ídem |
 | **Revocar un token** | **No se puede**, y es una propiedad del diseño, no un olvido: un JWT está firmado y ya salió. Lo único que lo apaga es que venza — de ahí que la duración sea corta |
-| **Permisos por operación** (leer sí, borrar no) | La tabla `ruta` tiene `permiso.crear` y `permiso.eliminar` sembrados, así que la base de datos lo soportaría. **La v3 protege por interfaz**, que es lo que los diez criterios piden |
+| **Permisos por operación** (leer sí, borrar no) | La tabla `ruta` tiene `/permiso/crear` y `/permiso/eliminar` sembrados, así que la base de datos lo soportaría. **La v3 protege por interfaz**, que es lo que los diez criterios piden |

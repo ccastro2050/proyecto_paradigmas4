@@ -65,7 +65,7 @@ http://localhost:8005/swagger
 
 | | Qué hacer |
 |---|---|
-| **1** | Despliegue **`POST /api/sesion`** → *Try it out* → en el cuerpo ponga `{ "email": "admin@correo.com", "contrasena": "admin123" }` → *Execute* |
+| **1** | Despliegue **`POST /api/sesion/entrar`** → *Try it out* → en el cuerpo ponga `{ "email": "admin@correo.com", "contrasena": "admin123" }` → *Execute* |
 | **2** | En la respuesta, **copie el valor de `token`** — solo el texto, sin las comillas |
 | **3** | Botón **`Authorize`**, arriba a la derecha → pegue **solo el token** → *Authorize* → *Close* |
 | **4** | Ya puede probar cualquier endpoint: el candado se cierra y Swagger (lo genera FastAPI solo) manda la cabecera |
@@ -82,7 +82,7 @@ http://localhost:8005/swagger
 | **Autorizado** | El mismo, después | **200** |
 | **El 403** | Cierre sesión (*Authorize* → *Logout*), entre como `vendedor1@correo.com` / `vendedor123`, autorice con **ese** token y pruebe `GET /api/usuario` | **403**, con la `ruta` que le faltó |
 
-> **`POST /api/sesion` muestra el candado como los demás** —el requisito está
+> **`POST /api/sesion/entrar` muestra el candado como los demás** —el requisito está
 > declarado para toda la API— **y funciona sin token igual**, porque el
 > controlador es `[AllowAnonymous]`. El candado dice «esta API usa token», no
 > «este endpoint lo exige».
@@ -112,21 +112,29 @@ vendedor1@correo.com      | $2a$12$MeuuKTqIN3JeEYGUCMtbueU5k8QVy7mmiB.yVDkT9hUp0
 
 ```powershell
 # correctas -> 200 con el token
-curl.exe -X POST http://localhost:8005/api/sesion -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"admin123\"}"
+curl.exe -X POST http://localhost:8005/api/sesion/entrar -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"admin123\"}"
 
 # la contrasena mal -> 401
-curl.exe -i -X POST http://localhost:8005/api/sesion -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"NOESLACLAVE\"}"
+curl.exe -i -X POST http://localhost:8005/api/sesion/entrar -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"NOESLACLAVE\"}"
 
 # un correo que NO existe -> 401, CON EL MISMO MENSAJE
-curl.exe -i -X POST http://localhost:8005/api/sesion -H "Content-Type: application/json" -d "{\"email\":\"nadie@correo.com\",\"contrasena\":\"x\"}"
+curl.exe -i -X POST http://localhost:8005/api/sesion/entrar -H "Content-Type: application/json" -d "{\"email\":\"nadie@correo.com\",\"contrasena\":\"x\"}"
 ```
 
-**Los dos mensajes tienen que ser IDÉNTICOS:**
+**Los dos mensajes tienen que ser IDÉNTICOS.** Lo que responde esta API,
+copiado de la terminal:
 
+```json
+{"detail":{"estado":401,"mensaje":"Credenciales invalidas.",
+           "detalle":"El correo o la contrasena no coinciden."}}
+{"detail":{"estado":401,"mensaje":"Credenciales invalidas.",
+           "detalle":"El correo o la contrasena no coinciden."}}
 ```
-{"estado":401,"mensaje":"El correo o la contrasena no son correctos."}
-{"estado":401,"mensaje":"El correo o la contrasena no son correctos."}
-```
+
+> **`detail` lo pone FastAPI**, no el controlador: es la envoltura de
+> `HTTPException`. Lo de adentro —`estado`, `mensaje`, `detalle`— sí es el
+> sobre de error que el proyecto eligió, y es el mismo en los 15
+> controladores.
 
 > **Si el segundo dijera «ese correo no existe»**, le confirmaría a un
 > desconocido cuáles correos sí existen — y con una lista de correos válidos,
@@ -138,7 +146,7 @@ curl.exe -i -X POST http://localhost:8005/api/sesion -H "Content-Type: applicati
 
 ```powershell
 # guarde el token en una variable
-$t = (curl.exe -s -X POST http://localhost:8005/api/sesion -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"admin123\"}" | ConvertFrom-Json).token
+$t = (curl.exe -s -X POST http://localhost:8005/api/sesion/entrar -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"admin123\"}" | ConvertFrom-Json).token
 
 curl.exe -i http://localhost:8005/api/usuario                                      # -> 401 (sin token)
 curl.exe -i -H "Authorization: Bearer $t" http://localhost:8005/api/usuario        # -> 200
@@ -167,9 +175,9 @@ el diagnostico /: 200
 ## 6. CRITERIOS 5 y 9 — el 403, que es el corazón de la versión
 
 ```powershell
-$ta = (curl.exe -s -X POST http://localhost:8005/api/sesion -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"admin123\"}" | ConvertFrom-Json).token
-$tv = (curl.exe -s -X POST http://localhost:8005/api/sesion -H "Content-Type: application/json" -d "{\"email\":\"vendedor1@correo.com\",\"contrasena\":\"vendedor123\"}" | ConvertFrom-Json).token
-$tc = (curl.exe -s -X POST http://localhost:8005/api/sesion -H "Content-Type: application/json" -d "{\"email\":\"cliente1@correo.com\",\"contrasena\":\"cliente123\"}" | ConvertFrom-Json).token
+$ta = (curl.exe -s -X POST http://localhost:8005/api/sesion/entrar -H "Content-Type: application/json" -d "{\"email\":\"admin@correo.com\",\"contrasena\":\"admin123\"}" | ConvertFrom-Json).token
+$tv = (curl.exe -s -X POST http://localhost:8005/api/sesion/entrar -H "Content-Type: application/json" -d "{\"email\":\"vendedor1@correo.com\",\"contrasena\":\"vendedor123\"}" | ConvertFrom-Json).token
+$tc = (curl.exe -s -X POST http://localhost:8005/api/sesion/entrar -H "Content-Type: application/json" -d "{\"email\":\"cliente1@correo.com\",\"contrasena\":\"cliente123\"}" | ConvertFrom-Json).token
 
 # el vendedor pidiendo usuarios: TOKEN VALIDO, rol sin permiso
 curl.exe -i -H "Authorization: Bearer $tv" http://localhost:8005/api/usuario     # -> 403
@@ -202,7 +210,7 @@ curl.exe -i -H "Authorization: Bearer $tc" http://localhost:8005/api/cliente    
 ### El 403 dice QUÉ permiso faltó
 
 ```json
-{"estado":403,"mensaje":"Su rol no tiene permiso para esta operacion.","ruta":"interfaz.usuarios"}
+{"estado":403,"mensaje":"Su rol no tiene permiso para esta operacion.","ruta":"/usuario"}
 ```
 
 ---
@@ -230,7 +238,7 @@ permisos **no puede estar escrito en Python para decidir**.
 # 1. el vendedor pide clientes con su token
 curl.exe -i -H "Authorization: Bearer $tv" http://localhost:8005/api/cliente      # -> 200
 
-# 2. se le quita a su rol (Vendedor = 2) el permiso de interfaz.clientes (ruta 4)
+# 2. se le quita a su rol (Vendedor = 2) el permiso de /cliente (ruta 4)
 docker compose exec mariadb sqlcmd -U mariadb -d bdfacturas_postgres_local -c "DELETE FROM rutarol WHERE fkidruta=4 AND fkidrol=2;"
 
 # 3. CON EL MISMO TOKEN, sin volver a entrar

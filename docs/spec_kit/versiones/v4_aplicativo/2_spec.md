@@ -70,7 +70,7 @@ navegador. Daría el mismo número **a veces**, y falla por tres lados:
 | **1** | Los 70 endpoints de v1–v3 responden igual | La **regresión**: el smoke test de las tres versiones anteriores, completo |
 | **2** | Las diez consultas responden **200** con el sobre `{consulta, total, datos}` | [7_quickstart.md](7_quickstart.md) §2, una por una |
 | **3** | Cada una cruza **4 tablas o más** | Se lee el SQL del repositorio y se cuentan los `JOIN` |
-| **4** | Las diez exigen **token y permiso** | Sin token: 401. Con un rol sin `interfaz.inicio`: 403 |
+| **4** | Las diez exigen **token y permiso** | Sin token: 401. Con un rol sin `/home`: 403 |
 | **5** | El tablero las muestra **todas**, y las pide **a la vez** | [7_quickstart.md](7_quickstart.md) §3 |
 | **6** | Si una consulta falla, **las otras nueve se dibujan** | Se apaga la API a mitad de carga, o se mira el aviso con el nombre de la que falló |
 | **7** | **Cero filas se muestra como respuesta**, no como error | Las consultas 6 y 9 pueden venir vacías, y la interfaz lo dice con palabras |

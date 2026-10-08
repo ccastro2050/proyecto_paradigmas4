@@ -73,7 +73,7 @@ SELECT EXISTS(
 
 | | |
 |---|---|
-| **Recibe el ID de la ruta, no su nombre** | Así que hay un paso antes: traducir `interfaz.usuarios` al id. Lo hace el repositorio, con un `SELECT id FROM ruta WHERE ruta = @nombre` |
+| **Recibe el ID de la ruta, no su nombre** | Así que hay un paso antes: traducir `/usuario` al id. Lo hace el repositorio, con un `SELECT id FROM ruta WHERE ruta = @nombre` |
 | **Si la ruta no está en la tabla, NADIE entra** | Y es lo correcto: una ruta que no se declaró no se concedió. **Fallar cerrado, no abierto** |
 
 > **Estaba ahí desde el primer día, sin que nadie lo llamara.** Eso es lo que
@@ -84,13 +84,13 @@ SELECT EXISTS(
 ### Las 15 rutas
 
 ```
-interfaz.inicio      interfaz.usuarios    interfaz.facturas    interfaz.clientes
-interfaz.vendedores  interfaz.personas    interfaz.empresas    interfaz.productos
-interfaz.roles       interfaz.permisos    interfaz.rutas
-permiso.crear        permiso.eliminar     ruta.crear           ruta.eliminar
+/home      /usuario    /factura    /cliente
+/vendedor  /persona    /empresa    /producto
+/rol       /permiso    /ruta
+/permiso/crear        /permiso/eliminar     /ruta/crear           /ruta/eliminar
 ```
 
-> **Los nombres llevan PUNTO y no barra** —`interfaz.productos`, no
+> **Los nombres llevan PUNTO y no barra** —`/producto`, no
 > `/productos`— y es deliberado: con barra se confunden con los endpoints de la
 > API, que son otra cosa. Estos son **interfaces y acciones protegibles**.
 

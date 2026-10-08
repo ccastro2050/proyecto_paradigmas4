@@ -49,7 +49,7 @@
 - [ ] `servicios/i_servicio_consultas.py` + `servicio_consultas.py` (sin reglas, y
       existe igual).
 - [ ] `controllers/consultas_controller.py`: `[Route("api/consultas")]`,
-      `la dependencia de autenticación`, `[ExigePermiso("interfaz.inicio")]` y diez acciones.
+      `la dependencia de autenticación`, `[ExigePermiso("/home")]` y diez acciones.
 - [ ] **El registro en `main.py`** — y esta casilla es la que más se olvida:
 
 ```python
@@ -83,7 +83,7 @@ el ensamblador<IServicioConsultas, ServicioConsultas>();
 ## Fase 7 — El menú
 
 - [ ] La entrada **de primera** en el `MenuApp` de `main.py`, con permiso
-      `interfaz.inicio`.
+      `/home`.
 
 ## Fase 8 — La regresión y el cierre
 

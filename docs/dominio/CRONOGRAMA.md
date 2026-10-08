@@ -18,8 +18,8 @@
 
 | | |
 |---|---|
-| **Commits** | **120** |
-| **Autor** | uno solo: Carlos Arturo (105 + 15 con el nombre completo — la misma persona con dos configuraciones de `user.name`) |
+| **Commits** | **130** |
+| **Autor** | uno solo: Carlos Arturo (dos líneas en `git shortlog`, el mismo correo con dos configuraciones de `user.name` — la misma persona) |
 | **Tags** | `v1` · `v2` · `v3` · `v4` |
 | **Primer commit** | **29 de julio de 2026** — «Entorno Docker completo: devcontainer + PostgreSQL/MariaDB/SQL Server» |
 | **Último** | 7 de octubre de 2026 |
@@ -53,14 +53,41 @@
   julio 2026     ████████                17 commits   el entorno
   agosto 2026    ████████████████████    76 commits   las cuatro versiones
   septiembre     ██████████              21 commits   documentación
-  octubre        ███                      6 commits   la ruta y el front
+  octubre        ████████                16 commits   el mapa nuevo: la v3 y la v4
 ```
 
 | | |
 |---|---|
-| **El grueso fue agosto** | 76 de 120 commits. Las cuatro versiones se cerraron en quince días |
+| **El grueso fue agosto** | 76 de 130 commits. Las cuatro versiones del mapa VIEJO se cerraron en quince días |
 | **Septiembre fue documentar** | Ni un cambio de versión: 21 commits de documentos |
-| **Octubre es la puesta a punto** | Alinear este repositorio con los otros cuatro de la ruta |
+| **Octubre fue el mapa nuevo** | 16 commits, y no son retoques: entraron los cinco recursos que faltaban, el control de acceso completo, las diez consultas y las catorce pantallas del front. Es la v3 y la v4 del mapa nuevo, construidas |
+
+---
+
+## 3.1. Qué pasó el 7 de octubre, que es un día entero
+
+Trece commits en un día piden explicación, y la hay: ese día este repositorio
+pasó del mapa viejo al nuevo. En orden:
+
+| Commit | Qué entró |
+|---|---|
+| `ed2c09f` | El spec kit: las cinco carpetas del mapa nuevo, adaptadas a Python |
+| `9a6efff` | Los cuatro recursos que faltaban: ruta, usuario y los dos puentes |
+| `57e5cb3` | **El control de acceso**: token, 401, 403 — y las contraseñas sembradas, que no servían |
+| `dabf06b` | `usuario-con-roles`, las diez consultas y el front encendido |
+| `2e322f8` | El front respetando permisos en los cuatro sitios, y las 14 pantallas |
+| `789c20f` | **El fallo que concedía todo contra MariaDB**, arreglado |
+| `904af9a` | La documentación diciendo lo que el código hace |
+
+> **El de `789c20f` es el que vale contar en clase.** El control de acceso
+> estaba «terminado» y medido contra PostgreSQL. Al probarlo contra los otros
+> dos motores, `vendedor1` entraba a `/api/usuario`: `verificar_acceso_ruta`
+> devuelve `tiene_acceso` como **cadena** en MariaDB, y en Python `bool("0")`
+> es `True`.
+>
+> **Dos de los tres motores funcionaban por casualidad**, y leyendo el código
+> no se veía. Es la razón por la que en este proyecto nada se da por bueno sin
+> correrlo.
 
 ---
 
@@ -79,7 +106,7 @@
 Nada de aquí hay que creerlo: se vuelve a contar en diez segundos.
 
 ```powershell
-git rev-list --count HEAD                       # 120
+git rev-list --count HEAD                       # 130
 git shortlog -sne                               # los autores
 git log --format='%ad' --date=format:'%Y-%m' | sort | uniq -c   # el ritmo
 git log -1 --format='%ad %s' --date=short v4    # qué cerró cada tag

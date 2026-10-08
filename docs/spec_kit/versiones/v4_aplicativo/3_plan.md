@@ -73,7 +73,7 @@ de facturas.
 
 ### 3.2 El tablero va PRIMERO en el menú
 
-Es lo que se mira al entrar. Y exige `interfaz.inicio`, que es el permiso que
+Es lo que se mira al entrar. Y exige `/home`, que es el permiso que
 todos los roles tienen — porque un tablero al que nadie puede entrar no es un
 tablero.
 

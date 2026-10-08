@@ -36,7 +36,7 @@ usan la misma contraseña.
 
 > **¿Y Argon2, que ganó la competencia de 2015?** Es mejor —además de lenta,
 > **gasta memoria**, y la memoria es lo que una GPU no tiene de sobra—. No se
-> usa aquí porque `BCrypt.Net-Next` **ya estaba en el proyecto** desde la v1,
+> usa aquí porque `bcrypt` **ya estaba en el proyecto** desde la v1,
 > funcionando. Cambiar de función de hash obligaría a que todos vuelvan a
 > poner su contraseña. Queda escrito como la mejora que es.
 
@@ -81,7 +81,7 @@ corta.
 **Lo que decide:**
 
 ```
-09:00  Ana recibe un token que dice: puede entrar a interfaz.usuarios
+09:00  Ana recibe un token que dice: puede entrar a /usuario
 09:30  se le quita ese permiso a su rol, en la base de datos
 09:31  Ana sigue entrando: su token todavia dice que puede
        ...hasta que venza, una hora despues
@@ -159,5 +159,5 @@ servidor** y no bajar nunca al navegador.
 |---|---|
 | **Refrescar el token** | Trae su propio problema sin resolver: cómo se revoca el *refresh token*. Con una hora, volver a identificarse alcanza |
 | **OAuth / OpenID Connect** | Delegar la identidad a Google o Microsoft es lo que se hace en producción, y **esconde exactamente lo que esta versión existe para enseñar** |
-| **Permisos por operación** | La tabla `ruta` trae `permiso.crear` y `permiso.eliminar`, así que la base de datos lo soportaría. Los diez criterios piden protección **por interfaz** |
+| **Permisos por operación** | La tabla `ruta` trae `/permiso/crear` y `/permiso/eliminar`, así que la base de datos lo soportaría. Los diez criterios piden protección **por interfaz** |
 | **Auditoría** (quién hizo qué) | Es un requisito real que el curso no plantea |

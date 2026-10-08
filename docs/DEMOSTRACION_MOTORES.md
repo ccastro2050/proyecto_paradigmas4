@@ -34,9 +34,9 @@ docker version          # si responde, el demonio está arriba
 docker compose up -d
 ```
 
-**Qué hace:** enciende **cinco** contenedores y devuelve la terminal (`-d` =
-en segundo plano). Son los tres motores, el inicializador de SQL Server y la
-API:
+**Qué hace:** enciende **seis** contenedores y devuelve la terminal (`-d` =
+en segundo plano). Son los tres motores, el inicializador de SQL Server, la
+API y la interfaz:
 
 | Contenedor | Qué es | Puerto en su PC |
 |---|---|---|
@@ -45,12 +45,13 @@ API:
 | `sqlserver` | El tercero, de la v4 | 11435 |
 | `sqlserver-init` | **Corre una vez y termina.** SQL Server no ejecuta solo los scripts montados: alguien tiene que entrar a correrlos | — |
 | `api-facturas` | La API en Python / FastAPI | **8005** |
+| `front-flask` | La interfaz en Flask + Jinja2 | **8046** |
 
 ```powershell
 docker compose ps
 ```
 
-> **Qué hay que ver:** cuatro en `Up` y `sqlserver-init` en `Exited (0)`. Ese
+> **Qué hay que ver:** cinco en `Up` y `sqlserver-init` en `Exited (0)`. Ese
 > cero importa: salió bien. Si saliera con otro número, la base no quedó
 > sembrada.
 
@@ -79,14 +80,67 @@ Invoke-RestMethod http://localhost:8005/
 
 ---
 
-## 3. Que responda datos
+## 3. Entrar — porque la API está cerrada
+
+Pida el catálogo **sin identificarse** y mire qué pasa:
 
 ```powershell
 Invoke-RestMethod http://localhost:8005/api/producto
 ```
 
+> **Responde 401**, y está bien que lo haga. Desde la v3 los únicos dos
+> endpoints abiertos son el diagnóstico y la puerta de entrada. Si esto
+> respondiera datos, el control de acceso no existiría.
+
+Entonces se entra, y el token se guarda en una variable:
+
+```powershell
+$s = Invoke-RestMethod -Method Post http://localhost:8005/api/sesion/entrar `
+      -ContentType 'application/json' `
+      -Body '{"email":"admin@correo.com","contrasena":"admin123"}'
+
+$h = @{ Authorization = "Bearer $($s.token)" }
+$s.roles        # Administrador
+```
+
+| La parte | Qué es |
+|---|---|
+| `$s.token` | El token firmado. Dura 60 minutos (`JWT_MINUTOS`) |
+| `$h` | La cabecera que hay que mandar en **todas** las peticiones de aquí en adelante |
+| `$s.roles` | Los nombres de los roles, que es lo que el token lleva adentro |
+
+> **El token está firmado, no cifrado.** Péguelo en <https://jwt.io> y se lee
+> entero: el correo, los roles y el vencimiento. Lo que la clave impide no es
+> leerlo: es **fabricar uno**. Por eso ahí no va nada secreto — y por eso el
+> **permiso** no viaja dentro, se consulta en cada petición.
+
+---
+
+## 4. Que responda datos
+
+```powershell
+Invoke-RestMethod http://localhost:8005/api/producto -Headers $h
+```
+
 **Qué hace:** pide el catálogo de productos. La API consulta el motor que
 tenga configurado y devuelve las filas sembradas.
+
+**El 403, que es el otro código de la v3.** Entre como vendedor y pida lo que
+no le toca:
+
+```powershell
+$v = Invoke-RestMethod -Method Post http://localhost:8005/api/sesion/entrar `
+      -ContentType 'application/json' `
+      -Body '{"email":"vendedor1@correo.com","contrasena":"vendedor123"}'
+$hv = @{ Authorization = "Bearer $($v.token)" }
+
+Invoke-RestMethod http://localhost:8005/api/factura -Headers $hv   # 200
+Invoke-RestMethod http://localhost:8005/api/usuario -Headers $hv   # 403
+```
+
+> **403 y no 401**, y la diferencia es el punto: 401 es «no sé quién es
+> usted»; 403 es «sé quién es, y no puede». Lo decide
+> `verificar_acceso_ruta`, **en la base de datos**, en cada petición.
 
 **Y la documentación que se genera sola:**
 
@@ -95,11 +149,12 @@ Start-Process http://localhost:8005/docs
 ```
 
 > FastAPI arma ese Swagger **leyendo el código**: no hay un archivo que
-> mantener al día. Ahí se pueden probar los endpoints con clics.
+> mantener al día. Ahí se pueden probar los endpoints con clics — primero
+> `POST /api/sesion/entrar`, y el token se pega en el botón **Authorize**.
 
 ---
 
-## 4. EL MOMENTO DE LA DEMOSTRACIÓN: cambiar de motor
+## 5. EL MOMENTO DE LA DEMOSTRACIÓN: cambiar de motor
 
 Esto es lo que hay que mostrar despacio, porque es lo que enseña la versión.
 
@@ -114,11 +169,20 @@ encendidos.
 
 ```powershell
 Invoke-RestMethod http://localhost:8005/
-Invoke-RestMethod http://localhost:8005/api/producto
+Invoke-RestMethod http://localhost:8005/api/producto -Headers $h
 ```
 
 > **Qué hay que ver:** `motor` ahora dice **`mariadb`**, y los productos son
 > **los mismos**. Misma petición, misma respuesta, otro motor debajo.
+>
+> **Y un detalle que en vivo sorprende:** el token de antes **sigue
+> sirviendo**. No se guardó en ninguna parte —la API no lleva lista de
+> sesiones—, y lo firma la misma clave, que viene del entorno y no del motor.
+> La sesión sobrevivió a un cambio de base de datos.
+>
+> Lo que **no** sobrevive es la contraseña: los usuarios están sembrados en
+> los tres motores con el mismo hash, y por eso `admin123` funciona en los
+> tres. Si una base se hubiera sembrado con otra clave, aquí se vería.
 
 Y el tercero:
 
@@ -148,7 +212,7 @@ docker compose up -d api-facturas
 
 ---
 
-## 5. El maestro-detalle, que es la otra mitad
+## 6. El maestro-detalle, que es la otra mitad
 
 Una factura y sus renglones **en un solo envío**:
 
@@ -163,7 +227,7 @@ $cuerpo = @{
 } | ConvertTo-Json -Depth 5
 
 Invoke-RestMethod -Method Post -Uri http://localhost:8005/api/factura `
-                  -ContentType "application/json" -Body $cuerpo
+                  -ContentType "application/json" -Body $cuerpo -Headers $h
 ```
 
 **Qué hay que ver en la respuesta:** el **total** y los **subtotales** vienen
@@ -178,17 +242,18 @@ $malo = @{
 } | ConvertTo-Json -Depth 5
 
 Invoke-RestMethod -Method Post -Uri http://localhost:8005/api/factura `
-                  -ContentType "application/json" -Body $malo
+                  -ContentType "application/json" -Body $malo -Headers $h
 ```
 
 > **Falla, y eso es lo correcto.** El mensaje dice qué producto y cuánto había.
 > Y lo importante: **no queda media factura**. Se puede comprobar listando
-> `GET /api/factura` — el encabezado tampoco se guardó.
+> `GET /api/factura -Headers $h` — el encabezado tampoco se guardó.
 
 **Anular una factura:**
 
 ```powershell
-Invoke-RestMethod -Method Post -Uri http://localhost:8005/api/factura/1/anular
+Invoke-RestMethod -Method Post -Uri http://localhost:8005/api/factura/1/anular `
+                  -Headers $h
 ```
 
 > Anular **no borra**: cambia el estado y devuelve el stock. Una factura
@@ -196,7 +261,57 @@ Invoke-RestMethod -Method Post -Uri http://localhost:8005/api/factura/1/anular
 
 ---
 
-## 6. Apagar
+## 7. La prueba que cierra la demostración: las mismas respuestas en los tres
+
+Cambiar de motor no sirve de nada si lo que responde cambia. Esto es lo que se
+midió el 7 de octubre de 2026, con `DB_PROVIDER` en los tres valores y sin
+tocar una línea de código.
+
+**Las diez consultas de la v4** —cada una cruzando cuatro o cinco tablas—:
+
+| Consulta | postgres | mariadb | sqlserver |
+|---|---|---|---|
+| ventas-por-producto | 8 | 8 | 8 |
+| ventas-por-cliente | 3 | 3 | 3 |
+| ventas-por-vendedor | 3 | 3 | 3 |
+| ventas-por-empresa | 2 | 2 | 2 |
+| ticket-por-vendedor | 3 | 3 | 3 |
+| productos-sin-vender | 0 | 0 | 0 |
+| anulaciones-por-cliente | 2 | 2 | 2 |
+| alcance-de-usuarios | 8 | 8 | 8 |
+| interfaces-sin-usuarios | 0 | 0 | 0 |
+| credito-contra-consumo | 6 | 6 | 6 |
+
+Y el **ticket promedio** del primer vendedor da `3440000.0` en los tres — con
+centavos, no truncado. Ese detalle no es gratis: en T-SQL, dividir un decimal
+entre un entero **trunca**, y la consulta de SQL Server lleva un `CAST` que
+las otras dos no necesitan ([`PLAN_V4.md`](dominio/PLAN_V4.md) §5).
+
+**El control de acceso**, con los tres usuarios:
+
+| | admin | vendedor1 | cliente1 |
+|---|---|---|---|
+| **postgres** | 200 · 200 · 200 | 403 · 200 · 403 | 200 · 403 · 403 |
+| **mariadb** | 200 · 200 · 200 | 403 · 200 · 403 | 200 · 403 · 403 |
+| **sqlserver** | 200 · 200 · 200 | 403 · 200 · 403 | 200 · 403 · 403 |
+
+*(las tres rutas de cada celda: `/api/producto`, `/api/factura`, `/api/usuario`)*
+
+> **Esta última tabla es la que destapó el único fallo grave de la versión**, y
+> vale contarlo porque es la lección de medir: la primera vez, la fila de
+> `mariadb` daba **200 en las nueve celdas**. Todo el mundo entraba a todo.
+>
+> El motivo: `verificar_acceso_ruta` devuelve el mismo JSON en los tres
+> motores con el campo `tiene_acceso` de tres tipos distintos —booleano en
+> PostgreSQL, número en SQL Server y **cadena** en MariaDB—, y en Python
+> `bool("0")` es **True**.
+>
+> **Dos de los tres motores funcionaban por casualidad.** Leyendo el código no
+> se veía; probando contra un solo motor, tampoco.
+
+---
+
+## 8. Apagar
 
 ```powershell
 docker compose down

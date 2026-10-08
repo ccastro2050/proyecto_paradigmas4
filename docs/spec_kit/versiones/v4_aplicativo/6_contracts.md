@@ -46,7 +46,7 @@
 |---|---|
 | **Método** | `GET`, siempre. Son preguntas |
 | **Token** | **Obligatorio.** Sin él: `401` |
-| **Permiso** | `interfaz.inicio`. Sin él: `403` |
+| **Permiso** | `/home`. Sin él: `403` |
 | **Sin parámetros** | Responden sobre todo lo que hay |
 | **`200` con `datos: []`** | Cuando no hay filas. **No es un 404**: la pregunta se pudo responder, y la respuesta es «ninguno» |
 | **`500`** | Solo si el motor falla. Y el cuerpo lleva `detalle` |
@@ -195,7 +195,7 @@ Hasta dónde llega cada usuario: cuántos roles tiene y a cuántas interfaces al
   "consulta": "interfaces_sin_usuarios",
   "total": 3,
   "datos": [
-    {"id": 7, "ruta": "interfaz.rutas", "descripcion": "…", "rolesConAcceso": 1, "usuariosConAcceso": 0}
+    {"id": 7, "ruta": "/ruta", "descripcion": "…", "rolesConAcceso": 1, "usuariosConAcceso": 0}
   ]
 }
 ```

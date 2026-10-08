@@ -42,7 +42,7 @@
 
 ## D. El contrato es exacto
 
-- [ ] [6_contracts.md](6_contracts.md) nombra `POST /api/sesion` con su cuerpo.
+- [ ] [6_contracts.md](6_contracts.md) nombra `POST /api/sesion/entrar` con su cuerpo.
 - [ ] Está dicho que el **401 responde lo MISMO** para el correo inexistente y
       la contraseña equivocada, **y por qué**.
 - [ ] Están nombrados **los dos** endpoints abiertos, y solo dos.

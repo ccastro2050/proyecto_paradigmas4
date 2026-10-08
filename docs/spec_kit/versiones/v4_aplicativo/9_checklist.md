@@ -28,7 +28,7 @@
 - [ ] `CAST(… AS INT)` en todas las columnas de conteo.
 - [ ] Cada columna del `SELECT` tiene **alias** que coincide con la propiedad.
 - [ ] El servicio existe **aunque no valide nada**, y está escrito por qué.
-- [ ] El controlador lleva `la dependencia de autenticación` y `[ExigePermiso("interfaz.inicio")]`.
+- [ ] El controlador lleva `la dependencia de autenticación` y `[ExigePermiso("/home")]`.
 - [ ] **El registro en `main.py` está**, y la fábrica —si la hay— tiene su
       `CrearRepositorioConsultas()` en las **dos** implementaciones.
 
@@ -43,7 +43,7 @@
 ## Lo medido, no lo supuesto
 
 - [ ] Las diez responden **200** con token. *(¿se corrió?)*
-- [ ] Sin token: **401**. Con un rol sin `interfaz.inicio`: **403**.
+- [ ] Sin token: **401**. Con un rol sin `/home`: **403**.
 - [ ] Quitar el permiso **sin volver a identificarse** cambia el 200 por 403.
 - [ ] Anular una factura **mueve** el tablero: la consulta 7 se llena y el
       ingreso del producto baja.

@@ -25,8 +25,13 @@
 docker compose up -d --build
 ```
 
-La primera vez tarda unos minutos. Al terminar quedan **tres contenedores**: la
-base de datos, la API y la interfaz gráfica.
+La primera vez tarda unos minutos. Al terminar quedan **seis contenedores**:
+los tres motores, el inicializador de SQL Server —que corre una vez y sale con
+`Exited (0)`—, la API y la interfaz gráfica.
+
+> **De la v1 a la v4 el motor es PostgreSQL.** Los otros dos están encendidos
+> porque este repositorio es el ejemplo del profesor y trae la v5 proyectada;
+> en el proyecto de un estudiante basta con PostgreSQL.
 
 > **La API tarda en responder aunque el contenedor diga `Up`.** `uvicorn --reload`
 > compila al encender, y hasta que termine el puerto no contesta. Un `curl`
@@ -39,7 +44,7 @@ Primero el token. **En PowerShell se usa `Invoke-RestMethod`, no `curl`**: el
 mismas banderas** — el comando parece correcto y falla por otra razón.
 
 ```powershell
-$s = Invoke-RestMethod -Uri "http://localhost:8005/api/sesion" -Method Post `
+$s = Invoke-RestMethod -Uri "http://localhost:8005/api/sesion/entrar" -Method Post `
      -ContentType "application/json" `
      -Body '{"email":"admin@correo.com","contrasena":"admin123"}'
 $t = $s.token
@@ -73,9 +78,14 @@ Write-Host "credito-contra-consumo     $($r.total) filas"
 **Las diez tienen que responder.** Dos pueden decir `0 filas` —la 6 y la 9— y
 eso **también es pasar**: ver [2_spec.md](2_spec.md) criterio 7.
 
-> **Si ocho de las diez responden 500** con un mensaje que habla de un
-> constructor y de `System.Int64`, es el tropiezo del tipo: ver
-> [4_research.md](4_research.md) §D4. Se arregla en el SQL, con `CAST`.
+> **Si una responde 500 hablando de `STRING_AGG` o de sintaxis**, es el
+> dialecto: la consulta 8 no se escribe igual en los tres motores. Ver
+> [4_research.md](4_research.md) §D4.
+>
+> **Y si el `ticket_promedio` sale sin centavos** —un número redondo— la
+> consulta 5 está sin el `CAST`, y ese es el tropiezo peligroso de esta
+> versión: **no falla, miente**. Solo pasa contra SQL Server, donde dividir
+> un decimal entre un entero trunca.
 
 ## 3. CRITERIO 5 — el tablero
 
@@ -95,10 +105,14 @@ Invoke-WebRequest -Uri "http://localhost:8005/api/consultas/ventas-por-producto"
   -SkipHttpErrorCheck | Select-Object StatusCode
 ```
 
-Y el **403**: quítele el permiso `interfaz.inicio` al rol del usuario con el
-que entró, **sin volver a identificarse**, y pida la consulta otra vez. Tiene
-que responder **403** — porque el permiso se consulta en cada petición, no se
-lee del token.
+Y el **403**, que es la prueba que de verdad cierra el criterio: quítele el
+permiso `/home` al rol del usuario con el que entró —`DELETE
+/api/rutarol/{id_ruta}/{id_rol}`— y pida la consulta otra vez **con el mismo
+token, sin volver a identificarse**. Tiene que responder **403**, porque el
+permiso se consulta en cada petición y no se lee del token.
+
+Después se lo devuelve con `POST /api/rutarol` y vuelve a dar 200. Ese ir y
+venir, con un token que no se tocó, es la demostración completa.
 
 ## 5. CRITERIO 8 — el tablero reacciona
 

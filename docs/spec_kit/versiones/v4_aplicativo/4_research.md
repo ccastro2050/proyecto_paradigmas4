@@ -57,7 +57,7 @@ que existe en las dos tablas, así que **no puede responder una ausencia**.
 
 | | `COUNT()` / `SUM(int)` | La consecuencia |
 |---|---|---|
-| **MariaDB** | `bigint` | El modelo con `int` revienta: *«A parameterless default constructor or one matching signature … System.Int64 unidades»* |
+| **MariaDB** | `bigint` | En Python **no pasa nada**: la fila llega como diccionario y el entero no tiene tamaño fijo. En el gemelo .NET del curso, el mismo SQL revienta con *«A parameterless default constructor or one matching signature … System.Int64 unidades»* — el tropiezo era del tipado estático, no del motor |
 | **PostgreSQL** | `int` | `SUM(decimal) / COUNT(*)` **trunca** el promedio |
 
 **Decisión: `CAST(… AS INT)` en el SQL.**

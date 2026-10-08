@@ -40,7 +40,7 @@ entender:
 
 > **Va EN EL SCRIPT, no a mano.** El siguiente `down -v` vuelve a sembrar.
 
-> **El hash ya funcionaba desde antes** —`BCrypt.Net-Next` estaba y el
+> **El hash ya funcionaba desde antes** —`bcrypt` estaba y el
 > repositorio lo usaba—. Lo que faltaba era que la semilla lo usara también.
 
 ## Fase 2 — La configuración del token
@@ -67,7 +67,7 @@ entender:
 | | |
 |---|---|
 | **Archivos** | `main.py` — `AddAuthentication` + `AddJwtBearer`, y `UseAuthentication` **antes** de `UseAuthorization`. `la dependencia de autenticación` en los 12 controladores |
-| **Lo que importa** | `ClockSkew = TimeSpan.Zero` · el `OnChallenge` que le pone cuerpo al 401 · el `/` y el `POST /api/sesion` **abiertos** |
+| **Lo que importa** | `ClockSkew = TimeSpan.Zero` · el `OnChallenge` que le pone cuerpo al 401 · el `/` y el `POST /api/sesion/entrar` **abiertos** |
 | **Verificación** | Sin token **401** · con token **200** · token con **una letra cambiada** → **401** · el `/` → **200** |
 
 > **Si todo responde 200 sin token, `UseAuthentication` no está o está después
@@ -77,7 +77,7 @@ entender:
 
 | | |
 |---|---|
-| **Archivos** | `repositorios/i_repositorio_acceso.py` · `repositorio_acceso_postgres.py` · `autorizacion/guardia_permisos.py` · `[ExigePermiso("interfaz.x")]` en los 12 controladores |
+| **Archivos** | `repositorios/i_repositorio_acceso.py` · `repositorio_acceso_postgres.py` · `autorizacion/guardia_permisos.py` · `[ExigePermiso("/x")]` en los 12 controladores |
 | **Lo que importa** | **`verificar_acceso_ruta`**, que ya existía: el `JOIN` de permisos **no se escribe en Python**. Y una ruta que no esté en la tabla tiene que **fallar cerrado** |
 | **Verificación** | La matriz de los tres roles: `admin` todo 200 · `vendedor1` **403** en usuarios y **200** en clientes · `cliente1` al revés |
 
@@ -92,7 +92,7 @@ entender:
 |---|---|
 | **Archivos** | `controllers/permisos_controller.py` |
 | **Lo que importa** | El correo sale **del token**, no de la URL. Exige token pero **no** permiso |
-| **Verificación** | `admin` → 15 rutas · `cliente1` → `["interfaz.inicio","interfaz.productos"]` |
+| **Verificación** | `admin` → 15 rutas · `cliente1` → `["/home","/producto"]` |
 
 > **Hasta aquí la API está completa. Y la versión NO está cerrada.**
 

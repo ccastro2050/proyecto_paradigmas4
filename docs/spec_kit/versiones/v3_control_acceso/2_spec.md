@@ -123,7 +123,7 @@ eso**.
 > comprueba. El menú es comodidad; la protección está en la API.
 >
 > **Se comprueba así:** identifíquese con un rol que no tenga permiso de
-> `interfaz.usuarios`, y escriba la dirección a mano. Tiene que responder
+> `/usuario`, y escriba la dirección a mano. Tiene que responder
 > **403**, no mostrar los datos.
 
 ## 4. Criterios de aceptación
