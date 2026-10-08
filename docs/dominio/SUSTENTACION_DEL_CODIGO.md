@@ -31,36 +31,34 @@
 
 ## 1 · ¿Quién hizo qué, y dónde está el rastro?
 
-**En el historial, y se cuenta en un comando.** Son **84 commits** de tres
-personas:
+**En el historial, y se cuenta en un comando.** En este repositorio la
+respuesta es corta, y conviene decirla sin adornos:
 
 ```powershell
-git shortlog -sne main
-#     40  Carlos    ← 25 de contenido + 15 fusiones
-#     24  Paco
-#     20  Luis
+git shortlog -sne
+#    105  Carlos Arturo
+#     15  Carlos Arturo Castro Castro
 ```
 
-> **Y la respuesta de sustentación completa no se queda en esa tabla**, porque
-> esa tabla engaña: **las 15 fusiones del repositorio son de Carlos**, por ser el
-> integrador. Descontándolas, el reparto real es **25 / 24 / 20** — casi parejo.
+> **Son 120 commits de UNA sola persona.** Las dos líneas no son dos autores:
+> es el mismo correo con dos `user.name` distintos — una configuración de Git
+> que cambió a mitad de camino.
 >
-> ```powershell
-> git log --no-merges --format='%an' | Group-Object | Select-Object Count, Name
-> ```
+> **Este repositorio es el EJEMPLO del profesor**, no el trabajo de un equipo.
+> Los otros de la ruta simulan tres estudiantes con sus ramas; aquí no hay
+> nada que repartir, y decir lo contrario sería inventar.
 
-**Para saber quién escribió un archivo concreto**, que es lo que de verdad se
-califica:
+**Para saber quién escribió un archivo concreto** —que es lo que de verdad se
+califica cuando sí hay equipo—:
 
 ```powershell
-git log -1 --format='%an' -- docs/spec_kit/versiones/v1_sin_fk/2_spec.md
-# responde: Paco
+git log -1 --format='%an' -- docs/spec_kit/versiones/v1_producto_postgres/2_spec.md
 ```
 
-> **Y una advertencia sobre contar commits:** mide **actividad**, no dificultad.
-> Luis tiene 20 y Carlos 40, y de ahí no se sigue que hiciera la mitad: a Luis le
-> tocaron los recursos de llave `IDENTITY`, que son los únicos que **no se
-> calcan** del molde. Ver [`CRONOGRAMA.md`](CRONOGRAMA.md) §3.
+> **Y una advertencia sobre contar commits**, que vale igual: mide
+> **actividad**, no dificultad. Veinte commits de un recurso con llave
+> generada pueden costar más que cuarenta de cinco recursos calcados del
+> mismo molde.
 
 ---
 
