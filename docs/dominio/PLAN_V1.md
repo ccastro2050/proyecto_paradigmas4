@@ -134,7 +134,7 @@ eso**.
 
 > **Es YAGNI aplicado a conciencia** — *You Aren't Gonna Need It*, Artículo 1. El
 > ensamblador de la v1 es la sección de inyección de dependencias de
-> `Program.cs`, y punto. Escribir la fábrica «porque en la v5 va a hacer falta»
+> `main.py`, y punto. Escribir la fábrica «porque en la v5 va a hacer falta»
 > es construir para un futuro que todavía puede cambiar: de hecho **cambió**, y
 > la versión del motor pasó de ser la v4 a ser la v5 (ver
 > [`CRONOGRAMA.md`](CRONOGRAMA.md) §2).
@@ -154,7 +154,7 @@ El orden no es casual: cada paso deja algo **comprobable** antes de seguir.
 | **5** | `Producto`, y sus tres peticiones por verbo | Un `POST` sin nombre da **422 con la lista** |
 | **6** | `IRepositorioProducto` → `RepositorioProductoPostgres` | Un `GET` trae las 8 filas sembradas |
 | **7** | `IServicioProducto` → `ServicioProducto` | El servicio no nombra nada de HTTP |
-| **8** | `ProductoController`, los cinco verbos | Los cinco responden lo que el contrato dice |
+| **8** | `producto_controller.py`, los cinco verbos | Los cinco responden lo que el contrato dice |
 | **9** | **Los otros cinco recursos**, calcando el molde | Las 37 operaciones en Swagger |
 | **10** | **Las seis pantallas**, una por recurso | Se crea un producto desde el navegador |
 

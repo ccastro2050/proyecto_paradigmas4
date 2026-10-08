@@ -82,7 +82,7 @@ porque todo está en un repositorio.**
 
 **Por qué la API es un monolito:** es **una** unidad. Sus tres capas y sus
 quince controladores viven en el mismo proceso, se compilan juntos y se
-despliegan juntos. Si hay que cambiar una línea de `ProductoController`, se
+despliegan juntos. Si hay que cambiar una línea de `producto_controller.py`, se
 vuelve a desplegar **toda** la API.
 
 **Por qué el front también:** exactamente lo mismo. Sus **10 plantillas** son un
@@ -157,7 +157,7 @@ Select-String -Path front_flask\**\*.cs,front_flask\**\*.html `
 Y entre cada par, **una interfaz**:
 
 ```
-FacturaController  →  IServicioFactura   →  IRepositorioFactura
+factura_controller  →  IServicioFactura  →  IRepositorioFactura
                           ↑                        ↑
                    ServicioFactura        RepositorioFacturaPostgres
                                           RepositorioFacturaMariaDb
@@ -169,32 +169,43 @@ FacturaController  →  IServicioFactura   →  IRepositorioFactura
 
 ### El inventario, por recurso
 
-Nueve recursos con sus tres capas, más los dos puentes y las vistas agregadas.
-Se puede contar:
+Trece recursos con sus tres capas —las diez tablas que se exponen, los dos
+puentes y las consultas agregadas—, más la sesión y los permisos. Se puede
+contar, y conviene hacerlo:
 
 | Carpeta | Cuántos | |
 |---|---|---|
-| `controllers/` | **7** | uno por recurso. Faltan los de las tablas que aún no se cubren |
-| `servicios/` | **7** + sus 7 contratos | las reglas, sin saber de HTTP |
-| `repositorios/` | **21** implementaciones + 7 contratos | **TRES por recurso**: PostgreSQL, MariaDB y SQL Server |
-| `models/` | **7** | la forma de lo que entra, con Pydantic |
+| `controllers/` | **15** | uno por recurso, más consultas, sesión y permisos |
+| `servicios/` | **15** + sus 15 contratos | las reglas, sin saber de HTTP |
+| `repositorios/` | **42** implementaciones + 14 contratos | **TRES por contrato**: PostgreSQL, MariaDB y SQL Server |
+| `models/` | **13** | la forma de lo que entra, con Pydantic |
+| `autorizacion/` | **2** | el token y las dos dependencias (401 y 403) |
 
-Esos 21 contra 7 son la arquitectura en un número: cada contrato tiene tres
-implementaciones, y arriba nadie sabe cuál está puesta.
+> **Esos 42 contra 14 son la arquitectura en un número:** cada contrato tiene
+> tres implementaciones, y arriba nadie sabe cuál está puesta. Son 14 y no 15
+> porque el servicio de sesión no tiene repositorio propio: usa los de
+> usuario, rol y el puente —tres a la vez—, que es la otra cosa que la
+> inyección de dependencias deja hacer sin esfuerzo.
+
+Y lo que la API expone, contado del propio `/openapi.json` —no de memoria—:
+**45 rutas y 91 operaciones** repartidas en 16 etiquetas. Dos están abiertas
+(el diagnóstico y `POST /api/sesion/entrar`); las otras 89 exigen token, y
+además permiso.
 
 ---
 
 ## 4. La fábrica, que es donde se decide el motor
 
 ```
-Program.cs  →  IFabricaRepositorios  →  FabricaPostgres
-                                     →  FabricaMariaDb
+main.py  →  servicios/ensamblador.py  →  _FABRICAS["postgres"]
+                                      →  _FABRICAS["mariadb"]
+                                      →  _FABRICAS["sqlserver"]
 ```
 
 Un interruptor —la variable `DB_PROVIDER`— elige cuál. **Y es el único sitio del
 sistema que decide CUÁL IMPLEMENTACIÓN DE REPOSITORIO se usa.**
 
-> **No confundirlo con «no se nombran clases concretas».** `ProductoController` y
+> **No confundirlo con «no se nombran clases concretas».** `producto_controller` y
 > `ServicioProducto` lo son, y se nombran sin problema: de cada uno hay **uno
 > solo**. La regla aplica donde hay **dos alternativas** — los repositorios — y
 > por eso son los únicos que pasan por la fábrica.

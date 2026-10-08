@@ -106,7 +106,7 @@ Tres mecanismos, y conviene distinguirlos porque fallan distinto:
 > auditoría. Anular deja el rastro: existió, y se dejó sin efecto.
 >
 > El `DELETE` existe en la API y **está apagado** por esta razón — vea
-> `FacturaController`, que lo trae escrito y comentado.
+> `factura_controller.py`, que lo trae escrito y comentado.
 
 ---
 
