@@ -18,6 +18,21 @@ la misma casa.
 > escrito en tablas. Los pasos propios de este proyecto —FastAPI, el
 > interruptor `DB_PROVIDER`, la cadena de `asyncpg`— **van sin capturas**.
 
+> ### Qué está probado y qué no
+>
+> **Este tutorial todavía no se ha ejecutado de principio a fin con ESTE
+> proyecto**, y el curso exige decirlo.
+>
+> | | |
+> |---|---|
+> | **Probado** | El camino Neon + Render, dos veces, con otros dos proyectos del curso |
+> | **Probado** | La cadena `postgresql+asyncpg://...?ssl=require`, medida contra una base de datos de Neon real |
+> | **Probado** | Los arreglos de este repositorio —el `${PORT:-8005}` del `Dockerfile`, el `PORT` antes que `PUERTO` del `app.py`, gunicorn— que son los mismos que ya corren publicados en otros dos proyectos |
+> | **Sin ejecutar** | Los servicios de **este** proyecto en Render, y por lo tanto las direcciones y los registros que aparecen más abajo son **lo que se espera**, no lo que se midió |
+>
+> **Si usted lo reproduce y algo no coincide, el documento está equivocado y
+> hay que corregirlo** — no al revés.
+
 ### Lo que cuesta: nada
 
 | | Lo que da gratis | La letra menuda |
@@ -402,7 +417,8 @@ base de datos       Neon, Frankfurt       (PostgreSQL 18)
 
 ---
 
-**Versión 1.0** — escrito el 23 de noviembre de 2026. Las capturas de los
-paneles de Neon y Render son de la corrida de `proyecto_diseno_de_software4`,
-que usa esas mismas pantallas; **las direcciones y variables de este documento
-son las de este proyecto.**
+**Versión 0.9 — escrito el 23 de noviembre de 2026, SIN ejecutar.** El camino
+está probado con otros dos proyectos del curso y los arreglos de este
+repositorio también; lo que falta es correrlo aquí. **Cuando se ejecute, esta
+versión pasa a 1.0, las capturas prestadas se reemplazan por las propias y las
+direcciones dejan de ser un ejemplo.**
