@@ -148,4 +148,16 @@ def inicio():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PUERTO", "8046")), debug=True)
+    # Tres variables, y el orden importa:
+    #   PORT     la pone la plataforma de nube (Render) y manda sobre todo
+    #   PUERTO   la del docker-compose de este proyecto: 8046
+    #   8046     el respaldo, para correrlo a mano sin nada configurado
+    puerto = int(os.environ.get("PORT") or os.environ.get("PUERTO") or 8046)
+
+    # DEPURAR=1 en desarrollo (recarga al guardar y muestra el error completo
+    # en la pagina); "0" publicado. La imagen trae 0 y el compose pone 1: el
+    # modo comodo se PIDE, no se hereda. Al reves, el depurador de Werkzeug
+    # quedaria abierto en internet, que es una puerta para ejecutar codigo.
+    depurar = os.environ.get("DEPURAR", "1") == "1"
+
+    app.run(host="0.0.0.0", port=puerto, debug=depurar)

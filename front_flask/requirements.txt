@@ -1,2 +1,5 @@
 flask==3.*
 requests==2.*
+# Para PUBLICAR. El servidor que trae Flask lo dice el mismo al arrancar:
+# "This is a development server. Do not use it in a production deployment".
+gunicorn==23.*

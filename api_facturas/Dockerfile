@@ -25,4 +25,14 @@ COPY . .
 
 EXPOSE 8005
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8005"]
+# EL PUERTO NO LO DECIDE LA APLICACION. En su maquina lo decide este archivo
+# (8005) y el compose; publicada, lo IMPONE la plataforma con la variable PORT
+# y espera que el programa escuche AHI. Si uno escucha en otro, el hospedaje
+# reporta el servicio como caido con la aplicacion viva adentro: es el fallo
+# mas comun al publicar en contenedores, y el mas desconcertante.
+#
+# Por eso el arranque pasa por un shell ("sh", "-c"): la forma corta
+# -["uvicorn", ...]- no pasa por shell, y ${PORT} llegaria literal, con el
+# signo de dolar incluido. El ${PORT:-8005} dice: use PORT si existe; si no,
+# el 8005 de siempre, para que la misma imagen sirva en los dos sitios.
+CMD ["sh", "-c", "exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8005}"]

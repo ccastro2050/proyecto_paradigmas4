@@ -22,4 +22,14 @@ COPY . .
 
 ENV PUERTO=8046
 EXPOSE 8046
-CMD ["python", "app.py"]
+
+# El defecto de la IMAGEN es publicado, no desarrollo: asi un hospedaje que
+# solo haga build + run arranca con gunicorn sin que nadie configure nada.
+# El modo comodo se pide a proposito (el compose pone DEPURAR=1).
+ENV DEPURAR=0
+
+# UN SOLO ARRANQUE PARA LOS DOS MUNDOS: con DEPURAR=0 arranca gunicorn -un
+# servidor de verdad, que atiende varias peticiones a la vez-; con DEPURAR=1,
+# el de Flask, que recarga al guardar. Y ${PORT:-${PUERTO:-8046}} es la misma
+# cadena de respaldo del app.py: manda el puerto que imponga la plataforma.
+CMD ["sh", "-c", "if [ \"$DEPURAR\" = \"0\" ]; then exec gunicorn --bind 0.0.0.0:${PORT:-${PUERTO:-8046}} --workers 2 app:app; else exec python app.py; fi"]

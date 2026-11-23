@@ -140,6 +140,10 @@ services:
       - ./front_flask:/app
     environment:
       PUERTO: "8046"
+      # La imagen trae DEPURAR=0 (gunicorn, como en el hospedaje). Aqui se
+      # pide el modo desarrollo a proposito: recarga al guardar y muestra el
+      # error completo en la pagina. Ver el Dockerfile del front.
+      DEPURAR: "1"
       # El NOMBRE del servicio, no localhost: dentro del contenedor del front,
       # localhost seria el front mismo.
       API_FACTURAS_URL: "http://api-facturas:8005"
