@@ -71,7 +71,7 @@ la misma casa.
 |---|---|---|
 | **1** | La base de datos | Neon |
 | **2** | El esquema y los datos | Neon |
-| **3** | La cadena de conexión, y por qué la de Python no es la de siempre | su editor |
+| **3** | La cadena de conexión, y por qué hay que traducirla | su editor |
 | **4** | El servicio de la API | Render |
 | **5** | El front en Flask | Render |
 | **6** | La prueba del sistema completo | el navegador |
@@ -161,7 +161,7 @@ ORDER BY table_name;
 
 ---
 
-## Paso 3 — La cadena de conexión, y la trampa de Python
+## Paso 3 — La cadena de conexión, y por qué hay que traducirla
 
 **Botón verde `Connect`**, arriba a la izquierda. **Deje `Connection pooling`
 encendido** —esta API abre y cierra conexión en cada petición— y **oprima
@@ -187,10 +187,16 @@ postgresql+asyncpg://neondb_owner:LA_CLAVE@ep-xxxx-pooler.c-7.eu-central-1.aws.n
 | `?sslmode=require` → **`?ssl=require`** | es el nombre que usa **asyncpg**. Con `sslmode` responde `TypeError: connect() got an unexpected keyword argument 'sslmode'` |
 | borrar **`&channel_binding=require`** | asyncpg no conoce ese parámetro y falla igual |
 
-> **Estas tres diferencias son el tipo de cosa que cuesta una tarde** si uno
-> no sabe que existe: el mensaje de error habla de un argumento inesperado,
-> no de que la cadena venga en otro dialecto. **Comprobado contra Neon antes
-> de escribirlo.**
+> **Y esto no es una rareza de Python: es que hay dos formatos.** Neon
+> entrega la cadena en el formato de `libpq` —el que entiende `psql` y casi
+> cualquier cliente de PostgreSQL—. SQLAlchemy usa el suyo, que además del
+> servidor y la clave necesita saber **con qué driver** conectarse, porque
+> puede hablar con varios. Y cada driver nombra sus parámetros a su manera:
+> `psycopg2` dice `sslmode`, `asyncpg` dice `ssl`.
+>
+> **Lo que cuesta una tarde es el mensaje de error**, que habla de un
+> argumento inesperado y no de que la cadena venga en otro formato.
+> **Comprobado contra Neon antes de escribirlo.**
 
 **Guárdela en un `.txt` fuera del repositorio:** trae la contraseña. En el
 paso 4 se escribe **en el panel de Render**, no en un archivo del proyecto.
